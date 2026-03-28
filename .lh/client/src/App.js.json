@@ -1,0 +1,42 @@
+{
+    "sourceFile": "client/src/App.js",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 6,
+            "patches": [
+                {
+                    "date": 1774688247420,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1774688352327,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -11,9 +11,12 @@\n         <BrowserRouter>\r\n             <Container maxWidth=\"xl\">\r\n                 <Navbar />\r\n                 <Switch>\r\n-                    <Route path=\"/\" exact component={Home} />\r\n+                    <Route path=\"/\" exact component={() => <Redirect to=\"/posts\" />} />\r\n+                    <Route path=\"/posts\" exact component={Home} />\r\n+                    <Route path=\"/posts/search\" exact component={Home} />\r\n+                    <Route path=\"/posts/search?searchQuery\" exact component={Home} />\r\n                     <Route path=\"/auth\" exact component={Auth} />\r\n                 </Switch>\r\n             </Container>\r\n         </BrowserRouter>\r\n"
+                },
+                {
+                    "date": 1774688389787,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -14,9 +14,9 @@\n                 <Switch>\r\n                     <Route path=\"/\" exact component={() => <Redirect to=\"/posts\" />} />\r\n                     <Route path=\"/posts\" exact component={Home} />\r\n                     <Route path=\"/posts/search\" exact component={Home} />\r\n-                    <Route path=\"/posts/search?searchQuery\" exact component={Home} />\r\n+                    <Route path=\"/posts/:id\" component={PostDetails} />\r\n                     <Route path=\"/auth\" exact component={Auth} />\r\n                 </Switch>\r\n             </Container>\r\n         </BrowserRouter>\r\n"
+                },
+                {
+                    "date": 1774688486429,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -3,8 +3,9 @@\n import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';\r\n import Navbar from './components/Navbar/navbar.js';\r\n import Home from './components/Home/home.js';\r\n import Auth from './components/Auth/Auth.js';\r\n+import PostDetails from './components/PostDetails/PostDetails.js';\r\n \r\n \r\n const App = () => {\r\n     return (\r\n"
+                },
+                {
+                    "date": 1774688501302,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -0,0 +1,27 @@\n+import React from 'react';\r\n+import { Container } from '@material-ui/core';\r\n+import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';\r\n+import Navbar from './components/Navbar/navbar.js';\r\n+import Home from './components/Home/home.js';\r\n+import Auth from './components/Auth/Auth.js';\r\n+import PostDetails from './components/PostDetails/postdetails.jsx';\r\n+\r\n+\r\n+const App = () => {\r\n+    return (\r\n+        <BrowserRouter>\r\n+            <Container maxWidth=\"xl\">\r\n+                <Navbar />\r\n+                <Switch>\r\n+                    <Route path=\"/\" exact component={() => <Redirect to=\"/posts\" />} />\r\n+                    <Route path=\"/posts\" exact component={Home} />\r\n+                    <Route path=\"/posts/search\" exact component={Home} />\r\n+                    <Route path=\"/posts/:id\" component={PostDetails} />\r\n+                    <Route path=\"/auth\" exact component={Auth} />\r\n+                </Switch>\r\n+            </Container>\r\n+        </BrowserRouter>\r\n+    );\r\n+};\r\n+\r\n+export default App\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1774689229978,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -7,35 +7,10 @@\n import PostDetails from './components/PostDetails/postdetails.jsx';\r\n \r\n \r\n const App = () => {\r\n-    return (\r\n-        <BrowserRouter>\r\n-            <Container maxWidth=\"xl\">\r\n-                <Navbar />\r\n-                <Switch>\r\n-                    <Route path=\"/\" exact component={() => <Redirect to=\"/posts\" />} />\r\n-                    <Route path=\"/posts\" exact component={Home} />\r\n-                    <Route path=\"/posts/search\" exact component={Home} />\r\n-                    <Route path=\"/posts/:id\" component={PostDetails} />\r\n-                    <Route path=\"/auth\" exact component={Auth} />\r\n-                </Switch>\r\n-            </Container>\r\n-        </BrowserRouter>\r\n-    );\r\n-};\r\n+    const user = JSON.parse(localStorage.getItem('profile'));\r\n \r\n-export default App\n-import React from 'react';\r\n-import { Container } from '@material-ui/core';\r\n-import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';\r\n-import Navbar from './components/Navbar/navbar.js';\r\n-import Home from './components/Home/home.js';\r\n-import Auth from './components/Auth/Auth.js';\r\n-import PostDetails from './components/PostDetails/PostDetails.js';\r\n-\r\n-\r\n-const App = () => {\r\n     return (\r\n         <BrowserRouter>\r\n             <Container maxWidth=\"xl\">\r\n                 <Navbar />\r\n"
+                },
+                {
+                    "date": 1774689258537,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -18,9 +18,9 @@\n                     <Route path=\"/\" exact component={() => <Redirect to=\"/posts\" />} />\r\n                     <Route path=\"/posts\" exact component={Home} />\r\n                     <Route path=\"/posts/search\" exact component={Home} />\r\n                     <Route path=\"/posts/:id\" component={PostDetails} />\r\n-                    <Route path=\"/auth\" exact component={Auth} />\r\n+                    <Route path=\"/auth\" exact component={() => (!user ? <Auth /> : <Redirect to=\"/posts\" />)} />\r\n                 </Switch>\r\n             </Container>\r\n         </BrowserRouter>\r\n     );\r\n"
+                }
+            ],
+            "date": 1774688247420,
+            "name": "Commit-0",
+            "content": "import React from 'react';\r\nimport { Container } from '@material-ui/core';\r\nimport { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';\r\nimport Navbar from './components/Navbar/navbar.js';\r\nimport Home from './components/Home/home.js';\r\nimport Auth from './components/Auth/Auth.js';\r\n\r\n\r\nconst App = () => {\r\n    return (\r\n        <BrowserRouter>\r\n            <Container maxWidth=\"xl\">\r\n                <Navbar />\r\n                <Switch>\r\n                    <Route path=\"/\" exact component={Home} />\r\n                    <Route path=\"/auth\" exact component={Auth} />\r\n                </Switch>\r\n            </Container>\r\n        </BrowserRouter>\r\n    );\r\n};\r\n\r\nexport default App"
+        }
+    ]
+}

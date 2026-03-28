@@ -1,0 +1,102 @@
+{
+    "sourceFile": "client/src/reducers/posts.js",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 21,
+            "patches": [
+                {
+                    "date": 1774690939058,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1774690950435,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -0,0 +1,19 @@\n+import { FETCH_BY_SEARCH, FETCH_ALL, CREATE, UPDATE, DELETE} from '../constants/actionType';\r\n+export default (posts = [], action) => {\r\n+    switch (action.type){\r\n+        case DELETE: \r\n+            return posts.filter((post) => post._id !== action.payload);\r\n+        case UPDATE:\r\n+            return posts.map((post) => post._id === action.payload._id ? action.payload : post);\r\n+        case FETCH_ALL:\r\n+            return action.payload;\r\n+        case FETCH_BY_SEARCH:\r\n+            return action.payload;\r\n+        case CREATE:\r\n+            return [ ...posts, action.payload ];\r\n+        \r\n+            default:\r\n+            return posts;\r\n+    }\r\n+}\r\n+ \n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1774694183299,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -5,9 +5,9 @@\n             return posts.filter((post) => post._id !== action.payload);\r\n         case UPDATE:\r\n             return posts.map((post) => post._id === action.payload._id ? action.payload : post);\r\n         case FETCH_ALL:\r\n-            return action.payload;\r\n+            return { ...action.payload };\r\n         case FETCH_BY_SEARCH:\r\n             return action.payload;\r\n         case CREATE:\r\n             return [ ...posts, action.payload ];\r\n@@ -15,24 +15,5 @@\n             default:\r\n             return posts;\r\n     }\r\n }\r\n- \n-import { FETCH_ALL, CREATE, UPDATE, DELETE} from '../constants/actionType';\r\n-export default (posts = [], action) => {\r\n-    switch (action.type){\r\n-        case DELETE: \r\n-            return posts.filter((post) => post._id !== action.payload);\r\n-        case UPDATE:\r\n-            return posts.map((post) => post._id === action.payload._id ? action.payload : post);\r\n-        case FETCH_ALL:\r\n-            return action.payload;\r\n-        case FETCH_BY_SEARCH:\r\n-            return action.payload;\r\n-        case CREATE:\r\n-            return [ ...posts, action.payload ];\r\n-        \r\n-            default:\r\n-            return posts;\r\n-    }\r\n-}\r\n  \n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1774694334267,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -5,14 +5,23 @@\n             return posts.filter((post) => post._id !== action.payload);\r\n         case UPDATE:\r\n             return posts.map((post) => post._id === action.payload._id ? action.payload : post);\r\n         case FETCH_ALL:\r\n-            return { ...action.payload };\r\n+            return { \r\n+                ...state,\r\n+                post: action.payload.data,\r\n+                currentPage: action.payload.currentPage,\r\n+                numberOfPages: action.payload.numberOfPages\r\n+            };\r\n         case FETCH_BY_SEARCH:\r\n-            return action.payload;\r\n+            return {\r\n+                ...state,\r\n+                post: action.payload\r\n+            };\r\n         case CREATE:\r\n             return [ ...posts, action.payload ];\r\n-        \r\n+        case LIKE:\r\n+            return state.map((post) => post._id === action.payload._id ? action.payload : post);\r\n             default:\r\n             return posts;\r\n     }\r\n }\r\n"
+                },
+                {
+                    "date": 1774694359512,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,6 +1,6 @@\n import { FETCH_BY_SEARCH, FETCH_ALL, CREATE, UPDATE, DELETE} from '../constants/actionType';\r\n-export default (posts = [], action) => {\r\n+export default (state = [], action) => {\r\n     switch (action.type){\r\n         case DELETE: \r\n             return posts.filter((post) => post._id !== action.payload);\r\n         case UPDATE:\r\n"
+                },
+                {
+                    "date": 1774694525819,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,18 +1,18 @@\n import { FETCH_BY_SEARCH, FETCH_ALL, CREATE, UPDATE, DELETE} from '../constants/actionType';\r\n export default (state = [], action) => {\r\n     switch (action.type){\r\n-        case DELETE: \r\n-            return posts.filter((post) => post._id !== action.payload);\r\n-        case UPDATE:\r\n-            return posts.map((post) => post._id === action.payload._id ? action.payload : post);\r\n         case FETCH_ALL:\r\n             return { \r\n                 ...state,\r\n                 post: action.payload.data,\r\n                 currentPage: action.payload.currentPage,\r\n                 numberOfPages: action.payload.numberOfPages\r\n             };\r\n+        case DELETE: \r\n+            return posts.filter((post) => post._id !== action.payload);\r\n+        case UPDATE:\r\n+            return posts.map((post) => post._id === action.payload._id ? action.payload : post);\r\n         case FETCH_BY_SEARCH:\r\n             return {\r\n                 ...state,\r\n                 post: action.payload\r\n"
+                },
+                {
+                    "date": 1774694543541,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -7,17 +7,17 @@\n                 post: action.payload.data,\r\n                 currentPage: action.payload.currentPage,\r\n                 numberOfPages: action.payload.numberOfPages\r\n             };\r\n+        case FETCH_BY_SEARCH:\r\n+                return {\r\n+                    ...state,\r\n+                    post: action.payload\r\n+                };\r\n         case DELETE: \r\n             return posts.filter((post) => post._id !== action.payload);\r\n         case UPDATE:\r\n             return posts.map((post) => post._id === action.payload._id ? action.payload : post);\r\n-        case FETCH_BY_SEARCH:\r\n-            return {\r\n-                ...state,\r\n-                post: action.payload\r\n-            };\r\n         case CREATE:\r\n             return [ ...posts, action.payload ];\r\n         case LIKE:\r\n             return state.map((post) => post._id === action.payload._id ? action.payload : post);\r\n"
+                },
+                {
+                    "date": 1774694563255,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -12,16 +12,16 @@\n                 return {\r\n                     ...state,\r\n                     post: action.payload\r\n                 };\r\n+        case LIKE:\r\n+            return state.map((post) => post._id === action.payload._id ? action.payload : post);\r\n         case DELETE: \r\n             return posts.filter((post) => post._id !== action.payload);\r\n         case UPDATE:\r\n             return posts.map((post) => post._id === action.payload._id ? action.payload : post);\r\n         case CREATE:\r\n             return [ ...posts, action.payload ];\r\n-        case LIKE:\r\n-            return state.map((post) => post._id === action.payload._id ? action.payload : post);\r\n             default:\r\n             return posts;\r\n     }\r\n }\r\n"
+                },
+                {
+                    "date": 1774694589838,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -19,9 +19,9 @@\n             return posts.filter((post) => post._id !== action.payload);\r\n         case UPDATE:\r\n             return posts.map((post) => post._id === action.payload._id ? action.payload : post);\r\n         case CREATE:\r\n-            return [ ...posts, action.payload ];\r\n+            return [ ...state, action.payload ];\r\n             default:\r\n             return posts;\r\n     }\r\n }\r\n"
+                },
+                {
+                    "date": 1774694606773,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -20,9 +20,9 @@\n         case UPDATE:\r\n             return posts.map((post) => post._id === action.payload._id ? action.payload : post);\r\n         case CREATE:\r\n             return [ ...state, action.payload ];\r\n-            default:\r\n-            return posts;\r\n+        default:\r\n+            return state;\r\n     }\r\n }\r\n  \n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1774694655950,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -14,14 +14,14 @@\n                     post: action.payload\r\n                 };\r\n         case LIKE:\r\n             return state.map((post) => post._id === action.payload._id ? action.payload : post);\r\n+        case CREATE:\r\n+            return [ ...state, action.payload ];\r\n+        case UPDATE:\r\n+            return posts.map((post) => post._id === action.payload._id ? action.payload : post);\r\n         case DELETE: \r\n             return posts.filter((post) => post._id !== action.payload);\r\n-        case UPDATE:\r\n-            return posts.map((post) => post._id === action.payload._id ? action.payload : post);\r\n-        case CREATE:\r\n-            return [ ...state, action.payload ];\r\n         default:\r\n             return state;\r\n     }\r\n }\r\n"
+                },
+                {
+                    "date": 1774694668853,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -17,9 +17,9 @@\n             return state.map((post) => post._id === action.payload._id ? action.payload : post);\r\n         case CREATE:\r\n             return [ ...state, action.payload ];\r\n         case UPDATE:\r\n-            return posts.map((post) => post._id === action.payload._id ? action.payload : post);\r\n+            return state.map((post) => post._id === action.payload._id ? action.payload : post);\r\n         case DELETE: \r\n             return posts.filter((post) => post._id !== action.payload);\r\n         default:\r\n             return state;\r\n"
+                },
+                {
+                    "date": 1774694678581,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -19,9 +19,9 @@\n             return [ ...state, action.payload ];\r\n         case UPDATE:\r\n             return state.map((post) => post._id === action.payload._id ? action.payload : post);\r\n         case DELETE: \r\n-            return posts.filter((post) => post._id !== action.payload);\r\n+            return state.filter((post) => post._id !== action.payload);\r\n         default:\r\n             return state;\r\n     }\r\n }\r\n"
+                },
+                {
+                    "date": 1774694702569,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,5 +1,5 @@\n-import { FETCH_BY_SEARCH, FETCH_ALL, CREATE, UPDATE, DELETE} from '../constants/actionType';\r\n+import { FETCH_BY_SEARCH, FETCH_ALL, CREATE, UPDATE, DELETE, LIKE } from '../constants/actionType';\r\n export default (state = [], action) => {\r\n     switch (action.type){\r\n         case FETCH_ALL:\r\n             return { \r\n"
+                },
+                {
+                    "date": 1774695568149,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -3,9 +3,9 @@\n     switch (action.type){\r\n         case FETCH_ALL:\r\n             return { \r\n                 ...state,\r\n-                post: action.payload.data,\r\n+                posts: action.payload.data,\r\n                 currentPage: action.payload.currentPage,\r\n                 numberOfPages: action.payload.numberOfPages\r\n             };\r\n         case FETCH_BY_SEARCH:\r\n"
+                },
+                {
+                    "date": 1774695604617,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -10,18 +10,18 @@\n             };\r\n         case FETCH_BY_SEARCH:\r\n                 return {\r\n                     ...state,\r\n-                    post: action.payload\r\n+                    posts: action.payload\r\n                 };\r\n         case LIKE:\r\n-            return state.map((post) => post._id === action.payload._id ? action.payload : post);\r\n+            return state.map((posts) => posts._id === action.payload._id ? action.payload : posts);\r\n         case CREATE:\r\n             return [ ...state, action.payload ];\r\n         case UPDATE:\r\n-            return state.map((post) => post._id === action.payload._id ? action.payload : post);\r\n+            return state.map((posts) => posts._id === action.payload._id ? action.payload : posts);\r\n         case DELETE: \r\n-            return state.filter((post) => post._id !== action.payload);\r\n+            return state.filter((posts) => posts._id !== action.payload);\r\n         default:\r\n             return state;\r\n     }\r\n }\r\n"
+                },
+                {
+                    "date": 1774696794771,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,5 +1,5 @@\n-import { FETCH_BY_SEARCH, FETCH_ALL, CREATE, UPDATE, DELETE, LIKE } from '../constants/actionType';\r\n+import {START_LOADING, END_LOADING, FETCH_BY_SEARCH, FETCH_ALL, CREATE, UPDATE, DELETE, LIKE } from '../constants/actionType';\r\n export default (state = [], action) => {\r\n     switch (action.type){\r\n         case FETCH_ALL:\r\n             return { \r\n"
+                },
+                {
+                    "date": 1774696857044,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,7 +1,11 @@\n import {START_LOADING, END_LOADING, FETCH_BY_SEARCH, FETCH_ALL, CREATE, UPDATE, DELETE, LIKE } from '../constants/actionType';\r\n export default (state = [], action) => {\r\n     switch (action.type){\r\n+        case START_LOADING:\r\n+            return { ...state, isLoading: true };\r\n+        case END_LOADING:\r\n+            return { ...state, isLoading: false };\r\n         case FETCH_ALL:\r\n             return { \r\n                 ...state,\r\n                 posts: action.payload.data,\r\n"
+                },
+                {
+                    "date": 1774696912464,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,6 +1,6 @@\n import {START_LOADING, END_LOADING, FETCH_BY_SEARCH, FETCH_ALL, CREATE, UPDATE, DELETE, LIKE } from '../constants/actionType';\r\n-export default (state = [], action) => {\r\n+export default (state = { isLoading: true, posts: [] }, action) => {\r\n     switch (action.type){\r\n         case START_LOADING:\r\n             return { ...state, isLoading: true };\r\n         case END_LOADING:\r\n"
+                },
+                {
+                    "date": 1774697368128,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -17,15 +17,15 @@\n                     ...state,\r\n                     posts: action.payload\r\n                 };\r\n         case LIKE:\r\n-            return state.map((posts) => posts._id === action.payload._id ? action.payload : posts);\r\n+            return { ...state, posts: state.posts.map((posts) => posts._id === action.payload._id ? action.payload : posts) };\r\n         case CREATE:\r\n-            return [ ...state, action.payload ];\r\n+            return { ...state, posts: [...state.posts, action.payload] };\r\n         case UPDATE:\r\n-            return state.map((posts) => posts._id === action.payload._id ? action.payload : posts);\r\n+            return { ...state, posts: state.posts.map((posts) => posts._id === action.payload._id ? action.payload : posts) };\r\n         case DELETE: \r\n-            return state.filter((posts) => posts._id !== action.payload);\r\n+            return { ...state, posts: state.posts.filter((posts) => posts._id !== action.payload) };\r\n         default:\r\n             return state;\r\n     }\r\n }\r\n"
+                },
+                {
+                    "date": 1774699447651,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,5 +1,5 @@\n-import {START_LOADING, END_LOADING, FETCH_BY_SEARCH, FETCH_ALL, CREATE, UPDATE, DELETE, LIKE } from '../constants/actionType';\r\n+import {START_LOADING, END_LOADING, FETCH_POST, FETCH_BY_SEARCH, FETCH_ALL, CREATE, UPDATE, DELETE, LIKE } from '../constants/actionType';\r\n export default (state = { isLoading: true, posts: [] }, action) => {\r\n     switch (action.type){\r\n         case START_LOADING:\r\n             return { ...state, isLoading: true };\r\n"
+                },
+                {
+                    "date": 1774699468022,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -16,8 +16,10 @@\n                 return {\r\n                     ...state,\r\n                     posts: action.payload\r\n                 };\r\n+        case FETCH_POST:\r\n+            return { ...state, post: action.payload };\r\n         case LIKE:\r\n             return { ...state, posts: state.posts.map((posts) => posts._id === action.payload._id ? action.payload : posts) };\r\n         case CREATE:\r\n             return { ...state, posts: [...state.posts, action.payload] };\r\n"
+                }
+            ],
+            "date": 1774690939058,
+            "name": "Commit-0",
+            "content": "import { FETCH_ALL, CREATE, UPDATE, DELETE} from '../constants/actionType';\r\nexport default (posts = [], action) => {\r\n    switch (action.type){\r\n        case DELETE: \r\n            return posts.filter((post) => post._id !== action.payload);\r\n        case UPDATE:\r\n            return posts.map((post) => post._id === action.payload._id ? action.payload : post);\r\n        case FETCH_ALL:\r\n            return action.payload;\r\n        case FETCH_BY_SEARCH:\r\n            return action.payload;\r\n        case CREATE:\r\n            return [ ...posts, action.payload ];\r\n        \r\n            default:\r\n            return posts;\r\n    }\r\n}\r\n "
+        }
+    ]
+}

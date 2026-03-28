@@ -1,0 +1,18 @@
+{
+    "sourceFile": "client/src/components/Posts/Post/styles.js",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1774686177054,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1774686177054,
+            "name": "Commit-0",
+            "content": "import { makeStyles } from '@material-ui/core/styles';\r\n\r\nexport default makeStyles({\r\n  media: {\r\n    height: 0,\r\n    paddingTop: '56.25%',\r\n    backgroundColor: 'rgba(0, 0, 0, 0.5)',\r\n    backgroundBlendMode: 'darken',\r\n  },\r\n  border: {\r\n    border: 'solid',\r\n  },\r\n  fullHeightCard: {\r\n    height: '100%',\r\n  },\r\n  card: {\r\n    display: 'flex',\r\n    flexDirection: 'column',\r\n    justifyContent: 'space-between',\r\n    borderRadius: '15px',\r\n    height: '100%',\r\n    position: 'relative',\r\n  },\r\n  overlay: {\r\n    position: 'absolute',\r\n    top: '20px',\r\n    left: '20px',\r\n    color: 'white',\r\n  },\r\n  overlay2: {\r\n    position: 'absolute',\r\n    top: '20px',\r\n    right: '20px',\r\n    color: 'white',\r\n  },\r\n  grid: {\r\n    display: 'flex',\r\n  },\r\n  details: {\r\n    display: 'flex',\r\n    justifyContent: 'space-between',\r\n    margin: '20px',\r\n  },\r\n  title: {\r\n    padding: '0 16px',\r\n  },\r\n  cardActions: {\r\n    padding: '0 16px 8px 16px',\r\n    display: 'flex',\r\n    justifyContent: 'space-between',\r\n  },\r\n  cardAction: {\r\n    display: 'block',\r\n    textAlign: 'initial',\r\n  },\r\n});"
+        }
+    ]
+}

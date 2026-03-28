@@ -1,0 +1,82 @@
+{
+    "sourceFile": "client/src/components/Pagination.jsx",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 16,
+            "patches": [
+                {
+                    "date": 1774687867102,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1774687908844,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -10,17 +10,11 @@\n         window.location.href = `/posts?page=${targetPage}`;\r\n     };\r\n \r\n     return (\r\n-        <div className={classes.pagination}>\r\n-            <ButtonGroup color=\"primary\" aria-label=\"pagination\">\r\n-                <Button onClick={() => goToPage(Number(page) - 1)} disabled={Number(page) <= 1}>\r\n-                    Previous\r\n-                </Button>\r\n-                <Button disabled>Page {page}</Button>\r\n-                <Button onClick={() => goToPage(Number(page) + 1)}>Next</Button>\r\n-            </ButtonGroup>\r\n-        </div>\r\n+        <Pagination classes={{ ul: classes.ul }} count={5} page={Number(page)} variant=\"outlined\" color=\"primary\" renderItem={(item) => (\r\n+            <PaginationItem {...item} onClick={() => goToPage(item.page)} />\r\n+        )} />\r\n     );\r\n };\r\n \r\n export default Pagination;\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1774687915517,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -10,9 +10,9 @@\n         window.location.href = `/posts?page=${targetPage}`;\r\n     };\r\n \r\n     return (\r\n-        <Pagination classes={{ ul: classes.ul }} count={5} page={Number(page)} variant=\"outlined\" color=\"primary\" renderItem={(item) => (\r\n+        <Pagination classes={{ ul: classes.ul }} count={5} page={1} variant=\"outlined\" color=\"primary\" renderItem={(item) => (\r\n             <PaginationItem {...item} onClick={() => goToPage(item.page)} />\r\n         )} />\r\n     );\r\n };\r\n"
+                },
+                {
+                    "date": 1774687963989,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,8 +1,9 @@\n import React from \"react\";\r\n import { Button, ButtonGroup } from '@material-ui/core';\r\n import { Pagination, PaginationItem } from '@material-ui/lab';\r\n import useStyle from './styles.js';\r\n+import { Link } from \"react-router-dom/cjs/react-router-dom.min.js\";\r\n \r\n const Pagination = ({ page = 1 }) => {\r\n     const classes = useStyle();\r\n \r\n"
+                },
+                {
+                    "date": 1774687985273,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,9 +1,9 @@\n import React from \"react\";\r\n import { Button, ButtonGroup } from '@material-ui/core';\r\n import { Pagination, PaginationItem } from '@material-ui/lab';\r\n import useStyle from './styles.js';\r\n-import { Link } from \"react-router-dom/cjs/react-router-dom.min.js\";\r\n+import { Link } from 'react-router-dom';\r\n \r\n const Pagination = ({ page = 1 }) => {\r\n     const classes = useStyle();\r\n \r\n"
+                },
+                {
+                    "date": 1774688019790,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -12,9 +12,9 @@\n     };\r\n \r\n     return (\r\n         <Pagination classes={{ ul: classes.ul }} count={5} page={1} variant=\"outlined\" color=\"primary\" renderItem={(item) => (\r\n-            <PaginationItem {...item} onClick={() => goToPage(item.page)} />\r\n+            <PaginationItem {...item} component={Link} to={`/posts?page=${1}`} />\r\n         )} />\r\n     );\r\n };\r\n \r\n"
+                },
+                {
+                    "date": 1774688046907,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -3,9 +3,9 @@\n import { Pagination, PaginationItem } from '@material-ui/lab';\r\n import useStyle from './styles.js';\r\n import { Link } from 'react-router-dom';\r\n \r\n-const Pagination = ({ page = 1 }) => {\r\n+const Paginate = ({ page = 1 }) => {\r\n     const classes = useStyle();\r\n \r\n     const goToPage = (targetPage) => {\r\n         window.location.href = `/posts?page=${targetPage}`;\r\n@@ -17,5 +17,5 @@\n         )} />\r\n     );\r\n };\r\n \r\n-export default Pagination;\n\\ No newline at end of file\n+export default Paginate;\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1774693248656,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -3,9 +3,9 @@\n import { Pagination, PaginationItem } from '@material-ui/lab';\r\n import useStyle from './styles.js';\r\n import { Link } from 'react-router-dom';\r\n \r\n-const Paginate = ({ page = 1 }) => {\r\n+const Paginate = ({ page }) => {\r\n     const classes = useStyle();\r\n \r\n     const goToPage = (targetPage) => {\r\n         window.location.href = `/posts?page=${targetPage}`;\r\n"
+                },
+                {
+                    "date": 1774693266987,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,5 +1,5 @@\n-import React from \"react\";\r\n+import React, {useEffect} from \"react\";\r\n import { Button, ButtonGroup } from '@material-ui/core';\r\n import { Pagination, PaginationItem } from '@material-ui/lab';\r\n import useStyle from './styles.js';\r\n import { Link } from 'react-router-dom';\r\n"
+                },
+                {
+                    "date": 1774693312936,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -0,0 +1,27 @@\n+import React, {useEffect} from \"react\";\r\n+import { Button, ButtonGroup } from '@material-ui/core';\r\n+import { Pagination, PaginationItem } from '@material-ui/lab';\r\n+import useStyle from './styles.js';\r\n+import { Link } from 'react-router-dom';\r\n+import { useDispatch, useSelector } from 'react-redux';\r\n+\r\n+const Paginate = ({ page }) => {\r\n+    const classes = useStyle();\r\n+\r\n+    useEffect(() => {\r\n+        if(!page) return;\r\n+    }, [page]);\r\n+\r\n+\r\n+    const goToPage = (targetPage) => {\r\n+        window.location.href = `/posts?page=${targetPage}`;\r\n+    };\r\n+\r\n+    return (\r\n+        <Pagination classes={{ ul: classes.ul }} count={5} page={1} variant=\"outlined\" color=\"primary\" renderItem={(item) => (\r\n+            <PaginationItem {...item} component={Link} to={`/posts?page=${1}`} />\r\n+        )} />\r\n+    );\r\n+};\r\n+\r\n+export default Paginate;\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1774693785725,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -3,14 +3,17 @@\n import { Pagination, PaginationItem } from '@material-ui/lab';\r\n import useStyle from './styles.js';\r\n import { Link } from 'react-router-dom';\r\n import { useDispatch, useSelector } from 'react-redux';\r\n+import { getPosts } from '../../actions/posts';\r\n \r\n const Paginate = ({ page }) => {\r\n     const classes = useStyle();\r\n+    const dispatch = useDispatch();\r\n+     \r\n \r\n     useEffect(() => {\r\n-        if(!page) return;\r\n+        if(page) dispatch(getPosts(page)); ;\r\n     }, [page]);\r\n \r\n \r\n     const goToPage = (targetPage) => {\r\n@@ -23,26 +26,5 @@\n         )} />\r\n     );\r\n };\r\n \r\n-export default Paginate;\n-import React, {useEffect} from \"react\";\r\n-import { Button, ButtonGroup } from '@material-ui/core';\r\n-import { Pagination, PaginationItem } from '@material-ui/lab';\r\n-import useStyle from './styles.js';\r\n-import { Link } from 'react-router-dom';\r\n-\r\n-const Paginate = ({ page }) => {\r\n-    const classes = useStyle();\r\n-\r\n-    const goToPage = (targetPage) => {\r\n-        window.location.href = `/posts?page=${targetPage}`;\r\n-    };\r\n-\r\n-    return (\r\n-        <Pagination classes={{ ul: classes.ul }} count={5} page={1} variant=\"outlined\" color=\"primary\" renderItem={(item) => (\r\n-            <PaginationItem {...item} component={Link} to={`/posts?page=${1}`} />\r\n-        )} />\r\n-    );\r\n-};\r\n-\r\n export default Paginate;\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1774695199066,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -3,9 +3,9 @@\n import { Pagination, PaginationItem } from '@material-ui/lab';\r\n import useStyle from './styles.js';\r\n import { Link } from 'react-router-dom';\r\n import { useDispatch, useSelector } from 'react-redux';\r\n-import { getPosts } from '../../actions/posts';\r\n+import { getPosts } from '../actions/posts.js';\r\n \r\n const Paginate = ({ page }) => {\r\n     const classes = useStyle();\r\n     const dispatch = useDispatch();\r\n"
+                },
+                {
+                    "date": 1774696245947,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -6,8 +6,9 @@\n import { useDispatch, useSelector } from 'react-redux';\r\n import { getPosts } from '../actions/posts.js';\r\n \r\n const Paginate = ({ page }) => {\r\n+    const { numberOfPages } = useSelector((state) => state.posts);\r\n     const classes = useStyle();\r\n     const dispatch = useDispatch();\r\n      \r\n \r\n"
+                },
+                {
+                    "date": 1774696273413,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -0,0 +1,31 @@\n+import React, {useEffect} from \"react\";\r\n+import { Button, ButtonGroup } from '@material-ui/core';\r\n+import { Pagination, PaginationItem } from '@material-ui/lab';\r\n+import useStyle from './styles.js';\r\n+import { Link } from 'react-router-dom';\r\n+import { useDispatch, useSelector } from 'react-redux';\r\n+import { getPosts } from '../actions/posts.js';\r\n+\r\n+const Paginate = ({ page }) => {\r\n+    const { numberOfPages } = useSelector((state) => state.posts);\r\n+    const classes = useStyle();\r\n+    const dispatch = useDispatch();\r\n+     \r\n+\r\n+    useEffect(() => {\r\n+        if(page) dispatch(getPosts(page)); ;\r\n+    }, [page]);\r\n+\r\n+\r\n+    const goToPage = (targetPage) => {\r\n+        window.location.href = `/posts?page=${targetPage}`;\r\n+    };\r\n+\r\n+    return (\r\n+        <Pagination classes={{ ul: classes.ul }} count={numberOfPages} page={Number(page)} variant=\"outlined\" color=\"primary\" renderItem={(item) => (\r\n+            <PaginationItem {...item} component={Link} to={`/posts?page=${1}`} />\r\n+        )} />\r\n+    );\r\n+};\r\n+\r\n+export default Paginate;\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1774696283323,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -21,42 +21,11 @@\n         window.location.href = `/posts?page=${targetPage}`;\r\n     };\r\n \r\n     return (\r\n-        <Pagination classes={{ ul: classes.ul }} count={numberOfPages} page={Number(page)} variant=\"outlined\" color=\"primary\" renderItem={(item) => (\r\n+        <Pagination classes={{ ul: classes.ul }} count={numberOfPages} page={Number(page) || 1} variant=\"outlined\" color=\"primary\" renderItem={(item) => (\r\n             <PaginationItem {...item} component={Link} to={`/posts?page=${1}`} />\r\n         )} />\r\n     );\r\n };\r\n \r\n-export default Paginate;\n-import React, {useEffect} from \"react\";\r\n-import { Button, ButtonGroup } from '@material-ui/core';\r\n-import { Pagination, PaginationItem } from '@material-ui/lab';\r\n-import useStyle from './styles.js';\r\n-import { Link } from 'react-router-dom';\r\n-import { useDispatch, useSelector } from 'react-redux';\r\n-import { getPosts } from '../actions/posts.js';\r\n-\r\n-const Paginate = ({ page }) => {\r\n-    const { numberOfPages } = useSelector((state) => state.posts);\r\n-    const classes = useStyle();\r\n-    const dispatch = useDispatch();\r\n-     \r\n-\r\n-    useEffect(() => {\r\n-        if(page) dispatch(getPosts(page)); ;\r\n-    }, [page]);\r\n-\r\n-\r\n-    const goToPage = (targetPage) => {\r\n-        window.location.href = `/posts?page=${targetPage}`;\r\n-    };\r\n-\r\n-    return (\r\n-        <Pagination classes={{ ul: classes.ul }} count={5} page={1} variant=\"outlined\" color=\"primary\" renderItem={(item) => (\r\n-            <PaginationItem {...item} component={Link} to={`/posts?page=${1}`} />\r\n-        )} />\r\n-    );\r\n-};\r\n-\r\n export default Paginate;\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1774696344905,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -22,9 +22,9 @@\n     };\r\n \r\n     return (\r\n         <Pagination classes={{ ul: classes.ul }} count={numberOfPages} page={Number(page) || 1} variant=\"outlined\" color=\"primary\" renderItem={(item) => (\r\n-            <PaginationItem {...item} component={Link} to={`/posts?page=${1}`} />\r\n+            <PaginationItem {...item} component={Link} to={`/posts?page=${item.page}`} />\r\n         )} />\r\n     );\r\n };\r\n \r\n"
+                },
+                {
+                    "date": 1774697377384,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -9,9 +9,9 @@\n const Paginate = ({ page }) => {\r\n     const { numberOfPages } = useSelector((state) => state.posts);\r\n     const classes = useStyle();\r\n     const dispatch = useDispatch();\r\n-     \r\n+    \r\n \r\n     useEffect(() => {\r\n         if(page) dispatch(getPosts(page)); ;\r\n     }, [page]);\r\n"
+                }
+            ],
+            "date": 1774687867102,
+            "name": "Commit-0",
+            "content": "import React from \"react\";\r\nimport { Button, ButtonGroup } from '@material-ui/core';\r\nimport { Pagination, PaginationItem } from '@material-ui/lab';\r\nimport useStyle from './styles.js';\r\n\r\nconst Pagination = ({ page = 1 }) => {\r\n    const classes = useStyle();\r\n\r\n    const goToPage = (targetPage) => {\r\n        window.location.href = `/posts?page=${targetPage}`;\r\n    };\r\n\r\n    return (\r\n        <div className={classes.pagination}>\r\n            <ButtonGroup color=\"primary\" aria-label=\"pagination\">\r\n                <Button onClick={() => goToPage(Number(page) - 1)} disabled={Number(page) <= 1}>\r\n                    Previous\r\n                </Button>\r\n                <Button disabled>Page {page}</Button>\r\n                <Button onClick={() => goToPage(Number(page) + 1)}>Next</Button>\r\n            </ButtonGroup>\r\n        </div>\r\n    );\r\n};\r\n\r\nexport default Pagination;"
+        }
+    ]
+}

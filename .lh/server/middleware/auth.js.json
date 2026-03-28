@@ -1,0 +1,18 @@
+{
+    "sourceFile": "server/middleware/auth.js",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1774685177219,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1774685177219,
+            "name": "Commit-0",
+            "content": "import jwt, { decode } from 'jsonwebtoken';\r\n\r\nconst auth = async (req, res, next) => {\r\n    try {\r\n        const token = req.headers.authorization.split(\" \")[1];\r\n        const isCustomAuth = token.length < 500;\r\n\r\n        let decodedData;\r\n\r\n        if(token && isCustomAuth) {\r\n            decodedData = jwt.verify(token, 'test');\r\n            \r\n            req.userId = decodedData?.id;\r\n        } else {\r\n            decodedData = jwt.decode(token);\r\n\r\n            req.userId = decodedData?.sub;\r\n        } \r\n\r\n        next();\r\n    } catch (error) {\r\n        res.status(500).json({message: \"Unauthorized\"});\r\n    }\r\n}\r\n\r\nexport default auth;"
+        }
+    ]
+}

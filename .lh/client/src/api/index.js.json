@@ -1,0 +1,30 @@
+{
+    "sourceFile": "client/src/api/index.js",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 3,
+            "patches": [
+                {
+                    "date": 1774690349474,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1774693742190,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -9,9 +9,9 @@\n \r\n     return req;\r\n })\r\n \r\n-export const fetchPosts = () => API.get('/posts');\r\n+export const fetchPosts = (page) => API.get('/posts');\r\n export const fetchPostBySearch = (searchQuery) => API.get(`/posts/search?searchQuery=${searchQuery.search || 'none'}&tags=${searchQuery.tags}`);\r\n export const createPost = (newPost) => API.post('/posts', newPost);\r\n export const updatePost = (id, updatePost) => API.patch(`${'/posts'}/${id}`, updatePost);\r\n export const deletePost = (id) => API.delete(`${'/posts'}/${id}`);\r\n"
+                },
+                {
+                    "date": 1774693780037,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -9,9 +9,9 @@\n \r\n     return req;\r\n })\r\n \r\n-export const fetchPosts = (page) => API.get('/posts');\r\n+export const fetchPosts = (page) => API.get(`/posts?page=${page}`);\r\n export const fetchPostBySearch = (searchQuery) => API.get(`/posts/search?searchQuery=${searchQuery.search || 'none'}&tags=${searchQuery.tags}`);\r\n export const createPost = (newPost) => API.post('/posts', newPost);\r\n export const updatePost = (id, updatePost) => API.patch(`${'/posts'}/${id}`, updatePost);\r\n export const deletePost = (id) => API.delete(`${'/posts'}/${id}`);\r\n"
+                },
+                {
+                    "date": 1774699186868,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -9,8 +9,9 @@\n \r\n     return req;\r\n })\r\n \r\n+export const fetchPost = (id) => API.get(`/posts/${id}`);\r\n export const fetchPosts = (page) => API.get(`/posts?page=${page}`);\r\n export const fetchPostBySearch = (searchQuery) => API.get(`/posts/search?searchQuery=${searchQuery.search || 'none'}&tags=${searchQuery.tags}`);\r\n export const createPost = (newPost) => API.post('/posts', newPost);\r\n export const updatePost = (id, updatePost) => API.patch(`${'/posts'}/${id}`, updatePost);\r\n"
+                }
+            ],
+            "date": 1774690349474,
+            "name": "Commit-0",
+            "content": "import axios from 'axios';\r\n\r\nconst API = axios.create({ baseURL: 'http://localhost:5000' })\r\n\r\nAPI.interceptors.request.use((req) => {\r\n    if (localStorage.getItem('profile')){\r\n        req.headers.Authorization = `Bearer ${JSON.parse(localStorage.getItem('profile')).token}`;\r\n    }\r\n\r\n    return req;\r\n})\r\n\r\nexport const fetchPosts = () => API.get('/posts');\r\nexport const fetchPostBySearch = (searchQuery) => API.get(`/posts/search?searchQuery=${searchQuery.search || 'none'}&tags=${searchQuery.tags}`);\r\nexport const createPost = (newPost) => API.post('/posts', newPost);\r\nexport const updatePost = (id, updatePost) => API.patch(`${'/posts'}/${id}`, updatePost);\r\nexport const deletePost = (id) => API.delete(`${'/posts'}/${id}`);\r\nexport const likePost = (id) => API.patch(`${'/posts'}/${id}/likePost`);\r\n\r\n\r\nexport const signIn = (formData) => API.post('/user/signin', formData);\r\nexport const signUp = (formData) => API.post('/user/signup', formData);"
+        }
+    ]
+}

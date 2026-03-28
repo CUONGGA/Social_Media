@@ -1,0 +1,30 @@
+{
+    "sourceFile": "client/src/constants/actionType.js",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 3,
+            "patches": [
+                {
+                    "date": 1774690877418,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1774694736362,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -3,5 +3,6 @@\n export const DELETE = 'DELETE';\r\n export const FETCH_ALL = 'FETCH_ALL';\r\n export const FETCH_BY_SEARCH = 'FETCH_BY_SEARCH';\r\n export const AUTH = 'AUTH';\r\n+export const LIKE = 'LIKE';\r\n export const LOGOUT = 'LOGOUT';\r\n"
+                },
+                {
+                    "date": 1774696637739,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -5,4 +5,6 @@\n export const FETCH_BY_SEARCH = 'FETCH_BY_SEARCH';\r\n export const AUTH = 'AUTH';\r\n export const LIKE = 'LIKE';\r\n export const LOGOUT = 'LOGOUT';\r\n+export const START_LOADING = 'START_LOADING';\r\n+export const END_LOADING = 'END_LOADING';\r\n"
+                },
+                {
+                    "date": 1774699087660,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -2,8 +2,9 @@\n export const UPDATE = 'UPDATE';\r\n export const DELETE = 'DELETE';\r\n export const FETCH_ALL = 'FETCH_ALL';\r\n export const FETCH_BY_SEARCH = 'FETCH_BY_SEARCH';\r\n+export const FETCH_POST = 'FETCH_POST';\r\n export const AUTH = 'AUTH';\r\n export const LIKE = 'LIKE';\r\n export const LOGOUT = 'LOGOUT';\r\n export const START_LOADING = 'START_LOADING';\r\n"
+                }
+            ],
+            "date": 1774690877418,
+            "name": "Commit-0",
+            "content": "export const CREATE = 'CREATE';\r\nexport const UPDATE = 'UPDATE';\r\nexport const DELETE = 'DELETE';\r\nexport const FETCH_ALL = 'FETCH_ALL';\r\nexport const FETCH_BY_SEARCH = 'FETCH_BY_SEARCH';\r\nexport const AUTH = 'AUTH';\r\nexport const LOGOUT = 'LOGOUT';\r\n"
+        }
+    ]
+}

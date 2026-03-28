@@ -1,0 +1,62 @@
+{
+    "sourceFile": "client/src/actions/posts.js",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 11,
+            "patches": [
+                {
+                    "date": 1774690361267,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1774690898863,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,6 +1,6 @@\n import * as api from '../api';\r\n-import { FETCH_ALL, CREATE, UPDATE, DELETE} from '../constants/actionType';\r\n+import { FETCH_BY_SEARCH, FETCH_ALL, CREATE, UPDATE, DELETE} from '../constants/actionType';\r\n \r\n //Action Creators\r\n export const getPosts = () => async (dispatch) => {\r\n     try {\r\n@@ -13,9 +13,9 @@\n }\r\n \r\n export const getPostBySearch = (searchQuery) => async (dispatch) => {\r\n     try {\r\n-        const { data } = await api.fetchPostBySearch(searchQuery);\r\n+        const { data: { data } } = await api.fetchPostBySearch(searchQuery);\r\n         dispatch({ type: FETCH_ALL, payload: data });\r\n     } catch (error) {\r\n         console.log(error.message);\r\n     }\r\n"
+                },
+                {
+                    "date": 1774690912555,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -14,9 +14,9 @@\n \r\n export const getPostBySearch = (searchQuery) => async (dispatch) => {\r\n     try {\r\n         const { data: { data } } = await api.fetchPostBySearch(searchQuery);\r\n-        dispatch({ type: FETCH_ALL, payload: data });\r\n+        dispatch({ type: FETCH_BY_SEARCH, payload: data });\r\n     } catch (error) {\r\n         console.log(error.message);\r\n     }\r\n };\r\n"
+                },
+                {
+                    "date": 1774693715850,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,9 +1,9 @@\n import * as api from '../api';\r\n import { FETCH_BY_SEARCH, FETCH_ALL, CREATE, UPDATE, DELETE} from '../constants/actionType';\r\n \r\n //Action Creators\r\n-export const getPosts = () => async (dispatch) => {\r\n+export const getPosts = (page) => async (dispatch) => {\r\n     try {\r\n         const { data } = await api.fetchPosts(); \r\n         console.log(\"API response:\", data); \r\n         dispatch({type: FETCH_ALL, payload: data});\r\n"
+                },
+                {
+                    "date": 1774693725168,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -3,9 +3,9 @@\n \r\n //Action Creators\r\n export const getPosts = (page) => async (dispatch) => {\r\n     try {\r\n-        const { data } = await api.fetchPosts(); \r\n+        const { data } = await api.fetchPosts(page); \r\n         console.log(\"API response:\", data); \r\n         dispatch({type: FETCH_ALL, payload: data});\r\n     } catch (error) {\r\n         console.log(error.message);\r\n"
+                },
+                {
+                    "date": 1774694475228,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -4,8 +4,9 @@\n //Action Creators\r\n export const getPosts = (page) => async (dispatch) => {\r\n     try {\r\n         const { data } = await api.fetchPosts(page); \r\n+        \r\n         console.log(\"API response:\", data); \r\n         dispatch({type: FETCH_ALL, payload: data});\r\n     } catch (error) {\r\n         console.log(error.message);\r\n"
+                },
+                {
+                    "date": 1774696690574,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,12 +1,12 @@\n import * as api from '../api';\r\n-import { FETCH_BY_SEARCH, FETCH_ALL, CREATE, UPDATE, DELETE} from '../constants/actionType';\r\n+import { START_LOADING, END_LOADING, FETCH_BY_SEARCH, FETCH_ALL, CREATE, UPDATE, DELETE} from '../constants/actionType';\r\n \r\n //Action Creators\r\n export const getPosts = (page) => async (dispatch) => {\r\n     try {\r\n         const { data } = await api.fetchPosts(page); \r\n-        \r\n+\r\n         console.log(\"API response:\", data); \r\n         dispatch({type: FETCH_ALL, payload: data});\r\n     } catch (error) {\r\n         console.log(error.message);\r\n"
+                },
+                {
+                    "date": 1774697367194,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -3,31 +3,36 @@\n \r\n //Action Creators\r\n export const getPosts = (page) => async (dispatch) => {\r\n     try {\r\n+        dispatch({ type: START_LOADING });\r\n         const { data } = await api.fetchPosts(page); \r\n \r\n         console.log(\"API response:\", data); \r\n         dispatch({type: FETCH_ALL, payload: data});\r\n+        dispatch({ type: END_LOADING });\r\n     } catch (error) {\r\n         console.log(error.message);\r\n     }    \r\n }\r\n \r\n export const getPostBySearch = (searchQuery) => async (dispatch) => {\r\n     try {\r\n+        dispatch({ type: START_LOADING });\r\n         const { data: { data } } = await api.fetchPostBySearch(searchQuery);\r\n         dispatch({ type: FETCH_BY_SEARCH, payload: data });\r\n+        dispatch({ type: START_LOADING });\r\n     } catch (error) {\r\n         console.log(error.message);\r\n     }\r\n };\r\n \r\n export const createPost = (post) => async (dispatch) => {\r\n     try {\r\n         const { data } = await api.createPost(post);\r\n- \r\n+        dispatch({ type: START_LOADING });\r\n         dispatch( {type: CREATE, payload: data });\r\n+        dispatch({ type: START_LOADING });\r\n     } catch (error) {\r\n         console.log(error);\r\n     }\r\n }\r\n"
+                },
+                {
+                    "date": 1774699113273,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,8 +1,19 @@\n+import e from 'express';\r\n import * as api from '../api';\r\n-import { START_LOADING, END_LOADING, FETCH_BY_SEARCH, FETCH_ALL, CREATE, UPDATE, DELETE} from '../constants/actionType';\r\n+import { FETCH_POST ,START_LOADING, END_LOADING, FETCH_BY_SEARCH, FETCH_ALL, CREATE, UPDATE, DELETE} from '../constants/actionType';\r\n \r\n-//Action Creators\r\n+export const getPost = (id) => async (dispatch) => {\r\n+    try {\r\n+        dispatch({ type: START_LOADING });\r\n+        const { data } = await api.fetchPost(id);\r\n+        dispatch({ type: FETCH_POST, payload: data });\r\n+        dispatch({ type: END_LOADING });\r\n+    } catch (error) {\r\n+        console.log(error.message);\r\n+    }\r\n+}\r\n+\r\n export const getPosts = (page) => async (dispatch) => {\r\n     try {\r\n         dispatch({ type: START_LOADING });\r\n         const { data } = await api.fetchPosts(page); \r\n"
+                },
+                {
+                    "date": 1774699422802,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -5,8 +5,9 @@\n export const getPost = (id) => async (dispatch) => {\r\n     try {\r\n         dispatch({ type: START_LOADING });\r\n         const { data } = await api.fetchPost(id);\r\n+        \r\n         dispatch({ type: FETCH_POST, payload: data });\r\n         dispatch({ type: END_LOADING });\r\n     } catch (error) {\r\n         console.log(error.message);\r\n"
+                },
+                {
+                    "date": 1774699798734,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,5 +1,4 @@\n-import e from 'express';\r\n import * as api from '../api';\r\n import { FETCH_POST ,START_LOADING, END_LOADING, FETCH_BY_SEARCH, FETCH_ALL, CREATE, UPDATE, DELETE} from '../constants/actionType';\r\n \r\n export const getPost = (id) => async (dispatch) => {\r\n"
+                },
+                {
+                    "date": 1774701184106,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -30,9 +30,9 @@\n     try {\r\n         dispatch({ type: START_LOADING });\r\n         const { data: { data } } = await api.fetchPostBySearch(searchQuery);\r\n         dispatch({ type: FETCH_BY_SEARCH, payload: data });\r\n-        dispatch({ type: START_LOADING });\r\n+        dispatch({ type: END_LOADING });\r\n     } catch (error) {\r\n         console.log(error.message);\r\n     }\r\n };\r\n@@ -41,9 +41,9 @@\n     try {\r\n         const { data } = await api.createPost(post);\r\n         dispatch({ type: START_LOADING });\r\n         dispatch( {type: CREATE, payload: data });\r\n-        dispatch({ type: START_LOADING });\r\n+        dispatch({ type: END_LOADING });\r\n     } catch (error) {\r\n         console.log(error);\r\n     }\r\n }\r\n"
+                }
+            ],
+            "date": 1774690361267,
+            "name": "Commit-0",
+            "content": "import * as api from '../api';\r\nimport { FETCH_ALL, CREATE, UPDATE, DELETE} from '../constants/actionType';\r\n\r\n//Action Creators\r\nexport const getPosts = () => async (dispatch) => {\r\n    try {\r\n        const { data } = await api.fetchPosts(); \r\n        console.log(\"API response:\", data); \r\n        dispatch({type: FETCH_ALL, payload: data});\r\n    } catch (error) {\r\n        console.log(error.message);\r\n    }    \r\n}\r\n\r\nexport const getPostBySearch = (searchQuery) => async (dispatch) => {\r\n    try {\r\n        const { data } = await api.fetchPostBySearch(searchQuery);\r\n        dispatch({ type: FETCH_ALL, payload: data });\r\n    } catch (error) {\r\n        console.log(error.message);\r\n    }\r\n};\r\n\r\nexport const createPost = (post) => async (dispatch) => {\r\n    try {\r\n        const { data } = await api.createPost(post);\r\n \r\n        dispatch( {type: CREATE, payload: data });\r\n    } catch (error) {\r\n        console.log(error);\r\n    }\r\n}\r\n\r\nexport const updatePost = (id, post) => async (dispatch) => {\r\n    try {\r\n        const { data } = await api.updatePost(id, post);\r\n\r\n        dispatch ({type: UPDATE, payload: data})\r\n    } catch (error) {\r\n        console.log(error);\r\n    }\r\n}\r\n\r\nexport const deletePost = (id) => async (dispatch) => {\r\n    try {\r\n        await api.deletePost(id);\r\n\r\n        dispatch({ type: DELETE, payload: id });\r\n    } catch (error) {\r\n        console.log(error);\r\n    }\r\n}\r\n\r\nexport const likePost = (id) => async (dispatch) => {\r\n    try {\r\n        const { data } = await api.likePost(id);\r\n\r\n        dispatch({ type: UPDATE, payload: data });\r\n    } catch (error) {\r\n        console.log(error); \r\n    }\r\n}"
+        }
+    ]
+}

@@ -1,0 +1,58 @@
+{
+    "sourceFile": "client/src/components/PostDetails/postdetails.jsx",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 10,
+            "patches": [
+                {
+                    "date": 1774698642972,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1774698667740,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,7 +1,8 @@\n import React, { useEffect } from 'react';\r\n import { Paper, Typography, CircularProgress, Divider } from '@material-ui/core';\r\n import { useDispatch, useSelector } from 'react-redux';\r\n+import moment from 'moment';\r\n import useStyles from './styles.js';\r\n import { getPost } from '../../actions/posts.js';\r\n import { useParams } from 'react-router-dom';\r\n \r\n"
+                },
+                {
+                    "date": 1774698682674,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,10 +1,8 @@\n import React, { useEffect } from 'react';\r\n import { Paper, Typography, CircularProgress, Divider } from '@material-ui/core';\r\n import { useDispatch, useSelector } from 'react-redux';\r\n import moment from 'moment';\r\n-import useStyles from './styles.js';\r\n-import { getPost } from '../../actions/posts.js';\r\n import { useParams } from 'react-router-dom';\r\n \r\n \r\n \r\n"
+                },
+                {
+                    "date": 1774698691478,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,9 +1,9 @@\n import React, { useEffect } from 'react';\r\n import { Paper, Typography, CircularProgress, Divider } from '@material-ui/core';\r\n import { useDispatch, useSelector } from 'react-redux';\r\n import moment from 'moment';\r\n-import { useParams } from 'react-router-dom';\r\n+import { useParams, useHistory } from 'react-router-dom';\r\n \r\n \r\n \r\n const PostDetails = () => {\r\n"
+                },
+                {
+                    "date": 1774698922141,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -0,0 +1,49 @@\n+import React, { useEffect } from 'react';\r\n+import { Paper, Typography, CircularProgress, Divider } from '@material-ui/core';\r\n+import { useDispatch, useSelector } from 'react-redux';\r\n+import moment from 'moment';\r\n+import { useParams, useHistory } from 'react-router-dom';\r\n+import useStyle from './styles';\r\n+\r\n+\r\n+\r\n+const PostDetails = () => {\r\n+    const { post, posts, isLoading } = useSelector((state) => state.posts);\r\n+    const dispatch = useDispatch();\r\n+    const history = useHistory();\r\n+    const classes = useStyle();\r\n+    const { id } = useParams();\r\n+    useEffect(() => {\r\n+        dispatch(getPost(id));\r\n+    }, [id]);\r\n+\r\n+    if (isLoading) {\r\n+        return (\r\n+            <Paper elevation={6} className={classes.loadingPaper}>\r\n+                <CircularProgress size=\"7em\" />\r\n+            </Paper>\r\n+        );\r\n+    }\r\n+\r\n+  return (\r\n+    <div className={classes.card}>\r\n+        <div className={classes.section}>\r\n+          <Typography variant=\"h3\" component=\"h2\">{post.title}</Typography>\r\n+          <Typography gutterBottom variant=\"h6\" color=\"textSecondary\" component=\"h2\">{post.tags.map((tag) => `#${tag} `)}</Typography>\r\n+          <Typography gutterBottom variant=\"body1\" component=\"p\">{post.message}</Typography>\r\n+          <Typography variant=\"h6\">Created by: {post.name}</Typography>\r\n+          <Typography variant=\"body1\">{moment(post.createdAt).fromNow()}</Typography>\r\n+          <Divider style={{ margin: '20px 0' }} />\r\n+          <Typography variant=\"body1\"><strong>Realtime Chat - coming soon!</strong></Typography>\r\n+          <Divider style={{ margin: '20px 0' }} />\r\n+          <Typography variant=\"body1\"><strong>Comments - coming soon!</strong></Typography>\r\n+          <Divider style={{ margin: '20px 0' }} />\r\n+        </div>\r\n+        <div className={classes.imageSection}>\r\n+          <img className={classes.media} src={post.selectedFile || 'https://user-images.githubusercontent.com/194400/49531010-48dad180-f8b1-11e8-8d89-1e61320e1d82.png'} alt={post.title} />\r\n+        </div>\r\n+      </div>\r\n+  )\r\n+}\r\n+\r\n+export default PostDetails\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1774698975086,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -3,8 +3,9 @@\n import { useDispatch, useSelector } from 'react-redux';\r\n import moment from 'moment';\r\n import { useParams, useHistory } from 'react-router-dom';\r\n import useStyle from './styles';\r\n+import { getPost } from '../../actions/posts.js';\r\n \r\n \r\n \r\n const PostDetails = () => {\r\n@@ -45,23 +46,5 @@\n       </div>\r\n   )\r\n }\r\n \r\n-export default PostDetails\n-import React, { useEffect } from 'react';\r\n-import { Paper, Typography, CircularProgress, Divider } from '@material-ui/core';\r\n-import { useDispatch, useSelector } from 'react-redux';\r\n-import moment from 'moment';\r\n-import { useParams, useHistory } from 'react-router-dom';\r\n-\r\n-\r\n-\r\n-const PostDetails = () => {\r\n-    console.log('PostDetails');\r\n-  return (\r\n-    <div>\r\n-        PostDetails\r\n-    </div>\r\n-  )\r\n-}\r\n-\r\n export default PostDetails\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1774699166458,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -2,10 +2,10 @@\n import { Paper, Typography, CircularProgress, Divider } from '@material-ui/core';\r\n import { useDispatch, useSelector } from 'react-redux';\r\n import moment from 'moment';\r\n import { useParams, useHistory } from 'react-router-dom';\r\n+import { getPost } from '../../actions/posts.js';\r\n import useStyle from './styles';\r\n-import { getPost } from '../../actions/posts.js';\r\n \r\n \r\n \r\n const PostDetails = () => {\r\n"
+                },
+                {
+                    "date": 1774699969333,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -17,8 +17,10 @@\n     useEffect(() => {\r\n         dispatch(getPost(id));\r\n     }, [id]);\r\n \r\n+    if (!post) return null;\r\n+\r\n     if (isLoading) {\r\n         return (\r\n             <Paper elevation={6} className={classes.loadingPaper}>\r\n                 <CircularProgress size=\"7em\" />\r\n"
+                },
+                {
+                    "date": 1774700390935,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,10 +1,10 @@\n-import React, { useEffect } from 'react';\r\n+import React, { use, useEffect } from 'react';\r\n import { Paper, Typography, CircularProgress, Divider } from '@material-ui/core';\r\n import { useDispatch, useSelector } from 'react-redux';\r\n import moment from 'moment';\r\n import { useParams, useHistory } from 'react-router-dom';\r\n-import { getPost } from '../../actions/posts.js';\r\n+import { getPost, getPostBySearch } from '../../actions/posts.js';\r\n import useStyle from './styles';\r\n \r\n \r\n \r\n@@ -17,8 +17,14 @@\n     useEffect(() => {\r\n         dispatch(getPost(id));\r\n     }, [id]);\r\n \r\n+    useEffect(() => {\r\n+        if (post) {\r\n+            dispatch(getPost(post._id));\r\n+        }\r\n+    }, [post]);\r\n+\r\n     if (!post) return null;\r\n \r\n     if (isLoading) {\r\n         return (\r\n"
+                },
+                {
+                    "date": 1774700420237,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -19,9 +19,9 @@\n     }, [id]);\r\n \r\n     useEffect(() => {\r\n         if (post) {\r\n-            dispatch(getPost(post._id));\r\n+            dispatch(getPostBySearch({ search: 'none', tags: post?.tags.join(',') }));\r\n         }\r\n     }, [post]);\r\n \r\n     if (!post) return null;\r\n"
+                },
+                {
+                    "date": 1774700901344,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -33,10 +33,15 @@\n             </Paper>\r\n         );\r\n     }\r\n \r\n+    const recommendedPosts = posts.filter(({ _id }) => _id !== post._id);\r\n+\r\n+    const openPost = (_id) => history.push(`/posts/${_id}`);\r\n+\r\n   return (\r\n-    <div className={classes.card}>\r\n+    <Paper style={{ padding: '20px', borderRadius: '15px' }} elevation={6}>\r\n+      <div className={classes.card}>\r\n         <div className={classes.section}>\r\n           <Typography variant=\"h3\" component=\"h2\">{post.title}</Typography>\r\n           <Typography gutterBottom variant=\"h6\" color=\"textSecondary\" component=\"h2\">{post.tags.map((tag) => `#${tag} `)}</Typography>\r\n           <Typography gutterBottom variant=\"body1\" component=\"p\">{post.message}</Typography>\r\n@@ -51,8 +56,26 @@\n         <div className={classes.imageSection}>\r\n           <img className={classes.media} src={post.selectedFile || 'https://user-images.githubusercontent.com/194400/49531010-48dad180-f8b1-11e8-8d89-1e61320e1d82.png'} alt={post.title} />\r\n         </div>\r\n       </div>\r\n+      {recommendedPosts.length && (\r\n+        <div className={classes.section}>\r\n+          <Typography gutterBottom variant=\"h5\">You might also like:</Typography>\r\n+          <Divider />\r\n+          <div className={classes.recommendedPosts}>\r\n+            {recommendedPosts.map(({ title, name, message, likes, selectedFile, _id }) => (\r\n+              <div style={{ margin: '20px', cursor: 'pointer' }} onClick={() => openPost(_id)} key={_id}>\r\n+                <Typography gutterBottom variant=\"h6\">{title}</Typography>\r\n+                <Typography gutterBottom variant=\"subtitle2\">{name}</Typography>\r\n+                <Typography gutterBottom variant=\"subtitle2\">{message}</Typography>\r\n+                <Typography gutterBottom variant=\"subtitle1\">Likes: {likes.length}</Typography>\r\n+                <img src={selectedFile} width=\"200px\" />\r\n+              </div>\r\n+            ))}\r\n+          </div>\r\n+        </div>\r\n+      )}\r\n+    </Paper>\r\n   )\r\n }\r\n \r\n export default PostDetails\n\\ No newline at end of file\n"
+                }
+            ],
+            "date": 1774698642972,
+            "name": "Commit-0",
+            "content": "import React, { useEffect } from 'react';\r\nimport { Paper, Typography, CircularProgress, Divider } from '@material-ui/core';\r\nimport { useDispatch, useSelector } from 'react-redux';\r\nimport useStyles from './styles.js';\r\nimport { getPost } from '../../actions/posts.js';\r\nimport { useParams } from 'react-router-dom';\r\n\r\n\r\n\r\nconst PostDetails = () => {\r\n    console.log('PostDetails');\r\n  return (\r\n    <div>\r\n        PostDetails\r\n    </div>\r\n  )\r\n}\r\n\r\nexport default PostDetails"
+        }
+    ]
+}

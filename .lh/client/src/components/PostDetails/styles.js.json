@@ -1,0 +1,18 @@
+{
+    "sourceFile": "client/src/components/PostDetails/styles.js",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1774698827295,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1774698827295,
+            "name": "Commit-0",
+            "content": "import { makeStyles } from '@material-ui/core/styles';\r\n\r\nexport default makeStyles((theme) => ({\r\n  media: {\r\n    borderRadius: '20px',\r\n    objectFit: 'cover',\r\n    width: '100%',\r\n    maxHeight: '600px',\r\n\r\n  },\r\n  card: {\r\n    display: 'flex',\r\n    width: '100%',\r\n    [theme.breakpoints.down('sm')]: {\r\n      flexWrap: 'wrap',\r\n      flexDirection: 'column',\r\n    },\r\n  },\r\n  section: {\r\n    borderRadius: '20px',\r\n    margin: '10px',\r\n    flex: 1,\r\n  },\r\n  imageSection: {\r\n    marginLeft: '20px',\r\n    [theme.breakpoints.down('sm')]: {\r\n      marginLeft: 0,\r\n    },\r\n  },\r\n  recommendedPosts: {\r\n    display: 'flex',\r\n    [theme.breakpoints.down('sm')]: {\r\n      flexDirection: 'column',\r\n    },\r\n  },\r\n  loadingPaper: {\r\n    display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '20px', borderRadius: '15px', height: '39vh',\r\n  },\r\n}));"
+        }
+    ]
+}

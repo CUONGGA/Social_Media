@@ -1,0 +1,34 @@
+{
+    "sourceFile": "client/src/components/Posts/posts.js",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 4,
+            "patches": [
+                {
+                    "date": 1774691418246,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1774691429391,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -12,9 +12,9 @@\n   return (\r\n     !posts.length ? <CircularProgress /> : (\r\n       <Grid className={classes.container} container alignItems=\"stretch\" spacing={3}>\r\n         {posts.map((post) => (\r\n-          <Grid key={post._id} item xs={12} sm={12} md={6}>\r\n+          <Grid key={post._id} item xs={12} sm={12} md={6} lg={3}>\r\n             <Post post={post} setCurrentId={setCurrentId} />\r\n           </Grid>\r\n         ))}\r\n       </Grid>\r\n"
+                },
+                {
+                    "date": 1774694460989,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -5,13 +5,13 @@\n import Post from './Post/post';\r\n import useStyles from './styles';\r\n \r\n const Posts = ({ setCurrentId }) => {\r\n-  const posts = useSelector((state) => state.posts);\r\n+  const { posts } = useSelector((state) => state.posts);\r\n   const classes = useStyles();\r\n \r\n   return (\r\n-    !posts.length ? <CircularProgress /> : (\r\n+    !posts?.length ? <CircularProgress /> : (\r\n       <Grid className={classes.container} container alignItems=\"stretch\" spacing={3}>\r\n         {posts.map((post) => (\r\n           <Grid key={post._id} item xs={12} sm={12} md={6} lg={3}>\r\n             <Post post={post} setCurrentId={setCurrentId} />\r\n"
+                },
+                {
+                    "date": 1774697365086,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -5,13 +5,14 @@\n import Post from './Post/post';\r\n import useStyles from './styles';\r\n \r\n const Posts = ({ setCurrentId }) => {\r\n-  const { posts } = useSelector((state) => state.posts);\r\n+  const { posts, isLoading } = useSelector((state) => state.posts);\r\n   const classes = useStyles();\r\n+  if(!posts.length && !isLoading) return 'No posts';\r\n \r\n   return (\r\n-    !posts?.length ? <CircularProgress /> : (\r\n+    isLoading ? <CircularProgress /> : (\r\n       <Grid className={classes.container} container alignItems=\"stretch\" spacing={3}>\r\n         {posts.map((post) => (\r\n           <Grid key={post._id} item xs={12} sm={12} md={6} lg={3}>\r\n             <Post post={post} setCurrentId={setCurrentId} />\r\n"
+                },
+                {
+                    "date": 1774697429895,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -7,9 +7,9 @@\n \r\n const Posts = ({ setCurrentId }) => {\r\n   const { posts, isLoading } = useSelector((state) => state.posts);\r\n   const classes = useStyles();\r\n-  if(!posts.length && !isLoading) return 'No posts';\r\n+  if(!posts.length && !isLoading) return 'NO POSTS';\r\n \r\n   return (\r\n     isLoading ? <CircularProgress /> : (\r\n       <Grid className={classes.container} container alignItems=\"stretch\" spacing={3}>\r\n"
+                }
+            ],
+            "date": 1774691418246,
+            "name": "Commit-0",
+            "content": "import React from 'react';\r\nimport { Grid, CircularProgress } from '@material-ui/core';\r\nimport { useSelector } from 'react-redux';\r\n\r\nimport Post from './Post/post';\r\nimport useStyles from './styles';\r\n\r\nconst Posts = ({ setCurrentId }) => {\r\n  const posts = useSelector((state) => state.posts);\r\n  const classes = useStyles();\r\n\r\n  return (\r\n    !posts.length ? <CircularProgress /> : (\r\n      <Grid className={classes.container} container alignItems=\"stretch\" spacing={3}>\r\n        {posts.map((post) => (\r\n          <Grid key={post._id} item xs={12} sm={12} md={6}>\r\n            <Post post={post} setCurrentId={setCurrentId} />\r\n          </Grid>\r\n        ))}\r\n      </Grid>\r\n    )\r\n  );\r\n};\r\n\r\nexport default Posts;"
+        }
+    ]
+}

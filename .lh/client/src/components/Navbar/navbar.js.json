@@ -1,0 +1,50 @@
+{
+    "sourceFile": "client/src/components/Navbar/navbar.js",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 8,
+            "patches": [
+                {
+                    "date": 1774687621234,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1774687635109,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,8 +1,9 @@\n import React, { useState, useEffect } from \"react\";\r\n import { Link, useHistory, useLocation } from \"react-router-dom\";\r\n import { AppBar, Avatar, Toolbar, Typography, Button } from \"@material-ui/core\";\r\n import { useDispatch } from \"react-redux\";\r\n+import decode from 'jwt-decode';\r\n import useStyle from './styles';\r\n import memories from '../../images/memories.png';\r\n \r\n const Navbar = () => {\r\n@@ -21,8 +22,9 @@\n \r\n         if(token) {\r\n             // Check if token is expired\r\n             const decodedToken = decode(token);\r\n+            if(decodedToken.exp * 1000 < new Date().getTime()) logout();\r\n         }\r\n \r\n \r\n         setUser(JSON.parse(localStorage.getItem('profile')));\r\n"
+                },
+                {
+                    "date": 1774691522625,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,11 +1,13 @@\n import React, { useState, useEffect } from \"react\";\r\n import { Link, useHistory, useLocation } from \"react-router-dom\";\r\n import { AppBar, Avatar, Toolbar, Typography, Button } from \"@material-ui/core\";\r\n import { useDispatch } from \"react-redux\";\r\n-import decode from 'jwt-decode';\r\n+import { jwtDecode } from 'jwt-decode';\r\n import useStyle from './styles';\r\n import memories from '../../images/memories.png';\r\n+import memoriesLogo from '../../images/memories-Logo.png';\r\n+import memoriesText from '../../images/memories-Text.png';\r\n \r\n const Navbar = () => {\r\n     const classes = useStyle();\r\n     const [user, setUser] = useState(JSON.parse(localStorage.getItem('profile')));\r\n@@ -21,9 +23,9 @@\n         const token = user?.token;\r\n \r\n         if(token) {\r\n             // Check if token is expired\r\n-            const decodedToken = decode(token);\r\n+            const decodedToken = jwtDecode(token);\r\n             if(decodedToken.exp * 1000 < new Date().getTime()) logout();\r\n         }\r\n \r\n \r\n"
+                },
+                {
+                    "date": 1774691612202,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -33,10 +33,10 @@\n     }, [location]);\r\n     return (    \r\n     <AppBar className={classes.appBar} position=\"static\" color='inherit'>\r\n         <div className={classes.brandContainer}>\r\n-        <Typography component={Link} to=\"/\" className={classes.heading} variant='h2' align='center'>Memories</Typography>\r\n-        <img className={classes.image} src={memories} alt=\"memories\" height=\"60\"></img>\r\n+        <img src={memoriesLogo} alt=\"Memories Logo\" className={classes.logo} />\r\n+        <img src={memoriesText} alt=\"Memories Text\" height=\"60\" />\r\n         </div>\r\n         <Toolbar className={classes.toolbar}>\r\n             {\r\n                 user ? ( \r\n"
+                },
+                {
+                    "date": 1774691620889,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -34,9 +34,9 @@\n     return (    \r\n     <AppBar className={classes.appBar} position=\"static\" color='inherit'>\r\n         <div className={classes.brandContainer}>\r\n         <img src={memoriesLogo} alt=\"Memories Logo\" className={classes.logo} />\r\n-        <img src={memoriesText} alt=\"Memories Text\" height=\"60\" />\r\n+        <img src={memoriesText} alt=\"icon\" height=\"60\" />\r\n         </div>\r\n         <Toolbar className={classes.toolbar}>\r\n             {\r\n                 user ? ( \r\n"
+                },
+                {
+                    "date": 1774691630858,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -34,9 +34,9 @@\n     return (    \r\n     <AppBar className={classes.appBar} position=\"static\" color='inherit'>\r\n         <div className={classes.brandContainer}>\r\n         <img src={memoriesLogo} alt=\"Memories Logo\" className={classes.logo} />\r\n-        <img src={memoriesText} alt=\"icon\" height=\"60\" />\r\n+        <img src={memoriesText} alt=\"icon\" height=\"45px\" />\r\n         </div>\r\n         <Toolbar className={classes.toolbar}>\r\n             {\r\n                 user ? ( \r\n"
+                },
+                {
+                    "date": 1774691778563,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -33,10 +33,10 @@\n     }, [location]);\r\n     return (    \r\n     <AppBar className={classes.appBar} position=\"static\" color='inherit'>\r\n         <div className={classes.brandContainer}>\r\n-        <img src={memoriesLogo} alt=\"Memories Logo\" className={classes.logo} />\r\n         <img src={memoriesText} alt=\"icon\" height=\"45px\" />\r\n+        <img className={classes.image} src={memoriesLogo} alt=\"icon\" height=\"40px\" />\r\n         </div>\r\n         <Toolbar className={classes.toolbar}>\r\n             {\r\n                 user ? ( \r\n"
+                },
+                {
+                    "date": 1774691828792,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -32,12 +32,12 @@\n         setUser(JSON.parse(localStorage.getItem('profile')));\r\n     }, [location]);\r\n     return (    \r\n     <AppBar className={classes.appBar} position=\"static\" color='inherit'>\r\n-        <div className={classes.brandContainer}>\r\n+        <Link to=\"/\" className={classes.brandContainer}>\r\n         <img src={memoriesText} alt=\"icon\" height=\"45px\" />\r\n         <img className={classes.image} src={memoriesLogo} alt=\"icon\" height=\"40px\" />\r\n-        </div>\r\n+        </Link>\r\n         <Toolbar className={classes.toolbar}>\r\n             {\r\n                 user ? ( \r\n                     <div className={classes.profile}>\r\n"
+                },
+                {
+                    "date": 1774692368459,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -3,9 +3,8 @@\n import { AppBar, Avatar, Toolbar, Typography, Button } from \"@material-ui/core\";\r\n import { useDispatch } from \"react-redux\";\r\n import { jwtDecode } from 'jwt-decode';\r\n import useStyle from './styles';\r\n-import memories from '../../images/memories.png';\r\n import memoriesLogo from '../../images/memories-Logo.png';\r\n import memoriesText from '../../images/memories-Text.png';\r\n \r\n const Navbar = () => {\r\n"
+                }
+            ],
+            "date": 1774687621234,
+            "name": "Commit-0",
+            "content": "import React, { useState, useEffect } from \"react\";\r\nimport { Link, useHistory, useLocation } from \"react-router-dom\";\r\nimport { AppBar, Avatar, Toolbar, Typography, Button } from \"@material-ui/core\";\r\nimport { useDispatch } from \"react-redux\";\r\nimport useStyle from './styles';\r\nimport memories from '../../images/memories.png';\r\n\r\nconst Navbar = () => {\r\n    const classes = useStyle();\r\n    const [user, setUser] = useState(JSON.parse(localStorage.getItem('profile')));\r\n    const dispatch = useDispatch();\r\n    const history = useHistory();\r\n    const location = useLocation();\r\n    const logout = () => {\r\n        dispatch({ type:'LOGOUT' });\r\n        history.push('/');\r\n        setUser(null);\r\n    }\r\n    useEffect(() => {\r\n        const token = user?.token;\r\n\r\n        if(token) {\r\n            // Check if token is expired\r\n            const decodedToken = decode(token);\r\n        }\r\n\r\n\r\n        setUser(JSON.parse(localStorage.getItem('profile')));\r\n    }, [location]);\r\n    return (    \r\n    <AppBar className={classes.appBar} position=\"static\" color='inherit'>\r\n        <div className={classes.brandContainer}>\r\n        <Typography component={Link} to=\"/\" className={classes.heading} variant='h2' align='center'>Memories</Typography>\r\n        <img className={classes.image} src={memories} alt=\"memories\" height=\"60\"></img>\r\n        </div>\r\n        <Toolbar className={classes.toolbar}>\r\n            {\r\n                user ? ( \r\n                    <div className={classes.profile}>\r\n                        <Avatar className={classes.purple} alt={user.result.name} src={user.result.picture}>{user.result.name.charAt(0)}</Avatar>\r\n                        <Typography className={classes.userName} variant=\"h6\">{user.result.name}</Typography>\r\n                        <Button variant=\"contained\" className={classes.logout} color=\"secondary\" onClick={logout}>Logout</Button>\r\n                    </div>\r\n                ) : ( \r\n                    <Button component={Link} to=\"/auth\" variant=\"contained\" color=\"primary\">\r\n                        Sign In\r\n                    </Button>\r\n                )\r\n            }\r\n        </Toolbar>\r\n    </AppBar>\r\n    );\r\n};\r\n\r\nexport default Navbar;"
+        }
+    ]
+}
