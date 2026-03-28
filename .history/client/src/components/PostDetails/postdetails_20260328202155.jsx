@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { use, useEffect } from 'react';
 import { Paper, Typography, CircularProgress, Divider } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
@@ -20,22 +20,24 @@ const PostDetails = () => {
 
     useEffect(() => {
         if (post) {
-            dispatch(getPostBySearch({ search: 'none', tags: post?.tags?.join(',') }));
+            dispatch(getPostBySearch({ search: 'none', tags: post?.tags.join(',') }));
         }
     }, [post]);
 
-    
+    if (!post) return null;
+
     if (isLoading) {
-      return (
-        <Paper elevation={6} className={classes.loadingPaper}>
+        return (
+            <Paper elevation={6} className={classes.loadingPaper}>
                 <CircularProgress size="7em" />
             </Paper>
         );
-      }
-    if (!post) return null;
+    }
 
-    const recommendedPosts = posts.filter(({ _id }) => _id !== post._id);
-
+    const recommendedPosts = posts?.filter(({ _id }) => String(_id) !== String(post._id));
+    console.log("post:", post);
+console.log("posts:", posts);
+console.log("recommendedPosts:", recommendedPosts);
     const openPost = (_id) => history.push(`/posts/${_id}`);
 
   return (
@@ -57,7 +59,7 @@ const PostDetails = () => {
           <img className={classes.media} src={post.selectedFile || 'https://user-images.githubusercontent.com/194400/49531010-48dad180-f8b1-11e8-8d89-1e61320e1d82.png'} alt={post.title} />
         </div>
       </div>
-      {recommendedPosts.length > 0 && (
+      {recommendedPosts?.length > 0 && (
         <div className={classes.section}>
           <Typography gutterBottom variant="h5">You might also like:</Typography>
           <Divider />

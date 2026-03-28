@@ -36,7 +36,7 @@ const PostDetails = () => {
 
     const recommendedPosts = posts.filter(({ _id }) => _id !== post._id);
 
-    const openPost = (_id) => history.push(`/posts/${_id}`);
+    const openPost = (id) => history.push(`/posts/${id}`);
 
   return (
     <Paper style={{ padding: '20px', borderRadius: '15px' }} elevation={6}>
@@ -57,7 +57,7 @@ const PostDetails = () => {
           <img className={classes.media} src={post.selectedFile || 'https://user-images.githubusercontent.com/194400/49531010-48dad180-f8b1-11e8-8d89-1e61320e1d82.png'} alt={post.title} />
         </div>
       </div>
-      {recommendedPosts.length > 0 && (
+      {recommendedPosts.length && (
         <div className={classes.section}>
           <Typography gutterBottom variant="h5">You might also like:</Typography>
           <Divider />

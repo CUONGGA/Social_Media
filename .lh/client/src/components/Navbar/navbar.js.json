@@ -3,7 +3,7 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 8,
+            "activePatchIndex": 14,
             "patches": [
                 {
                     "date": 1774687621234,
@@ -40,6 +40,30 @@
                 {
                     "date": 1774692368459,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -3,9 +3,8 @@\n import { AppBar, Avatar, Toolbar, Typography, Button } from \"@material-ui/core\";\r\n import { useDispatch } from \"react-redux\";\r\n import { jwtDecode } from 'jwt-decode';\r\n import useStyle from './styles';\r\n-import memories from '../../images/memories.png';\r\n import memoriesLogo from '../../images/memories-Logo.png';\r\n import memoriesText from '../../images/memories-Text.png';\r\n \r\n const Navbar = () => {\r\n"
+                },
+                {
+                    "date": 1774706011104,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -32,9 +32,9 @@\n     }, [location]);\r\n     return (    \r\n     <AppBar className={classes.appBar} position=\"static\" color='inherit'>\r\n         <Link to=\"/\" className={classes.brandContainer}>\r\n-        <img src={memoriesText} alt=\"icon\" height=\"45px\" />\r\n+        <img src={memoriesText} alt=\"icon\" height=\"50px\" />\r\n         <img className={classes.image} src={memoriesLogo} alt=\"icon\" height=\"40px\" />\r\n         </Link>\r\n         <Toolbar className={classes.toolbar}>\r\n             {\r\n"
+                },
+                {
+                    "date": 1774706027997,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -32,9 +32,9 @@\n     }, [location]);\r\n     return (    \r\n     <AppBar className={classes.appBar} position=\"static\" color='inherit'>\r\n         <Link to=\"/\" className={classes.brandContainer}>\r\n-        <img src={memoriesText} alt=\"icon\" height=\"50px\" />\r\n+        <img src={memoriesText} alt=\"icon\" height=\"60px\" />\r\n         <img className={classes.image} src={memoriesLogo} alt=\"icon\" height=\"40px\" />\r\n         </Link>\r\n         <Toolbar className={classes.toolbar}>\r\n             {\r\n"
+                },
+                {
+                    "date": 1774706045246,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -32,9 +32,9 @@\n     }, [location]);\r\n     return (    \r\n     <AppBar className={classes.appBar} position=\"static\" color='inherit'>\r\n         <Link to=\"/\" className={classes.brandContainer}>\r\n-        <img src={memoriesText} alt=\"icon\" height=\"60px\" />\r\n+        <img src={memoriesText} alt=\"icon\" height=\"100px\" />\r\n         <img className={classes.image} src={memoriesLogo} alt=\"icon\" height=\"40px\" />\r\n         </Link>\r\n         <Toolbar className={classes.toolbar}>\r\n             {\r\n"
+                },
+                {
+                    "date": 1774706064189,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -32,9 +32,9 @@\n     }, [location]);\r\n     return (    \r\n     <AppBar className={classes.appBar} position=\"static\" color='inherit'>\r\n         <Link to=\"/\" className={classes.brandContainer}>\r\n-        <img src={memoriesText} alt=\"icon\" height=\"100px\" />\r\n+        <img src={memoriesText} alt=\"icon\" height=\"50px\" />\r\n         <img className={classes.image} src={memoriesLogo} alt=\"icon\" height=\"40px\" />\r\n         </Link>\r\n         <Toolbar className={classes.toolbar}>\r\n             {\r\n"
+                },
+                {
+                    "date": 1774706071997,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -32,9 +32,9 @@\n     }, [location]);\r\n     return (    \r\n     <AppBar className={classes.appBar} position=\"static\" color='inherit'>\r\n         <Link to=\"/\" className={classes.brandContainer}>\r\n-        <img src={memoriesText} alt=\"icon\" height=\"50px\" />\r\n+        <img src={memoriesText} alt=\"icon\" height=\"55px\" />\r\n         <img className={classes.image} src={memoriesLogo} alt=\"icon\" height=\"40px\" />\r\n         </Link>\r\n         <Toolbar className={classes.toolbar}>\r\n             {\r\n"
+                },
+                {
+                    "date": 1774706091332,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -33,9 +33,9 @@\n     return (    \r\n     <AppBar className={classes.appBar} position=\"static\" color='inherit'>\r\n         <Link to=\"/\" className={classes.brandContainer}>\r\n         <img src={memoriesText} alt=\"icon\" height=\"55px\" />\r\n-        <img className={classes.image} src={memoriesLogo} alt=\"icon\" height=\"40px\" />\r\n+        <img className={classes.image} src={memoriesLogo} alt=\"icon\" height=\"60px\" />\r\n         </Link>\r\n         <Toolbar className={classes.toolbar}>\r\n             {\r\n                 user ? ( \r\n"
                 }
             ],
             "date": 1774687621234,

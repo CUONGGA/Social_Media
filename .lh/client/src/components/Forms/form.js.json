@@ -3,7 +3,7 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 7,
+            "activePatchIndex": 11,
             "patches": [
                 {
                     "date": 1774684869531,
@@ -36,6 +36,22 @@
                 {
                     "date": 1774698316784,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -44,9 +44,9 @@\n         setPostData({title: '', message: '', tags: '', selectedFile: ''});\r\n     }\r\n \r\n     return (\r\n-        <Paper className={classes.paper}>\r\n+        <Paper className={classes.paper} elevation={6}>\r\n             <form autoComplete=\"off\" noValidate className={`${classes.form} ${classes.root}`} onSubmit={handleSubmit}>\r\n             <Typography variant=\"h6\">{ currentId ? 'Editing' : 'Creating' } a Memory</Typography>\r\n             <TextField name=\"title\" variant=\"outlined\" label=\"Title\" fullWidth value={postData.title} onChange={(e) => setPostData({ ...postData, title: e.target.value})}/>\r\n             <TextField name=\"message\" variant=\"outlined\" label=\"Message\" fullWidth value={postData.message} onChange={(e) => setPostData({ ...postData, message: e.target.value})}/>\r\n"
+                },
+                {
+                    "date": 1774705586706,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -7,9 +7,9 @@\n import { createPost, updatePost } from '../../actions/posts.js'\r\n \r\n const Form = ({ currentId, setCurrentId }) => {\r\n     const [postData, setPostData] = useState({title: '', message: '', tags: '', selectedFile: ''})\r\n-    const post = useSelector((state) => currentId ? state.posts.find((p) => p._id === currentId) : null);\r\n+    const post = useSelector((state) => currentId ? state.posts.posts.find((p) => p._id === currentId) : null);\r\n     const classes = useStyle();\r\n     const dispatch = useDispatch();\r\n     const user = JSON.parse(localStorage.getItem('profile'));\r\n \r\n"
+                },
+                {
+                    "date": 1774705709536,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -3,8 +3,9 @@\n import FileBase from 'react-file-base64';\r\n import { useSelector } from 'react-redux';\r\n import { TextField, Button, Typography, Paper } from \"@material-ui/core\";\r\n import { useDispatch } from \"react-redux\";\r\n+import { useHistory } from \"react-router-dom\";\r\n import { createPost, updatePost } from '../../actions/posts.js'\r\n \r\n const Form = ({ currentId, setCurrentId }) => {\r\n     const [postData, setPostData] = useState({title: '', message: '', tags: '', selectedFile: ''})\r\n@@ -21,8 +22,9 @@\n         e.preventDefault();\r\n         \r\n         if (currentId) {\r\n             dispatch(updatePost(currentId, {...postData, name: user?.result?.name}));\r\n+            history.push(`/posts/${currentId}`);\r\n             clear();\r\n         } else {\r\n             dispatch(createPost({...postData, name: user?.result?.name}));\r\n             clear();\r\n"
+                },
+                {
+                    "date": 1774705745741,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -12,8 +12,9 @@\n     const post = useSelector((state) => currentId ? state.posts.posts.find((p) => p._id === currentId) : null);\r\n     const classes = useStyle();\r\n     const dispatch = useDispatch();\r\n     const user = JSON.parse(localStorage.getItem('profile'));\r\n+    const history = useHistory();\r\n \r\n     useEffect(() => {\r\n         if(post) setPostData(post)\r\n     }, [post])\r\n"
+                },
+                {
+                    "date": 1774705780055,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -22,10 +22,9 @@\n     const handleSubmit = (e) => {\r\n         e.preventDefault();\r\n         \r\n         if (currentId) {\r\n-            dispatch(updatePost(currentId, {...postData, name: user?.result?.name}));\r\n-            history.push(`/posts/${currentId}`);\r\n+            dispatch(updatePost(currentId, {...postData, name: user?.result?.name}, history));\r\n             clear();\r\n         } else {\r\n             dispatch(createPost({...postData, name: user?.result?.name}));\r\n             clear();\r\n"
                 }
             ],
             "date": 1774684869531,

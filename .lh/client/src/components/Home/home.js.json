@@ -3,7 +3,7 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 23,
+            "activePatchIndex": 26,
             "patches": [
                 {
                     "date": 1774688094358,
@@ -100,6 +100,18 @@
                 {
                     "date": 1774698173468,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -60,12 +60,12 @@\n                     <Button onClick={searchPost} className={classes.searchButton} variant=\"contained\" color=\"primary\">Search</Button>\r\n                 </AppBar>\r\n                 <Form currentId={currentId} setCurrentId={setCurrentId} />\r\n                 {(!searchQuery && !tags.length) && (\r\n-                     <Paper elevation={6}>\r\n+                     <Paper elevation={6} className={classes.pagination}>\r\n                         <Paginate page={page} />\r\n                     </Paper>\r\n-                ) }\r\n+                )}\r\n             </Grid>\r\n         </Grid>\r\n     </Container>\r\n     </Grow>\r\n"
+                },
+                {
+                    "date": 1774701295502,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -42,11 +42,13 @@\n             history.push('/');\r\n         }\r\n     };\r\n \r\n-    useEffect(() => {\r\n-        dispatch(getPosts());\r\n-    }, [currentId ,dispatch]);\r\n+        useEffect(() => {\r\n+        dispatch(getPosts(page));\r\n+    }, [dispatch, currentId, page]);\r\n+\r\n+\r\n   return (\r\n     <Grow in>\r\n     <Container maxWidth=\"xl\">\r\n         <Grid  container justifyContent =\"space-between\" alignItems=\"stretch\" spacing={3} className={classes.gridContainer}>\r\n"
+                },
+                {
+                    "date": 1774701365277,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -42,13 +42,11 @@\n             history.push('/');\r\n         }\r\n     };\r\n \r\n-        useEffect(() => {\r\n-        dispatch(getPosts(page));\r\n-    }, [dispatch, currentId, page]);\r\n-\r\n-\r\n+    useEffect(() => {\r\n+        dispatch(getPosts());\r\n+    }, [currentId ,dispatch]);\r\n   return (\r\n     <Grow in>\r\n     <Container maxWidth=\"xl\">\r\n         <Grid  container justifyContent =\"space-between\" alignItems=\"stretch\" spacing={3} className={classes.gridContainer}>\r\n"
+                },
+                {
+                    "date": 1774701397478,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -43,10 +43,10 @@\n         }\r\n     };\r\n \r\n     useEffect(() => {\r\n-        dispatch(getPosts());\r\n-    }, [currentId ,dispatch]);\r\n+    dispatch(getPosts(page));\r\n+    }, [dispatch, currentId, page]);\r\n   return (\r\n     <Grow in>\r\n     <Container maxWidth=\"xl\">\r\n         <Grid  container justifyContent =\"space-between\" alignItems=\"stretch\" spacing={3} className={classes.gridContainer}>\r\n"
                 }
             ],
             "date": 1774688094358,

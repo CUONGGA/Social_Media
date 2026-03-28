@@ -20,21 +20,21 @@ const PostDetails = () => {
 
     useEffect(() => {
         if (post) {
-            dispatch(getPostBySearch({ search: 'none', tags: post?.tags?.join(',') }));
+            dispatch(getPostBySearch({ search: 'none', tags: post?.tags.join(',') }));
         }
     }, [post]);
 
-    
+    if (!post) return null;
+
     if (isLoading) {
-      return (
-        <Paper elevation={6} className={classes.loadingPaper}>
+        return (
+            <Paper elevation={6} className={classes.loadingPaper}>
                 <CircularProgress size="7em" />
             </Paper>
         );
-      }
-    if (!post) return null;
+    }
 
-    const recommendedPosts = posts.filter(({ _id }) => _id !== post._id);
+    const recommendedPosts = posts?.filter(({ _id }) => _id !== post._id);
 
     const openPost = (_id) => history.push(`/posts/${_id}`);
 

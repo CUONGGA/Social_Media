@@ -44,8 +44,8 @@ const Home = () => {
     };
 
     useEffect(() => {
-    dispatch(getPosts(page));
-    }, [dispatch, currentId, page]);
+        dispatch(getPosts());
+    }, [currentId ,dispatch]);
   return (
     <Grow in>
     <Container maxWidth="xl">

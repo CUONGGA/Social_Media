@@ -13,7 +13,6 @@ const Form = ({ currentId, setCurrentId }) => {
     const classes = useStyle();
     const dispatch = useDispatch();
     const user = JSON.parse(localStorage.getItem('profile'));
-    const history = useHistory();
 
     useEffect(() => {
         if(post) setPostData(post)
@@ -23,7 +22,8 @@ const Form = ({ currentId, setCurrentId }) => {
         e.preventDefault();
         
         if (currentId) {
-            dispatch(updatePost(currentId, {...postData, name: user?.result?.name}, history));
+            dispatch(updatePost(currentId, {...postData, name: user?.result?.name}));
+            history.push(`/posts/${currentId}`);
             clear();
         } else {
             dispatch(createPost({...postData, name: user?.result?.name}));

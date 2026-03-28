@@ -3,7 +3,7 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 11,
+            "activePatchIndex": 14,
             "patches": [
                 {
                     "date": 1774690361267,
@@ -52,6 +52,18 @@
                 {
                     "date": 1774701184106,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -30,9 +30,9 @@\n     try {\r\n         dispatch({ type: START_LOADING });\r\n         const { data: { data } } = await api.fetchPostBySearch(searchQuery);\r\n         dispatch({ type: FETCH_BY_SEARCH, payload: data });\r\n-        dispatch({ type: START_LOADING });\r\n+        dispatch({ type: END_LOADING });\r\n     } catch (error) {\r\n         console.log(error.message);\r\n     }\r\n };\r\n@@ -41,9 +41,9 @@\n     try {\r\n         const { data } = await api.createPost(post);\r\n         dispatch({ type: START_LOADING });\r\n         dispatch( {type: CREATE, payload: data });\r\n-        dispatch({ type: START_LOADING });\r\n+        dispatch({ type: END_LOADING });\r\n     } catch (error) {\r\n         console.log(error);\r\n     }\r\n }\r\n"
+                },
+                {
+                    "date": 1774705812555,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -36,9 +36,9 @@\n         console.log(error.message);\r\n     }\r\n };\r\n \r\n-export const createPost = (post) => async (dispatch) => {\r\n+export const createPost = (post, history) => async (dispatch) => {\r\n     try {\r\n         const { data } = await api.createPost(post);\r\n         dispatch({ type: START_LOADING });\r\n         dispatch( {type: CREATE, payload: data });\r\n"
+                },
+                {
+                    "date": 1774705821340,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -38,10 +38,10 @@\n };\r\n \r\n export const createPost = (post, history) => async (dispatch) => {\r\n     try {\r\n+        dispatch({ type: START_LOADING });\r\n         const { data } = await api.createPost(post);\r\n-        dispatch({ type: START_LOADING });\r\n         dispatch( {type: CREATE, payload: data });\r\n         dispatch({ type: END_LOADING });\r\n     } catch (error) {\r\n         console.log(error);\r\n"
+                },
+                {
+                    "date": 1774705830675,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -40,8 +40,9 @@\n export const createPost = (post, history) => async (dispatch) => {\r\n     try {\r\n         dispatch({ type: START_LOADING });\r\n         const { data } = await api.createPost(post);\r\n+        history.push(`/posts/${data._id}`);\r\n         dispatch( {type: CREATE, payload: data });\r\n         dispatch({ type: END_LOADING });\r\n     } catch (error) {\r\n         console.log(error);\r\n"
                 }
             ],
             "date": 1774690361267,
