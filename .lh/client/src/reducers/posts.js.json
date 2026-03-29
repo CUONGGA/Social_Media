@@ -3,7 +3,7 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 21,
+            "activePatchIndex": 23,
             "patches": [
                 {
                     "date": 1774690939058,
@@ -92,6 +92,14 @@
                 {
                     "date": 1774699468022,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -16,8 +16,10 @@\n                 return {\r\n                     ...state,\r\n                     posts: action.payload\r\n                 };\r\n+        case FETCH_POST:\r\n+            return { ...state, post: action.payload };\r\n         case LIKE:\r\n             return { ...state, posts: state.posts.map((posts) => posts._id === action.payload._id ? action.payload : posts) };\r\n         case CREATE:\r\n             return { ...state, posts: [...state.posts, action.payload] };\r\n"
+                },
+                {
+                    "date": 1774774872419,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,5 +1,5 @@\n-import {START_LOADING, END_LOADING, FETCH_POST, FETCH_BY_SEARCH, FETCH_ALL, CREATE, UPDATE, DELETE, LIKE } from '../constants/actionType';\r\n+import {START_LOADING, END_LOADING, FETCH_POST, FETCH_BY_SEARCH, FETCH_ALL, CREATE, UPDATE, DELETE, LIKE, COMMENT } from '../constants/actionType';\r\n export default (state = { isLoading: true, posts: [] }, action) => {\r\n     switch (action.type){\r\n         case START_LOADING:\r\n             return { ...state, isLoading: true };\r\n"
+                },
+                {
+                    "date": 1774775004303,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -20,8 +20,18 @@\n         case FETCH_POST:\r\n             return { ...state, post: action.payload };\r\n         case LIKE:\r\n             return { ...state, posts: state.posts.map((posts) => posts._id === action.payload._id ? action.payload : posts) };\r\n+        case COMMENT:\r\n+            return {\r\n+                ...state,                \r\n+                posts: state.posts.map((post) => {\r\n+                    if (post._id === action.payload._id) {\r\n+                        return action.payload;\r\n+                    }\r\n+                    return post;\r\n+                })\r\n+            };\r\n         case CREATE:\r\n             return { ...state, posts: [...state.posts, action.payload] };\r\n         case UPDATE:\r\n             return { ...state, posts: state.posts.map((posts) => posts._id === action.payload._id ? action.payload : posts) };\r\n"
                 }
             ],
             "date": 1774690939058,

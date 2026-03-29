@@ -3,7 +3,7 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 4,
+            "activePatchIndex": 6,
             "patches": [
                 {
                     "date": 1774690530694,
@@ -24,6 +24,14 @@
                 {
                     "date": 1774699305058,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,13 +1,13 @@\n import express from 'express';\r\n-import { getPostsBySearch, getposts, createPost, updatePost, deletePost, likePost } from '../controllers/posts.js';\r\n+import { getPostsBySearch, getPost ,getposts, createPost, updatePost, deletePost, likePost } from '../controllers/posts.js';\r\n import auth from '../middleware/auth.js';\r\n \r\n const router = express.Router();\r\n \r\n router.get('/search', getPostsBySearch);\r\n router.get('/', getposts);\r\n-router.get('/:id', getposts);\r\n+router.get('/:id', getPost);\r\n router.post('/', auth, createPost);\r\n router.patch('/:id', auth, updatePost);\r\n router.delete('/:id', auth, deletePost);\r\n router.patch('/:id/likePost', auth, likePost);\r\n"
+                },
+                {
+                    "date": 1774772106497,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,6 +1,6 @@\n import express from 'express';\r\n-import { getPostsBySearch, getPost ,getposts, createPost, updatePost, deletePost, likePost } from '../controllers/posts.js';\r\n+import { getPostsBySearch, getPost ,getposts, createPost, updatePost, deletePost, likePost, commentPost } from '../controllers/posts.js';\r\n import auth from '../middleware/auth.js';\r\n \r\n const router = express.Router();\r\n \r\n@@ -10,6 +10,7 @@\n router.post('/', auth, createPost);\r\n router.patch('/:id', auth, updatePost);\r\n router.delete('/:id', auth, deletePost);\r\n router.patch('/:id/likePost', auth, likePost);\r\n+router.post('/:id/commentPost', auth, commentPost);\r\n \r\n export default router;\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1774774473024,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,16 +1,16 @@\n-import express from 'express';\r\n-import { getPostsBySearch, getPost ,getposts, createPost, updatePost, deletePost, likePost, commentPost } from '../controllers/posts.js';\r\n-import auth from '../middleware/auth.js';\r\n+    import express from 'express';\r\n+    import { getPostsBySearch, getPost ,getposts, createPost, updatePost, deletePost, likePost, commentPost } from '../controllers/posts.js';\r\n+    import auth from '../middleware/auth.js';\r\n \r\n-const router = express.Router();\r\n+    const router = express.Router();\r\n \r\n-router.get('/search', getPostsBySearch);\r\n-router.get('/', getposts);\r\n-router.get('/:id', getPost);\r\n-router.post('/', auth, createPost);\r\n-router.patch('/:id', auth, updatePost);\r\n-router.delete('/:id', auth, deletePost);\r\n\\ No newline at end of file\n-router.patch('/:id/likePost', auth, likePost);\r\n-router.post('/:id/commentPost', auth, commentPost);\r\n+    router.get('/search', getPostsBySearch);\r\n+    router.get('/', getposts);\r\n+    router.get('/:id', getPost);\r\n+    router.post('/', auth, createPost);\r\n+    router.patch('/:id', auth, updatePost);\r\n+    router.delete('/:id', auth, deletePost);\r\n+    router.patch('/:id/likePost', auth, likePost);\r\n+    router.post('/:id/commentPost', auth, commentPost);\r\n \r\n-export default router;\n+    export default router;\n\\ No newline at end of file\n"
                 }
             ],
             "date": 1774690530694,

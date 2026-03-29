@@ -3,7 +3,7 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 4,
+            "activePatchIndex": 6,
             "patches": [
                 {
                     "date": 1774684813986,
@@ -24,6 +24,14 @@
                 {
                     "date": 1774699762762,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -23,10 +23,9 @@\n \r\n export const getPost = async (req, res, next) => {\r\n     const { id } = req.params;\r\n     try {\r\n-        const post = await PostMessage\r\n-            .findById(id);\r\n+        const post = await PostMessage.findById(id);\r\n \r\n         res.status(200).json(post);\r\n     } catch(err) {\r\n         res.status(404).json({\r\n"
+                },
+                {
+                    "date": 1774772231382,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -104,4 +104,19 @@\n \r\n     res.json(updatedPost);\r\n }\r\n \r\n+export const commentPost = async (req, res, next) => {\r\n+    const { id } = req.params;\r\n+    const { value } = req.body;\r\n+\r\n+    if (!req.userId) return res.json({message: 'Unauthenticated'});\r\n+    if(!mongoose.Types.ObjectId.isValid(id)) return res.status(404).send('Not Found!');\r\n+\r\n+    const post = await PostMessage.findById(id);\r\n+\r\n+    post.comments.push(value);\r\n+    const updatedPost = await PostMessage.findByIdAndUpdate(id\r\n+        , post, { new: true });\r\n+    res.json(updatedPost);\r\n+}\r\n+\r\n"
+                },
+                {
+                    "date": 1774782588150,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -92,9 +92,9 @@\n \r\n     const post = await PostMessage.findById(id);    \r\n \r\n     const index = post.likes.findIndex((id) => id == String(req.userId));\r\n-\r\n+    console.log(post);\r\n     if (index == -1) {\r\n         post.likes.push(req.userId);\r\n     } else {\r\n         post.likes = post.likes.filter((id) => id !== String(req.userId));\r\n"
                 }
             ],
             "date": 1774684813986,

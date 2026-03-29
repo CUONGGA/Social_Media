@@ -3,11 +3,15 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 0,
+            "activePatchIndex": 1,
             "patches": [
                 {
                     "date": 1774698827295,
                     "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1774771771959,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -35,5 +35,11 @@\n   },\r\n   loadingPaper: {\r\n     display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '20px', borderRadius: '15px', height: '39vh',\r\n   },\r\n+  commentsOuterContainer: {\r\n+    display: 'flex', justifyContent: 'space-between',\r\n+  },\r\n+  commentsInnerContainer: {\r\n+    height: '200px', overflowY: 'auto', marginRight: '30px',\r\n+  },\r\n }));\n\\ No newline at end of file\n"
                 }
             ],
             "date": 1774698827295,

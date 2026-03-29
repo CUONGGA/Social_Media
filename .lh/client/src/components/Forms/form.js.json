@@ -3,7 +3,7 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 11,
+            "activePatchIndex": 12,
             "patches": [
                 {
                     "date": 1774684869531,
@@ -52,6 +52,10 @@
                 {
                     "date": 1774705780055,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -22,10 +22,9 @@\n     const handleSubmit = (e) => {\r\n         e.preventDefault();\r\n         \r\n         if (currentId) {\r\n-            dispatch(updatePost(currentId, {...postData, name: user?.result?.name}));\r\n-            history.push(`/posts/${currentId}`);\r\n+            dispatch(updatePost(currentId, {...postData, name: user?.result?.name}, history));\r\n             clear();\r\n         } else {\r\n             dispatch(createPost({...postData, name: user?.result?.name}));\r\n             clear();\r\n"
+                },
+                {
+                    "date": 1774783173068,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -25,9 +25,9 @@\n         if (currentId) {\r\n             dispatch(updatePost(currentId, {...postData, name: user?.result?.name}, history));\r\n             clear();\r\n         } else {\r\n-            dispatch(createPost({...postData, name: user?.result?.name}));\r\n+            dispatch(createPost({...postData, name: user?.result?.name}, history));\r\n             clear();\r\n         }\r\n     };\r\n \r\n"
                 }
             ],
             "date": 1774684869531,

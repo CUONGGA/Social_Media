@@ -3,7 +3,7 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 6,
+            "activePatchIndex": 11,
             "patches": [
                 {
                     "date": 1774688247420,
@@ -32,6 +32,26 @@
                 {
                     "date": 1774689258537,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -18,9 +18,9 @@\n                     <Route path=\"/\" exact component={() => <Redirect to=\"/posts\" />} />\r\n                     <Route path=\"/posts\" exact component={Home} />\r\n                     <Route path=\"/posts/search\" exact component={Home} />\r\n                     <Route path=\"/posts/:id\" component={PostDetails} />\r\n-                    <Route path=\"/auth\" exact component={Auth} />\r\n+                    <Route path=\"/auth\" exact component={() => (!user ? <Auth /> : <Redirect to=\"/posts\" />)} />\r\n                 </Switch>\r\n             </Container>\r\n         </BrowserRouter>\r\n     );\r\n"
+                },
+                {
+                    "date": 1774784322042,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -7,8 +7,9 @@\n import PostDetails from './components/PostDetails/postdetails.jsx';\r\n \r\n \r\n const App = () => {\r\n+    const location = useLocation();\r\n     const user = JSON.parse(localStorage.getItem('profile'));\r\n \r\n     return (\r\n         <BrowserRouter>\r\n"
+                },
+                {
+                    "date": 1774784437185,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,30 +1,32 @@\n import React from 'react';\r\n import { Container } from '@material-ui/core';\r\n-import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom';\r\n+import { BrowserRouter, Switch, Route, Redirect, useLocation } from 'react-router-dom';\r\n import Navbar from './components/Navbar/navbar.js';\r\n import Home from './components/Home/home.js';\r\n import Auth from './components/Auth/Auth.js';\r\n import PostDetails from './components/PostDetails/postdetails.jsx';\r\n \r\n \r\n const App = () => {\r\n-    const location = useLocation();\r\n-    const user = JSON.parse(localStorage.getItem('profile'));\r\n+  const location = useLocation(); \r\n+  const user = JSON.parse(localStorage.getItem('profile'));\r\n \r\n-    return (\r\n-        <BrowserRouter>\r\n-            <Container maxWidth=\"xl\">\r\n-                <Navbar />\r\n-                <Switch>\r\n-                    <Route path=\"/\" exact component={() => <Redirect to=\"/posts\" />} />\r\n-                    <Route path=\"/posts\" exact component={Home} />\r\n-                    <Route path=\"/posts/search\" exact component={Home} />\r\n-                    <Route path=\"/posts/:id\" component={PostDetails} />\r\n-                    <Route path=\"/auth\" exact component={() => (!user ? <Auth /> : <Redirect to=\"/posts\" />)} />\r\n-                </Switch>\r\n-            </Container>\r\n-        </BrowserRouter>\r\n-    );\r\n+  return (\r\n+    <Container maxWidth=\"xl\">\r\n+      <Navbar />\r\n+      <Switch>\r\n+        <Route path=\"/\" exact component={() => <Redirect to=\"/posts\" />} />\r\n+        <Route path=\"/posts\" exact component={Home} />\r\n+        <Route path=\"/posts/search\" exact component={Home} />\r\n+        <Route path=\"/posts/:id\" component={PostDetails} />\r\n+        <Route \r\n+          path=\"/auth\" \r\n+          exact \r\n+          component={() => (!user ? <Auth /> : <Redirect to=\"/posts\" />)} \r\n+        />\r\n+      </Switch>\r\n+    </Container>\r\n+  );\r\n };\r\n \r\n export default App\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1774784533704,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -8,9 +8,11 @@\n \r\n \r\n const App = () => {\r\n   const location = useLocation(); \r\n-  const user = JSON.parse(localStorage.getItem('profile'));\r\n+  const user = React.useMemo(() => {\r\n+  return JSON.parse(localStorage.getItem('profile'));\r\n+}, [location]);\r\n \r\n   return (\r\n     <Container maxWidth=\"xl\">\r\n       <Navbar />\r\n"
+                },
+                {
+                    "date": 1774784541830,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -9,10 +9,10 @@\n \r\n const App = () => {\r\n   const location = useLocation(); \r\n   const user = React.useMemo(() => {\r\n-  return JSON.parse(localStorage.getItem('profile'));\r\n-}, [location]);\r\n+        return JSON.parse(localStorage.getItem('profile'));\r\n+        }, [location]);\r\n \r\n   return (\r\n     <Container maxWidth=\"xl\">\r\n       <Navbar />\r\n"
+                },
+                {
+                    "date": 1774784612110,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -9,9 +9,9 @@\n \r\n const App = () => {\r\n   const location = useLocation(); \r\n   const user = React.useMemo(() => {\r\n-        return JSON.parse(localStorage.getItem('profile'));\r\n+    return JSON.parse(localStorage.getItem('profile'));\r\n         }, [location]);\r\n \r\n   return (\r\n     <Container maxWidth=\"xl\">\r\n"
                 }
             ],
             "date": 1774688247420,

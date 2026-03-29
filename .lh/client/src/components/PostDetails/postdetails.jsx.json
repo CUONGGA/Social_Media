@@ -3,7 +3,7 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 34,
+            "activePatchIndex": 38,
             "patches": [
                 {
                     "date": 1774698642972,
@@ -144,6 +144,22 @@
                 {
                     "date": 1774705952481,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -56,9 +56,9 @@\n         <div className={classes.imageSection}>\r\n           <img className={classes.media} src={post.selectedFile || 'https://user-images.githubusercontent.com/194400/49531010-48dad180-f8b1-11e8-8d89-1e61320e1d82.png'} alt={post.title} />\r\n         </div>\r\n       </div>\r\n-      {recommendedPosts.length && (\r\n+      {recommendedPosts.length > 0 && (\r\n         <div className={classes.section}>\r\n           <Typography gutterBottom variant=\"h5\">You might also like:</Typography>\r\n           <Divider />\r\n           <div className={classes.recommendedPosts}>\r\n"
+                },
+                {
+                    "date": 1774770488553,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -73,5 +73,10 @@\n               </div>\r\n             ))}\r\n           </div>\r\n         </div>\r\n-      )}\n\\ No newline at end of file\n+      )}\r\n+    </Paper>\r\n+  )\r\n+}\r\n+\r\n+export default PostDetails\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1774770512666,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,8 +1,9 @@\n import React, { useEffect } from 'react';\r\n import { Paper, Typography, CircularProgress, Divider } from '@material-ui/core';\r\n import { useDispatch, useSelector } from 'react-redux';\r\n import moment from 'moment';\r\n+import CommentSection from './commentsection.jsx';\r\n import { useParams, useHistory } from 'react-router-dom';\r\n import { getPost, getPostBySearch } from '../../actions/posts.js';\r\n import useStyle from './styles';\r\n \r\n@@ -49,9 +50,9 @@\n           <Typography variant=\"body1\">{moment(post.createdAt).fromNow()}</Typography>\r\n           <Divider style={{ margin: '20px 0' }} />\r\n           <Typography variant=\"body1\"><strong>Realtime Chat - coming soon!</strong></Typography>\r\n           <Divider style={{ margin: '20px 0' }} />\r\n-          <Typography variant=\"body1\"><strong>Comments - coming soon!</strong></Typography>\r\n+          < CommentSection post={post} />\r\n           <Divider style={{ margin: '20px 0' }} />\r\n         </div>\r\n         <div className={classes.imageSection}>\r\n           <img className={classes.media} src={post.selectedFile || 'https://user-images.githubusercontent.com/194400/49531010-48dad180-f8b1-11e8-8d89-1e61320e1d82.png'} alt={post.title} />\r\n@@ -77,10 +78,5 @@\n     </Paper>\r\n   )\r\n }\r\n \r\n-export default PostDetails\n-    </Paper>\r\n-  )\r\n-}\r\n-\r\n export default PostDetails\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1774771034233,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -50,9 +50,9 @@\n           <Typography variant=\"body1\">{moment(post.createdAt).fromNow()}</Typography>\r\n           <Divider style={{ margin: '20px 0' }} />\r\n           <Typography variant=\"body1\"><strong>Realtime Chat - coming soon!</strong></Typography>\r\n           <Divider style={{ margin: '20px 0' }} />\r\n-          < CommentSection post={post} />\r\n+          <CommentSection post={post} />\r\n           <Divider style={{ margin: '20px 0' }} />\r\n         </div>\r\n         <div className={classes.imageSection}>\r\n           <img className={classes.media} src={post.selectedFile || 'https://user-images.githubusercontent.com/194400/49531010-48dad180-f8b1-11e8-8d89-1e61320e1d82.png'} alt={post.title} />\r\n"
+                },
+                {
+                    "date": 1774782095820,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -48,10 +48,8 @@\n           <Typography gutterBottom variant=\"body1\" component=\"p\">{post.message}</Typography>\r\n           <Typography variant=\"h6\">Created by: {post.name}</Typography>\r\n           <Typography variant=\"body1\">{moment(post.createdAt).fromNow()}</Typography>\r\n           <Divider style={{ margin: '20px 0' }} />\r\n-          <Typography variant=\"body1\"><strong>Realtime Chat - coming soon!</strong></Typography>\r\n-          <Divider style={{ margin: '20px 0' }} />\r\n           <CommentSection post={post} />\r\n           <Divider style={{ margin: '20px 0' }} />\r\n         </div>\r\n         <div className={classes.imageSection}>\r\n"
                 }
             ],
             "date": 1774698642972,

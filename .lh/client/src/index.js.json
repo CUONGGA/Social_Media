@@ -1,0 +1,22 @@
+{
+    "sourceFile": "client/src/index.js",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 1,
+            "patches": [
+                {
+                    "date": 1774784773767,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1774784824998,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -3,8 +3,9 @@\n import { Provider } from 'react-redux';\r\n import { createStore, applyMiddleware, compose } from \"redux\";\r\n import { thunk } from 'redux-thunk';\r\n import { GoogleOAuthProvider } from '@react-oauth/google';\r\n+import { BrowserRouter } from 'react-router-dom'; \r\n \r\n import reducers from './reducers';\r\n import App from './App';\r\n import './index.css';\r\n"
+                }
+            ],
+            "date": 1774784773767,
+            "name": "Commit-0",
+            "content": "import React from \"react\";\r\nimport ReactDOM from \"react-dom\";\r\nimport { Provider } from 'react-redux';\r\nimport { createStore, applyMiddleware, compose } from \"redux\";\r\nimport { thunk } from 'redux-thunk';\r\nimport { GoogleOAuthProvider } from '@react-oauth/google';\r\n\r\nimport reducers from './reducers';\r\nimport App from './App';\r\nimport './index.css';\r\n\r\nconst store = createStore(reducers, compose(applyMiddleware(thunk)));\r\n\r\nReactDOM.render(\r\n    <Provider store={store}>\r\n        <GoogleOAuthProvider clientId=\"319407429518-4o8l3lg5ulji3pfav2aei920j6r3eqbl.apps.googleusercontent.com\">\r\n            <BrowserRouter>\r\n                <App /> \r\n            </BrowserRouter>\r\n        </GoogleOAuthProvider>\r\n    </Provider>,\r\n    document.getElementById(\"root\")\r\n);"
+        }
+    ]
+}
