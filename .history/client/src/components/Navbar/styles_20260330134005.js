@@ -59,21 +59,4 @@ export default makeStyles((theme) => ({
     color: theme.palette.getContrastText(deepPurple[500]),
     backgroundColor: deepPurple[500],
   },
-  signInButton: {
-  textTransform: 'none',                // chữ bình thường
-  fontWeight: 600,                      // chữ đậm hơn
-  fontSize: '1rem',                     // cỡ chữ vừa phải
-  padding: '8px 22px',                  // padding gọn nhưng sang
-  borderRadius: '12px',                 // bo tròn mềm mại
-  background: 'linear-gradient(90deg, #141620 0%, #6573c3 100%)', // gradient nhẹ
-  color: '#fff',
-  boxShadow: '0 4px 12px rgba(63,81,181,0.3)', // shadow sang
-  transition: 'all 0.3s ease',
-  cursor: 'pointer',
-  '&:hover': {
-    background: 'linear-gradient(90deg, #6573c3 0%, #3f51b5 100%)', // đổi gradient khi hover
-    boxShadow: '0 6px 16px rgba(63,81,181,0.4)', // shadow nổi bật hơn
-    transform: 'translateY(-2px)',  // nâng nhẹ khi hover
-  },
-  },
 }));

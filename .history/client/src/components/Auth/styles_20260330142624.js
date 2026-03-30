@@ -58,7 +58,7 @@ export default makeStyles((theme) => ({
     textTransform: 'none',
     fontWeight: 600,
     fontSize: '1rem',
-    padding: '8px 0',
+    padding: '12px 0',
     borderRadius: '14px',
     background: 'linear-gradient(90deg, #3f51b5 0%, #6573c3 100%)',
     color: '#fff',
@@ -71,7 +71,24 @@ export default makeStyles((theme) => ({
     },
   },
 
+  // Google Sign In button
+  googleButton: {
+  marginTop: theme.spacing(1),
+  marginBottom: theme.spacing(2),
+  width: '100%',
+  borderRadius: '14px',
+  background: '#1b255c',          // màu nền mặc định
+  color: '#fff',
+  boxShadow: '0 4px 12px rgba(27,37,92,0.3)',
+  transition: 'all 0.3s ease',
+  '&:hover': {
+    background: '#4e5db9',        // màu khi hover
+    boxShadow: '0 6px 18px rgba(78,93,185,0.4)',
+    transform: 'translateY(-1px)',
+  },
+},
 
+  // Typography / Heading
   heading: {
     fontWeight: 700,
     fontSize: '1.8rem',
@@ -83,7 +100,6 @@ export default makeStyles((theme) => ({
   // Small switch mode text
   switchMode: {
     textTransform: 'none',
-    marginTop: '10px',
     fontWeight: 500,
     fontSize: '0.9rem',
     color: '#555',

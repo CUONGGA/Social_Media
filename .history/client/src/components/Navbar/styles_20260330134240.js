@@ -65,7 +65,7 @@ export default makeStyles((theme) => ({
   fontSize: '1rem',                     // cỡ chữ vừa phải
   padding: '8px 22px',                  // padding gọn nhưng sang
   borderRadius: '12px',                 // bo tròn mềm mại
-  background: 'linear-gradient(90deg, #141620 0%, #6573c3 100%)', // gradient nhẹ
+  background: 'linear-gradient(90deg, #3f51b5 0%, #6573c3 100%)', // gradient nhẹ
   color: '#fff',
   boxShadow: '0 4px 12px rgba(63,81,181,0.3)', // shadow sang
   transition: 'all 0.3s ease',

@@ -3,28 +3,28 @@ import { makeStyles } from "@material-ui/core/styles";
 export default makeStyles((theme) => ({
   ul: {
     justifyContent: 'center',
-    margin: '20px 0',
+    marginTop: '20px',
     '& .MuiPaginationItem-root': {
-      borderRadius: '50%', // bo tròn hoàn toàn
-      margin: '0 8px',     // tăng khoảng cách 2 bên
-      minWidth: '44px',    // to hơn một chút
-      height: '44px',
+      borderRadius: '12px',
+      margin: '0 4px',
+      minWidth: '40px',
+      height: '40px',
       fontWeight: 600,
+      transition: 'all 0.3s ease',
       color: '#3f51b5',
-      background: 'linear-gradient(145deg, #f5f5f5 0%, #e8e8e8 100%)',
-      boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
-      transition: 'all 0.25s ease',
+      background: 'linear-gradient(90deg, #e0e0e0 0%, #f5f5f5 100%)',
+      boxShadow: '0 3px 8px rgba(0,0,0,0.08)',
       '&:hover': {
-        background: 'linear-gradient(145deg, #7986cb 0%, #9fa8da 100%)',
+        background: 'linear-gradient(90deg, #c5cae9 0%, #7986cb 100%)',
         color: '#fff',
         transform: 'translateY(-2px)',
-        boxShadow: '0 6px 16px rgba(0,0,0,0.15)',
+        boxShadow: '0 6px 12px rgba(0,0,0,0.15)',
       },
     },
     '& .Mui-selected': {
       background: 'linear-gradient(90deg, #3f51b5 0%, #6573c3 100%)',
       color: '#fff',
-      boxShadow: '0 6px 16px rgba(63,81,181,0.3)',
+      boxShadow: '0 6px 12px rgba(63,81,181,0.3)',
       '&:hover': {
         background: 'linear-gradient(90deg, #6573c3 0%, #3f51b5 100%)',
       },

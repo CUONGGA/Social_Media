@@ -1,0 +1,18 @@
+{
+    "sourceFile": "client/src/components/Forms/styles.js",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1774853217124,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1774853217124,
+            "name": "Commit-0",
+            "content": "import { makeStyles } from '@material-ui/core/styles';\r\n\r\nexport default makeStyles((theme) => ({\r\n  root: {\r\n    '& .MuiTextField-root': {\r\n      margin: theme.spacing(1),\r\n      '& .MuiOutlinedInput-root': {\r\n        borderRadius: '10px',\r\n        backgroundColor: '#fff',\r\n      },\r\n      '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': {\r\n        borderColor: '#3f51b5',\r\n      },\r\n      '& .MuiInputLabel-root': {\r\n        color: '#555',\r\n        fontWeight: 500,\r\n      },\r\n    },\r\n  },\r\n  paper: {\r\n    padding: '24px',\r\n    marginTop: '20px',\r\n    borderRadius: '15px',\r\n    backgroundColor: '#fafafa',\r\n    boxShadow: '0 6px 20px rgba(0,0,0,0.06)',\r\n    transition: 'all 0.3s ease',\r\n  },\r\n  form: {\r\n    display: 'flex',\r\n    flexDirection: 'column',\r\n    flexWrap: 'wrap',\r\n    justifyContent: 'center',\r\n    gap: '14px',\r\n  },\r\n  fileInput: {\r\n    width: '100%',\r\n    margin: '10px 0',\r\n    borderRadius: '10px',\r\n    padding: '8px',\r\n    backgroundColor: '#fff',\r\n    boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.1)',\r\n  },\r\n  buttonSubmit: {\r\n    marginTop: '10px',\r\n    textTransform: 'none',\r\n    fontWeight: 600,\r\n    fontSize: '1rem',\r\n    padding: '10px 0',\r\n    borderRadius: '12px',\r\n    background: 'linear-gradient(90deg, #3f51b5 0%, #6573c3 100%)',\r\n    color: '#fff',\r\n    boxShadow: '0 4px 12px rgba(63,81,181,0.3)',\r\n    transition: 'all 0.3s ease',\r\n    cursor: 'pointer',\r\n    '&:hover': {\r\n      background: 'linear-gradient(90deg, #6573c3 0%, #3f51b5 100%)',\r\n      boxShadow: '0 6px 16px rgba(63,81,181,0.4)',\r\n      transform: 'translateY(-2px)',\r\n    },\r\n  },\r\n  clearButton: {\r\n    marginTop: '10px',\r\n    textTransform: 'none',\r\n    fontWeight: 600,\r\n    fontSize: '0.9rem',\r\n    padding: '8px 0',\r\n    borderRadius: '12px',\r\n    background: 'linear-gradient(90deg, #f50057 0%, #ff4081 100%)',\r\n    color: '#fff',\r\n    boxShadow: '0 4px 12px rgba(245,0,87,0.3)',\r\n    transition: 'all 0.3s ease',\r\n    cursor: 'pointer',\r\n    '&:hover': {\r\n      boxShadow: '0 6px 16px rgba(245,0,87,0.4)',\r\n      transform: 'translateY(-2px)',\r\n    },\r\n  },\r\n  titleTypography: {\r\n    fontFamily: 'Inter, sans-serif',\r\n    fontWeight: 600,\r\n    fontSize: '1.2rem',\r\n    marginBottom: '10px',\r\n    color: '#222',\r\n  },\r\n}));"
+        }
+    ]
+}

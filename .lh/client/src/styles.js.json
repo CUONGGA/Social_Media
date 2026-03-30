@@ -1,0 +1,18 @@
+{
+    "sourceFile": "client/src/styles.js",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1774853987227,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1774853987227,
+            "name": "Commit-0",
+            "content": "import { makeStyles } from '@material-ui/core';\r\n\r\nexport default makeStyles((theme) => ({\r\n    appBar: {\r\n        borderRadius: 15,\r\n        margin: '20px 0',\r\n        padding: '10px 20px',\r\n        display: 'flex',\r\n        flexDirection: 'row',\r\n        justifyContent: 'space-between',\r\n        alignItems: 'center',\r\n        background: 'linear-gradient(90deg, #2196F3, #21CBF3)',\r\n        boxShadow: '0 6px 20px rgba(0,0,0,0.1)',\r\n        color: '#fff',\r\n    },\r\n    heading: {\r\n        fontWeight: 700,\r\n        fontSize: '2rem',\r\n        letterSpacing: '1px',\r\n        color: '#fff',\r\n        textTransform: 'uppercase',\r\n    },\r\n    image: {\r\n        marginLeft: '15px',\r\n        width: '50px',\r\n        height: '50px',\r\n    },\r\n    mainContainer: {\r\n        padding: '20px 0',\r\n        display: 'flex',\r\n        justifyContent: 'center',\r\n        [theme.breakpoints.down('sm')]: {\r\n            flexDirection: 'column-reverse',\r\n        }\r\n    },\r\n    paper: {\r\n        padding: '20px',\r\n        borderRadius: '15px',\r\n        boxShadow: '0 8px 25px rgba(0,0,0,0.1)',\r\n        transition: '0.3s ease',\r\n        '&:hover': {\r\n            boxShadow: '0 12px 40px rgba(0,0,0,0.15)',\r\n        }\r\n    },\r\n}));"
+        }
+    ]
+}

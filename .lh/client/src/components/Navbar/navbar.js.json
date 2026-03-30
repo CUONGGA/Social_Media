@@ -3,7 +3,7 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 16,
+            "activePatchIndex": 17,
             "patches": [
                 {
                     "date": 1774687621234,
@@ -72,6 +72,10 @@
                 {
                     "date": 1774781738495,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -39,9 +39,9 @@\n         <Toolbar className={classes.toolbar}>\r\n             {\r\n                 user ? ( \r\n                     <div className={classes.profile}>\r\n-                        <Avatar className={classes.purple} alt={user?.result?.name} src={user?.result?.picture}>\r\n+                        <Avatar className={classes.purple} alt={user?.result?.name?.charAt(0)} src={user?.result?.picture}>\r\n                             {user?.result?.name.charAt(0)}\r\n                         </Avatar>\r\n                         <Typography className={classes.userName} variant=\"h6\">\r\n                             {user?.result?.name}\r\n"
+                },
+                {
+                    "date": 1774852888048,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -50,9 +50,9 @@\n                             Logout\r\n                         </Button>\r\n                     </div>\r\n                 ) : ( \r\n-                    <Button component={Link} to=\"/auth\" variant=\"contained\" color=\"primary\">\r\n+                    <Button component={Link} to=\"/auth\" variant=\"contained\" color=\"primary\" className={classes.signInButton}>\r\n                         Sign In\r\n                     </Button>\r\n                 )\r\n             }\r\n"
                 }
             ],
             "date": 1774687621234,

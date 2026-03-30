@@ -83,7 +83,7 @@ export default makeStyles((theme) => ({
   // Small switch mode text
   switchMode: {
     textTransform: 'none',
-    marginTop: '10px',
+    marginTop: theme.spacing(2),
     fontWeight: 500,
     fontSize: '0.9rem',
     color: '#555',

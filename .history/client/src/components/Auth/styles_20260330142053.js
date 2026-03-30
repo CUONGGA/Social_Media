@@ -58,9 +58,9 @@ export default makeStyles((theme) => ({
     textTransform: 'none',
     fontWeight: 600,
     fontSize: '1rem',
-    padding: '8px 0',
+    padding: '12px 0',
     borderRadius: '14px',
-    background: 'linear-gradient(90deg, #3f51b5 0%, #6573c3 100%)',
+    background: 'linear-gradient(90deg, #4f46e5 0%, #6366f1 100%)',
     color: '#fff',
     boxShadow: '0 8px 20px rgba(79,70,229,0.3)',
     transition: 'all 0.3s ease',
@@ -71,7 +71,21 @@ export default makeStyles((theme) => ({
     },
   },
 
+  // Google Sign In button
+  googleButton: {
+    marginTop: theme.spacing(1),
+    marginBottom: theme.spacing(2),
+    width: '100%',
+    borderRadius: '14px',
+    boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+    transition: 'all 0.3s ease',
+    '&:hover': {
+      boxShadow: '0 6px 18px rgba(0,0,0,0.15)',
+      transform: 'translateY(-1px)',
+    },
+  },
 
+  // Typography / Heading
   heading: {
     fontWeight: 700,
     fontSize: '1.8rem',
@@ -83,7 +97,6 @@ export default makeStyles((theme) => ({
   // Small switch mode text
   switchMode: {
     textTransform: 'none',
-    marginTop: '10px',
     fontWeight: 500,
     fontSize: '0.9rem',
     color: '#555',

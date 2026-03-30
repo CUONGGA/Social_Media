@@ -52,6 +52,18 @@ export default makeStyles((theme) => ({
     },
   },
 
+  switchMode: {
+  textTransform: 'none',
+  fontWeight: 500,
+  fontSize: '0.9rem',
+  color: '#555',
+  marginTop: '8px', // <-- thêm khoảng cách lên trên
+  '&:hover': {
+    color: '#4f46e5',
+    backgroundColor: 'transparent',
+    },
+  },
+
   // Sign In / Sign Up button
   submit: {
     margin: theme.spacing(3, 0, 2),
@@ -83,7 +95,6 @@ export default makeStyles((theme) => ({
   // Small switch mode text
   switchMode: {
     textTransform: 'none',
-    marginTop: '10px',
     fontWeight: 500,
     fontSize: '0.9rem',
     color: '#555',

@@ -77,15 +77,23 @@ const Auth = () => {
           </Grid>
           <Button type="submit" fullWidth variant='contained' color='primary' className={classes.submit}>{ isSignup ? 'Sign Up' : 'Sign In' }</Button>
           <GoogleLogin
-                className={classes.googleButton}
-                clientId = "GOOGLE ID"
-                onSuccess={googleSuccess}
-                onFailure={googleFailure}
-                cookiePolicy="single_host_origin"
-              />
+            onSuccess={googleSuccess}
+            onError={googleFailure}
+            render={(renderProps) => (
+            <Button
+              className={classes.googleButton}  // style Material-UI của bạn sẽ áp dụng
+              fullWidth
+              onClick={renderProps.onClick}
+              disabled={renderProps.disabled}
+              variant="contained"
+            >
+              Sign in with Google
+            </Button>
+          )}
+          />
           <Grid container justifyContent='flex-end'>
                 <Grid item>
-                  <Button onClick={switchMode} className={classes.switchMode}>
+                  <Button onClick={switchMode}>
                       { isSignup ? 'Already have an account? Sign in' : "Don't have an account? Sign Up" }
                   </Button>
                 </Grid>
