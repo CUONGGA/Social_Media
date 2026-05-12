@@ -6,9 +6,11 @@ export default makeStyles((theme) => ({
     margin: '20px 0',
     '& .MuiPaginationItem-root': {
       borderRadius: '50%', // bo tròn hoàn toàn
-      margin: '0 8px',     // tăng khoảng cách 2 bên
-      minWidth: '44px',    // to hơn một chút
-      height: '44px',
+      margin: '0 5px',
+      minWidth: '36px',
+      height: '36px',
+      padding: theme.spacing(0.75),
+      fontSize: '0.875rem',
       fontWeight: 600,
       color: '#3f51b5',
       background: 'linear-gradient(145deg, #f5f5f5 0%, #e8e8e8 100%)',
