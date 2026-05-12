@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import useStyle from './styles.js';
-import FileBase from 'react-file-base64';
 import { useSelector } from 'react-redux';
 import { TextField, Button, Typography, Paper } from "@material-ui/core";
 import { useDispatch } from "react-redux";
@@ -8,7 +7,9 @@ import { useHistory } from "react-router-dom";
 import { createPost, updatePost } from '../../actions/posts.js'
 
 const Form = ({ currentId, setCurrentId }) => {
-    const [postData, setPostData] = useState({title: '', message: '', tags: '', selectedFile: ''})
+    const [postData, setPostData] = useState({ title: '', message: '', tags: [], selectedFile: '' })
+    const [pickedFileLabel, setPickedFileLabel] = useState('')
+    const fileInputRef = useRef(null)
     const post = useSelector((state) => currentId ? state.posts.posts.find((p) => p._id === currentId) : null);
     const classes = useStyle();
     const dispatch = useDispatch();
@@ -16,8 +17,24 @@ const Form = ({ currentId, setCurrentId }) => {
     const history = useHistory();
 
     useEffect(() => {
-        if(post) setPostData(post)
+        if (post) {
+            setPostData(post)
+            setPickedFileLabel(post.selectedFile ? 'Image attached' : '')
+        }
     }, [post])
+
+    const handleFileChange = (e) => {
+        const file = e.target.files?.[0]
+        if (!file) return
+        const reader = new FileReader()
+        reader.onload = () => {
+            setPostData((prev) => ({ ...prev, selectedFile: reader.result }))
+            setPickedFileLabel(file.name)
+        }
+        reader.readAsDataURL(file)
+    }
+
+    const openFilePicker = () => fileInputRef.current?.click()
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -43,19 +60,47 @@ const Form = ({ currentId, setCurrentId }) => {
 
     const clear = () => {
         setCurrentId(null);
-        setPostData({title: '', message: '', tags: '', selectedFile: ''});
+        setPostData({ title: '', message: '', tags: [], selectedFile: '' });
+        setPickedFileLabel('');
+        if (fileInputRef.current) fileInputRef.current.value = '';
     }
+
+    const tagsValue = Array.isArray(postData.tags)
+        ? postData.tags.join(', ')
+        : (postData.tags || '');
 
     return (
         <Paper className={classes.paper} elevation={6}>
             <form autoComplete="off" noValidate className={`${classes.form} ${classes.root}`} onSubmit={handleSubmit}>
-            <Typography variant="h6">{ currentId ? 'Editing' : 'Creating' } a Memory</Typography>
+            <Typography className={classes.titleTypography} component="h2">
+                { currentId ? 'Editing' : 'Creating' } a Memory
+            </Typography>
             <TextField name="title" variant="outlined" label="Title" fullWidth value={postData.title} onChange={(e) => setPostData({ ...postData, title: e.target.value})}/>
-            <TextField name="message" variant="outlined" label="Message" fullWidth value={postData.message} onChange={(e) => setPostData({ ...postData, message: e.target.value})}/>
-            <TextField name="tags" variant="outlined" label="Tags" fullWidth value={postData.tags} onChange={(e) => setPostData({ ...postData, tags: e.target.value.split(',')})}/>
-            <div className={classes.fileInput}><FileBase type="file" multiple={false} onDone={({base64}) => setPostData ({ ...postData, selectedFile: base64 })}/></div>
-            <Button className={classes.buttonSubmit} variant="contained" color="primary" size="large" type="submit" fullWidth>Submit</Button>
-            <Button style={{ marginTop: '10px' }} variant="contained" color="secondary" size="small" onClick={clear} fullWidth>Clear</Button>
+            <TextField name="message" variant="outlined" label="Message" fullWidth multiline rows={3} value={postData.message} onChange={(e) => setPostData({ ...postData, message: e.target.value})}/>
+            <TextField name="tags" variant="outlined" label="Tags" fullWidth placeholder="vacation, family" value={tagsValue} onChange={(e) => setPostData({ ...postData, tags: e.target.value.split(',').map((t) => t.trim()).filter(Boolean) })}/>
+            <div className={classes.fileInput}>
+                <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    className={classes.fileInputHidden}
+                    onChange={handleFileChange}
+                />
+                <Button type="button" className={classes.chooseFileButton} variant="outlined" color="primary" onClick={openFilePicker}>
+                    Choose file
+                </Button>
+                <Typography className={classes.fileHint} variant="body2" noWrap component="span" title={pickedFileLabel || undefined}>
+                    {pickedFileLabel || (postData.selectedFile ? 'Image attached' : 'No file chosen')}
+                </Typography>
+            </div>
+            <div className={classes.actionsRow}>
+                <Button className={classes.buttonSubmit} variant="contained" color="primary" type="submit">
+                    Submit
+                </Button>
+                <Button className={classes.clearButton} variant="text" type="button" onClick={clear}>
+                    Clear
+                </Button>
+            </div>
             </form>
         </Paper>
     )

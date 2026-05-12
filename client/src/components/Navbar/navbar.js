@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useHistory, useLocation } from "react-router-dom";
 import { AppBar, Avatar, Toolbar, Typography, Button } from "@material-ui/core";
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import { useDispatch } from "react-redux";
 import { jwtDecode } from 'jwt-decode';
 import useStyle from './styles';
@@ -43,10 +44,16 @@ const Navbar = () => {
                         <Avatar className={classes.purple} alt={user?.result?.name?.charAt(0)} src={user?.result?.picture}>
                             {user?.result?.name.charAt(0)}
                         </Avatar>
-                        <Typography className={classes.userName} variant="h6">
+                        <Typography className={classes.userName} component="span" variant="body1">
                             {user?.result?.name}
                         </Typography>
-                        <Button variant="contained" className={classes.logout} color="secondary" onClick={logout}>
+                        <Button
+                            variant="outlined"
+                            className={classes.logout}
+                            color="primary"
+                            onClick={logout}
+                            startIcon={<ExitToAppIcon style={{ fontSize: 18 }} />}
+                        >
                             Logout
                         </Button>
                     </div>
