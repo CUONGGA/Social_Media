@@ -7,6 +7,7 @@ import WbSunny from '@material-ui/icons/WbSunny';
 import { useDispatch } from "react-redux";
 import { useThemeMode } from '../../context/ThemeModeContext';
 import { jwtDecode } from 'jwt-decode';
+import { notifyInfo } from '../../utils/notify';
 import useStyle from './styles';
 import memoriesLogo from '../../images/memories-Logo.png';
 import memoriesText from '../../images/memories-Text.png';
@@ -20,6 +21,7 @@ const Navbar = () => {
     const location = useLocation();
     const logout = () => {
         dispatch({ type:'LOGOUT' });
+        notifyInfo('You have been signed out.');
         history.push('/');
         setUser(null);
     }

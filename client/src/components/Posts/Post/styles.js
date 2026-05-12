@@ -5,7 +5,8 @@ export default makeStyles((theme) => ({
     height: 0,
     paddingTop: '56.25%',
     /* Tránh lớp tối + blend làm ảnh trông mờ — chỉ nền nhẹ khi chưa load */
-    backgroundColor: 'rgba(0,0,0,0.04)',
+    backgroundColor:
+      theme.palette.type === 'dark' ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.04)',
     transition: 'transform 0.5s ease',
     '&:hover': {
       transform: 'scale(1.05)',
@@ -18,10 +19,16 @@ export default makeStyles((theme) => ({
     borderRadius: '20px',
     height: '100%',
     position: 'relative',
-    boxShadow: '0 10px 25px rgba(0,0,0,0.08)',
+    boxShadow:
+      theme.palette.type === 'dark'
+        ? '0 10px 25px rgba(0,0,0,0.45)'
+        : '0 10px 25px rgba(0,0,0,0.08)',
     transition: 'all 0.3s ease',
     '&:hover': {
-      boxShadow: '0 12px 30px rgba(0,0,0,0.12)',
+      boxShadow:
+        theme.palette.type === 'dark'
+          ? '0 12px 30px rgba(0,0,0,0.55)'
+          : '0 12px 30px rgba(0,0,0,0.12)',
       transform: 'translateY(-4px)',
     },
   },
@@ -44,18 +51,18 @@ export default makeStyles((theme) => ({
     flexWrap: 'wrap',
     margin: '20px',
     gap: '6px',
-    color: '#555',
+    color: theme.palette.text.secondary,
     fontWeight: 500,
   },
   title: {
     padding: '0 16px',
     fontWeight: 600,
     fontSize: '1.3rem',
-    color: '#222',
+    color: theme.palette.text.primary,
   },
   cardContent: {
     padding: '0 16px 16px 16px',
-    color: '#555',
+    color: theme.palette.text.secondary,
     fontSize: '0.95rem',
   },
   cardActions: {

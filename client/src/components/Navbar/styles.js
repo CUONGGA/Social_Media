@@ -62,8 +62,9 @@ export default makeStyles((theme) => ({
     textTransform: 'none',
     fontWeight: 600,
     fontSize: '0.8125rem',
-    padding: '8px 16px',
-    minHeight: 36,
+    padding: '9px 16px',
+    minHeight: 38,
+    minWidth: 132,
     borderRadius: 10,
     lineHeight: 1.2,
     color: '#5c5c5c',
@@ -83,7 +84,9 @@ export default makeStyles((theme) => ({
     },
     '&.MuiButton-outlined': {
       border: '1px solid #e0e0e0',
-      padding: '8px 16px',
+      padding: '9px 16px',
+      minHeight: 38,
+      minWidth: 132,
       '&:hover': {
         border: '1px solid #7986cb',
         backgroundColor: '#e8eaf6',
@@ -91,7 +94,7 @@ export default makeStyles((theme) => ({
     },
   },
   logoutIcon: {
-    fontSize: 18,
+    fontSize: 17,
   },
   userName: {
     display: 'block',
@@ -119,8 +122,12 @@ export default makeStyles((theme) => ({
     backgroundColor: deepPurple[500],
   },
   themeToggle: {
-    padding: 10,
-    borderRadius: 12,
+    padding: 8,
+    width: 38,
+    height: 38,
+    minWidth: 38,
+    boxSizing: 'border-box',
+    borderRadius: 10,
     border:
       theme.palette.type === 'dark'
         ? '1px solid rgba(129, 140, 248, 0.35)'
@@ -147,7 +154,7 @@ export default makeStyles((theme) => ({
       transform: 'scale(1.06)',
     },
     '& svg': {
-      fontSize: 22,
+      fontSize: 18,
       filter:
         theme.palette.type === 'dark'
           ? 'drop-shadow(0 0 6px rgba(165, 180, 252, 0.45))'
@@ -156,28 +163,54 @@ export default makeStyles((theme) => ({
   },
   signInButton: {
     textTransform: 'none',
-    fontWeight: 600,
-    fontSize: '0.875rem',
-    letterSpacing: '0.02em',
-    padding: '10px 22px',
-    minHeight: 40,
+    fontWeight: 700,
+    fontSize: '0.8125rem',
+    letterSpacing: '0.04em',
+    padding: '9px 16px',
+    minHeight: 38,
+    minWidth: 116,
     borderRadius: 10,
     lineHeight: 1.2,
-    boxShadow: 'none',
-    backgroundColor: '#3f51b5',
-    color: '#fff',
-    transition: 'background-color 0.2s ease, box-shadow 0.2s ease',
+    color: '#fff !important',
+    border: 'none',
+    background:
+      theme.palette.type === 'dark'
+        ? 'linear-gradient(145deg, #818cf8 0%, #6366f1 40%, #4f46e5 100%)'
+        : 'linear-gradient(145deg, #6a77c9 0%, #3f51b5 42%, #283593 100%)',
+    boxShadow:
+      theme.palette.type === 'dark'
+        ? '0 4px 18px rgba(99, 102, 241, 0.38)'
+        : '0 4px 16px rgba(57, 73, 171, 0.28)',
+    transition: 'box-shadow 0.25s ease, filter 0.2s ease',
     '&:hover': {
-      backgroundColor: '#283593',
-      color: '#fff',
-      boxShadow: '0 2px 6px rgba(40, 53, 147, 0.4)',
+      color: '#fff !important',
+      background:
+        theme.palette.type === 'dark'
+          ? 'linear-gradient(145deg, #a5b4fc 0%, #7c83f7 45%, #6366f1 100%)'
+          : 'linear-gradient(145deg, #7b87ce 0%, #4f5cb8 40%, #1a237e 100%)',
+      boxShadow:
+        theme.palette.type === 'dark'
+          ? '0 8px 26px rgba(129, 140, 248, 0.42)'
+          : '0 8px 24px rgba(57, 73, 171, 0.36)',
     },
     '&.MuiButton-containedPrimary': {
-      boxShadow: 'none',
-      backgroundColor: '#3f51b5',
+      background:
+        theme.palette.type === 'dark'
+          ? 'linear-gradient(145deg, #818cf8 0%, #6366f1 40%, #4f46e5 100%)'
+          : 'linear-gradient(145deg, #6a77c9 0%, #3f51b5 42%, #283593 100%)',
+      boxShadow:
+        theme.palette.type === 'dark'
+          ? '0 4px 18px rgba(99, 102, 241, 0.38)'
+          : '0 4px 16px rgba(57, 73, 171, 0.28)',
       '&:hover': {
-        backgroundColor: '#283593',
-        boxShadow: '0 2px 6px rgba(40, 53, 147, 0.4)',
+        background:
+          theme.palette.type === 'dark'
+            ? 'linear-gradient(145deg, #a5b4fc 0%, #7c83f7 45%, #6366f1 100%)'
+            : 'linear-gradient(145deg, #7b87ce 0%, #4f5cb8 40%, #1a237e 100%)',
+        boxShadow:
+          theme.palette.type === 'dark'
+            ? '0 8px 26px rgba(129, 140, 248, 0.42)'
+            : '0 8px 24px rgba(57, 73, 171, 0.36)',
       },
     },
   },

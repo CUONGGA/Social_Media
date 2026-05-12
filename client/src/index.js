@@ -10,6 +10,7 @@ import reducers from './reducers';
 import App from './App';
 import './index.css';
 import { ThemeModeProvider } from './context/ThemeModeContext';
+import { ToastProvider } from './context/ToastContext.jsx';
 
 const store = createStore(reducers, compose(applyMiddleware(thunk)));
 
@@ -18,7 +19,9 @@ ReactDOM.render(
         <GoogleOAuthProvider clientId="319407429518-4o8l3lg5ulji3pfav2aei920j6r3eqbl.apps.googleusercontent.com">
             <BrowserRouter>
                 <ThemeModeProvider>
-                    <App />
+                    <ToastProvider>
+                        <App />
+                    </ToastProvider>
                 </ThemeModeProvider>
             </BrowserRouter>
         </GoogleOAuthProvider>

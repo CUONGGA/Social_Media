@@ -13,19 +13,22 @@ export default makeStyles((theme) => ({
     marginTop: '40px',
     fontSize: '1.5rem',
     fontWeight: 600,
-    color: '#888',
+    color: theme.palette.text.secondary,
     fontFamily: 'Inter, sans-serif',
   },
   circularProgress: {
     display: 'block',
     margin: '50px auto',
-    color: '#3f51b5',
+    color: theme.palette.primary.main,
   },
   gridItem: {
     transition: 'transform 0.3s ease, box-shadow 0.3s ease',
     '&:hover': {
       transform: 'translateY(-4px)',
-      boxShadow: '0 12px 24px rgba(0,0,0,0.1)',
+      boxShadow:
+        theme.palette.type === 'dark'
+          ? '0 12px 24px rgba(0,0,0,0.4)'
+          : '0 12px 24px rgba(0,0,0,0.1)',
     },
   },
 }));

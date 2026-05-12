@@ -22,12 +22,12 @@ a {
 
 button {
     cursor: pointer;
-    transition: all 0.2s ease-in-out;
+    transition: background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out, border-color 0.2s ease-in-out,
+        color 0.2s ease-in-out, opacity 0.2s ease-in-out;
 }
 
-button:hover {
-    transform: translateY(-2px);
-}
+/* Không dùng transform trên toàn bộ button:hover — làm nút MUI nhích lên, chuột ở mép dưới
+   rơi khỏi hit area → hover bật/tắt liên tục. Hiệu ứng nâng nút để ở từng component nếu cần. */
 
 .MuiPaper-root {
     box-shadow: 0 4px 20px rgba(0,0,0,0.08);

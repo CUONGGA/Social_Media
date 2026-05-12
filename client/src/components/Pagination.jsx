@@ -11,12 +11,13 @@ const Paginate = ({ page }) => {
     const dispatch = useDispatch();
     const history = useHistory();
     const total = Math.max(Number(numberOfPages) || 1, 1);
-    const current = Math.min(Math.max(Number(page) || 1, 1), total);
+    const pageNum = Math.max(1, parseInt(String(page), 10) || 1);
+    const current = Math.min(pageNum, total);
     const compactEllipsis = total > 3;
 
     useEffect(() => {
-        if (page) dispatch(getPosts(page));
-    }, [page, dispatch]);
+        dispatch(getPosts(current));
+    }, [current, dispatch]);
 
     const handleChange = (e, value) => {
         history.push(`/posts?page=${value}`);

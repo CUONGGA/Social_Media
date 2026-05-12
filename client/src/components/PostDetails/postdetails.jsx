@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
 import CommentSection from './commentsection.jsx';
 import { useParams, useHistory } from 'react-router-dom';
-import { getPost, getPostBySearch } from '../../actions/posts.js';
+import { getPost, getPostBySearch } from '../../actions/posts';
 import useStyle from './styles';
 import { intrinsicDisplaySize } from './intrinsicImageSize';
 
@@ -22,7 +22,7 @@ function getCaps() {
 }
 
 const PostDetails = () => {
-    const { post, posts, isLoading } = useSelector((state) => state.posts);
+    const { post, isLoading, relatedPosts, relatedForPostId } = useSelector((state) => state.posts);
     const dispatch = useDispatch();
     const history = useHistory();
     const classes = useStyle();
@@ -43,7 +43,10 @@ const PostDetails = () => {
     useEffect(() => {
         if (!post || String(post._id) !== String(id)) return;
         dispatch(
-            getPostBySearch({ search: 'none', tags: (post.tags ?? []).join(',') }, { silent: true })
+            getPostBySearch(
+                { search: 'none', tags: (post.tags ?? []).join(',') },
+                { silent: true, forPostId: post._id }
+            )
         );
     }, [post, id, dispatch]);
 
@@ -77,8 +80,11 @@ const PostDetails = () => {
       );
     }
 
-    const list = Array.isArray(posts) ? posts : [];
-    const recommendedPosts = list.filter(({ _id }) => String(_id) !== String(post._id));
+    const relatedReady =
+        String(relatedForPostId) === String(id) && Array.isArray(relatedPosts);
+    const recommendedPosts = relatedReady
+        ? relatedPosts.filter(({ _id }) => String(_id) !== String(post._id))
+        : [];
 
     const openPost = (_id) => history.push(`/posts/${_id}`);
 

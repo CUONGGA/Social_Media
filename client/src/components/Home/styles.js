@@ -4,8 +4,11 @@ export default makeStyles((theme) => ({
   searchPaper: {
     padding: theme.spacing(2.5),
     borderRadius: 15,
-    backgroundColor: '#fafafa',
-    boxShadow: '0 6px 20px rgba(0,0,0,0.06)',
+    backgroundColor: theme.palette.background.paper,
+    boxShadow:
+      theme.palette.type === 'dark'
+        ? '0 6px 20px rgba(0,0,0,0.45)'
+        : '0 6px 20px rgba(0,0,0,0.06)',
     transition: 'all 0.3s ease',
     display: 'flex',
     justifyContent: 'center',
@@ -29,13 +32,14 @@ export default makeStyles((theme) => ({
       width: '100%',
       '& .MuiOutlinedInput-root': {
         borderRadius: 10,
-        backgroundColor: '#fff',
+        backgroundColor:
+          theme.palette.type === 'dark' ? 'rgba(255,255,255,0.06)' : '#fff',
       },
       '& .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline': {
         borderColor: '#3f51b5',
       },
       '& .MuiInputLabel-root': {
-        color: '#555',
+        color: theme.palette.text.secondary,
         fontWeight: 500,
       },
     },
@@ -44,7 +48,7 @@ export default makeStyles((theme) => ({
     fontWeight: 600,
     fontSize: '1.125rem',
     marginBottom: theme.spacing(1),
-    color: '#222',
+    color: theme.palette.text.primary,
     width: '100%',
     textAlign: 'center',
   },
@@ -55,7 +59,8 @@ export default makeStyles((theme) => ({
     marginBottom: theme.spacing(0.75),
     '& .MuiOutlinedInput-root': {
       borderRadius: 10,
-      backgroundColor: '#fff',
+      backgroundColor:
+        theme.palette.type === 'dark' ? 'rgba(255,255,255,0.06)' : '#fff',
       display: 'flex',
       flexWrap: 'wrap',
       alignItems: 'center',
@@ -86,7 +91,7 @@ export default makeStyles((theme) => ({
       alignSelf: 'center',
     },
     '& .MuiInputLabel-root': {
-      color: '#555',
+      color: theme.palette.text.secondary,
       fontWeight: 500,
     },
     /* ChipInput thêm top trên label → lệch so với TextField outlined chuẩn MUI */
@@ -98,7 +103,9 @@ export default makeStyles((theme) => ({
       transform: 'translate(14px, -6px) scale(0.75) !important',
     },
     '& .MuiChip-root': {
-      backgroundColor: '#e0e0e0',
+      backgroundColor:
+        theme.palette.type === 'dark' ? 'rgba(148, 163, 184, 0.22)' : '#e0e0e0',
+      color: theme.palette.type === 'dark' ? theme.palette.text.primary : undefined,
       fontWeight: 500,
       margin: theme.spacing(0.5, 1, 0.5, 0),
     },
@@ -143,9 +150,12 @@ export default makeStyles((theme) => ({
     borderRadius: 12,
     marginTop: '1rem',
     padding: '16px',
-    boxShadow: '0 6px 20px rgba(0,0,0,0.06)',
+    boxShadow:
+      theme.palette.type === 'dark'
+        ? '0 6px 20px rgba(0,0,0,0.45)'
+        : '0 6px 20px rgba(0,0,0,0.06)',
     transition: 'all 0.3s ease',
-    backgroundColor: '#fff',
+    backgroundColor: theme.palette.background.paper,
   },
   gridContainer: {
     [theme.breakpoints.down('xs')]: {

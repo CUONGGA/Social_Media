@@ -18,7 +18,7 @@ const Home = () => {
     const dispatch = useDispatch();
     const query = useQuery();
     const history = useHistory();
-    const page = query.get('page') || 1;
+    const page = Math.max(1, parseInt(query.get('page') || '1', 10) || 1);
     const searchQuery = query.get('searchQuery');
     const classes = useStyle();
     const [search, setSearch] = useState('');
@@ -40,6 +40,11 @@ const Home = () => {
     useEffect(() => {
     dispatch(getPosts(page));
     }, [dispatch, currentId, page]);
+
+    /* Đổi trang phân trang → cuộn lên đầu như lần đầu vào danh sách */
+    useEffect(() => {
+        window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+    }, [page]);
   return (
     <Grow in>
     <Container maxWidth="xl">

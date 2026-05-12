@@ -93,7 +93,7 @@ const Post = ({ post, setCurrentId }) => {
           <Typography variant="body2" color="textSecondary" component="h2">{(post.tags ?? []).map((tag) => `#${tag} `)}</Typography>
         </div>
         <Typography className={classes.title} gutterBottom variant="h5" component="h2">{post.title}</Typography>
-        <CardContent>
+        <CardContent className={classes.cardContent}>
           <Typography variant="body2" color="textSecondary" component="p">{(post.message ?? '').split(' ').splice(0, 20).join(' ')}...</Typography>
         </CardContent>
       </ButtonBase>

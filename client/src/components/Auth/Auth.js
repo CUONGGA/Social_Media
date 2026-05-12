@@ -9,6 +9,7 @@ import { GoogleLogin } from '@react-oauth/google';
 import { jwtDecode } from 'jwt-decode';
 import { useDispatch } from 'react-redux';
 import { signin, signup } from '../../actions/auth.js';
+import { notifySuccess, notifyError } from '../../utils/notify';
 
 
 const initialState = { firstName: '', lastName: '', email: '', password: '', confirmPassword: '' };
@@ -40,18 +41,18 @@ const Auth = () => {
     const googleSuccess = async (res) => {
       const token = res?.credential;
       const decoded = jwtDecode(token);
-      console.log(decoded, token);
       try {
         dispatch({ type: 'AUTH', data: { result: decoded, token } });
-        history.push('/');
+        notifySuccess('Signed in with Google.');
+        history.push('/posts');
       } catch (error) {
         console.log(error);
+        notifyError('Something went wrong during Google sign-in.');
       }
     };
 
-    const googleFailure = (error) => {
-      console.log('Google Sign In was unsuccessful. Try again later.');
-      console.log(error);
+    const googleFailure = () => {
+      notifyError('Google sign-in was cancelled or failed. Please try again.');
     };
 
 

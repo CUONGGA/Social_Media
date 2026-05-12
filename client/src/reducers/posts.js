@@ -1,5 +1,8 @@
-import {START_LOADING, END_LOADING, FETCH_POST, FETCH_BY_SEARCH, FETCH_ALL, CREATE, UPDATE, DELETE, LIKE, COMMENT } from '../constants/actionType';
-export default (state = { isLoading: true, posts: [] }, action) => {
+import {START_LOADING, END_LOADING, FETCH_POST, FETCH_BY_SEARCH, FETCH_RELATED, FETCH_ALL, CREATE, UPDATE, DELETE, LIKE, COMMENT } from '../constants/actionType';
+
+const emptyRelated = { relatedPosts: [], relatedForPostId: null };
+
+export default (state = { isLoading: true, posts: [], relatedPosts: [], relatedForPostId: null }, action) => {
     switch (action.type){
         case START_LOADING:
             return { ...state, isLoading: true };
@@ -10,19 +13,30 @@ export default (state = { isLoading: true, posts: [] }, action) => {
                 ...state,
                 posts: action.payload.data,
                 currentPage: action.payload.currentPage,
-                numberOfPages: action.payload.numberOfPages
+                numberOfPages: action.payload.numberOfPages,
+                ...emptyRelated,
             };
         case FETCH_BY_SEARCH:
                 return {
                     ...state,
                     posts: Array.isArray(action.payload) ? action.payload : [],
+                    ...emptyRelated,
                 };
+        case FETCH_RELATED: {
+            const p = action.payload || {};
+            const data = Array.isArray(p.data) ? p.data : [];
+            const postId = p.postId != null ? String(p.postId) : null;
+            return { ...state, relatedPosts: data, relatedForPostId: postId };
+        }
         case FETCH_POST:
-            return { ...state, post: action.payload };
+            return { ...state, post: action.payload, ...emptyRelated };
         case LIKE:
             return {
                 ...state,
                 posts: state.posts.map((p) =>
+                    String(p._id) === String(action.payload._id) ? action.payload : p
+                ),
+                relatedPosts: (state.relatedPosts || []).map((p) =>
                     String(p._id) === String(action.payload._id) ? action.payload : p
                 ),
                 post:
@@ -39,6 +53,12 @@ export default (state = { isLoading: true, posts: [] }, action) => {
                     }
                     return post;
                 }),
+                relatedPosts: (state.relatedPosts || []).map((post) => {
+                    if (post._id === action.payload._id) {
+                        return action.payload;
+                    }
+                    return post;
+                }),
                 post:
                     state.post && state.post._id === action.payload._id
                         ? action.payload
@@ -47,9 +67,19 @@ export default (state = { isLoading: true, posts: [] }, action) => {
         case CREATE:
             return { ...state, posts: [...state.posts, action.payload] };
         case UPDATE:
-            return { ...state, posts: state.posts.map((posts) => posts._id === action.payload._id ? action.payload : posts) };
+            return {
+                ...state,
+                posts: state.posts.map((posts) => (posts._id === action.payload._id ? action.payload : posts)),
+                relatedPosts: (state.relatedPosts || []).map((p) =>
+                    p._id === action.payload._id ? action.payload : p
+                ),
+            };
         case DELETE: 
-            return { ...state, posts: state.posts.filter((posts) => posts._id !== action.payload) };
+            return {
+                ...state,
+                posts: state.posts.filter((posts) => posts._id !== action.payload),
+                relatedPosts: (state.relatedPosts || []).filter((p) => p._id !== action.payload),
+            };
         default:
             return state;
     }
