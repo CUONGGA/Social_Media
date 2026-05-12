@@ -4,6 +4,8 @@ Tài liệu ghi lại các hướng củng cố và mở rộng cho ứng dụng
 
 **Ý tưởng tính năng sản phẩm / UX** (dòng thời gian, album, map, v.v.): [Y_TUONG_TINH_NANG.md](./Y_TUONG_TINH_NANG.md).
 
+**Phản ứng nhiều loại (tim, haha, …)** — tạm ngưng trên UI; gợi ý triển khai sau: [PHAN_UNG_DA_TRIEN_KHAI.md](./PHAN_UNG_DA_TRIEN_KHAI.md).
+
 ---
 
 ## Hiện trạng ngắn gọn

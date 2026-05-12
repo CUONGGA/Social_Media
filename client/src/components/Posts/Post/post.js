@@ -11,16 +11,27 @@ import { useHistory } from 'react-router-dom';
 import { likePost, deletePost } from '../../../actions/posts';
 import useStyles from './styles';
 
+const readStoredProfile = () => {
+  try {
+    const raw = localStorage.getItem('profile');
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
+};
+
 const getUserId = (user) => {
   const r = user?.result;
   if (!r) return null;
-  return r.sub ?? r.googleId ?? r._id ?? null;
+  const id = r.sub ?? r.googleId ?? r._id;
+  return id != null ? String(id) : null;
 };
 
 const isSameId = (a, b) => String(a) === String(b);
 
 const Post = ({ post, setCurrentId }) => {
-  const user = JSON.parse(localStorage.getItem('profile'));
+  const user = readStoredProfile();
   const dispatch = useDispatch();
   const history = useHistory();
   const classes = useStyles();
@@ -79,11 +90,11 @@ const Post = ({ post, setCurrentId }) => {
         </div>
         )}
         <div className={classes.details}>
-          <Typography variant="body2" color="textSecondary" component="h2">{post.tags.map((tag) => `#${tag} `)}</Typography>
+          <Typography variant="body2" color="textSecondary" component="h2">{(post.tags ?? []).map((tag) => `#${tag} `)}</Typography>
         </div>
         <Typography className={classes.title} gutterBottom variant="h5" component="h2">{post.title}</Typography>
         <CardContent>
-          <Typography variant="body2" color="textSecondary" component="p">{post.message.split(' ').splice(0, 20).join(' ')}...</Typography>
+          <Typography variant="body2" color="textSecondary" component="p">{(post.message ?? '').split(' ').splice(0, 20).join(' ')}...</Typography>
         </CardContent>
       </ButtonBase>
       <CardActions className={classes.cardActions}>

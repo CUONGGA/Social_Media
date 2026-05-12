@@ -5,11 +5,12 @@
         try {
             dispatch({ type: START_LOADING });
             const { data } = await api.fetchPost(id);
-            
+
             dispatch({ type: FETCH_POST, payload: data });
             dispatch({ type: END_LOADING });
         } catch (error) {
             console.log(error.message);
+            dispatch({ type: END_LOADING });
         }
     }
 
@@ -22,17 +23,22 @@
             dispatch({ type: END_LOADING });
         } catch (error) {
             console.log(error.message);
-        }    
+            dispatch({ type: END_LOADING });
+        }
     }
 
-    export const getPostBySearch = (searchQuery) => async (dispatch) => {
+    /** @param {object} searchQuery - { search, tags } */
+    /** @param {{ silent?: boolean }} [options] - silent: do not toggle global isLoading (use on post detail page) */
+    export const getPostBySearch = (searchQuery, options = {}) => async (dispatch) => {
+        const { silent = false } = options;
         try {
-            dispatch({ type: START_LOADING });
+            if (!silent) dispatch({ type: START_LOADING });
             const { data: { data } } = await api.fetchPostBySearch(searchQuery);
             dispatch({ type: FETCH_BY_SEARCH, payload: data });
-            dispatch({ type: END_LOADING });
+            if (!silent) dispatch({ type: END_LOADING });
         } catch (error) {
             console.log(error.message);
+            if (!silent) dispatch({ type: END_LOADING });
         }
     };
 

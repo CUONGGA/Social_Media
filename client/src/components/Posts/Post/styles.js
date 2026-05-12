@@ -4,8 +4,8 @@ export default makeStyles((theme) => ({
   media: {
     height: 0,
     paddingTop: '56.25%',
-    backgroundColor: 'rgba(0,0,0,0.3)',
-    backgroundBlendMode: 'darken',
+    /* Tránh lớp tối + blend làm ảnh trông mờ — chỉ nền nhẹ khi chưa load */
+    backgroundColor: 'rgba(0,0,0,0.04)',
     transition: 'transform 0.5s ease',
     '&:hover': {
       transform: 'scale(1.05)',
@@ -30,7 +30,7 @@ export default makeStyles((theme) => ({
     top: '20px',
     left: '20px',
     color: '#fff',
-    textShadow: '0 2px 6px rgba(0,0,0,0.5)',
+    textShadow: '0 2px 10px rgba(0,0,0,0.85), 0 1px 3px rgba(0,0,0,0.9)',
   },
   overlay2: {
     position: 'absolute',

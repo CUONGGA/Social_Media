@@ -15,16 +15,18 @@ export default (state = { isLoading: true, posts: [] }, action) => {
         case FETCH_BY_SEARCH:
                 return {
                     ...state,
-                    posts: action.payload
+                    posts: Array.isArray(action.payload) ? action.payload : [],
                 };
         case FETCH_POST:
             return { ...state, post: action.payload };
         case LIKE:
             return {
                 ...state,
-                posts: state.posts.map((p) => p._id === action.payload._id ? action.payload : p),
+                posts: state.posts.map((p) =>
+                    String(p._id) === String(action.payload._id) ? action.payload : p
+                ),
                 post:
-                    state.post && state.post._id === action.payload._id
+                    state.post && String(state.post._id) === String(action.payload._id)
                         ? action.payload
                         : state.post,
             };

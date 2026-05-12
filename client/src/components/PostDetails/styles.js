@@ -1,45 +1,152 @@
 import { makeStyles } from '@material-ui/core/styles';
 
 export default makeStyles((theme) => ({
+  rootPaper: {
+    padding: theme.spacing(2.5),
+    borderRadius: 15,
+    maxWidth: '100%',
+    boxSizing: 'border-box',
+    overflow: 'hidden',
+  },
   media: {
-    borderRadius: '20px',
-    objectFit: 'cover',
+    display: 'block',
+    width: 'auto',
+    height: 'auto',
+    maxWidth: '100%',
+    objectFit: 'contain',
+    imageRendering: 'auto',
+    borderRadius: 12,
+    boxSizing: 'border-box',
+  },
+  mediaFrame: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+    justifyContent: 'flex-start',
     width: '100%',
-    maxHeight: '600px',
-
+    maxWidth: 480,
+    [theme.breakpoints.down('sm')]: {
+      maxWidth: '100%',
+    },
   },
   card: {
     display: 'flex',
     width: '100%',
+    alignItems: 'flex-start',
+    gap: theme.spacing(3),
+    boxSizing: 'border-box',
     [theme.breakpoints.down('sm')]: {
-      flexWrap: 'wrap',
       flexDirection: 'column',
+      alignItems: 'stretch',
+      gap: theme.spacing(2),
     },
   },
   section: {
-    borderRadius: '20px',
-    margin: '10px',
-    flex: 1,
+    borderRadius: 20,
+    flex: '1 1 0',
+    minWidth: 0,
+    display: 'flex',
+    flexDirection: 'column',
+    margin: theme.spacing(0, 0, 1, 0),
+    '& h2': {
+      wordBreak: 'break-word',
+    },
+    '& p': {
+      wordBreak: 'break-word',
+    },
   },
   imageSection: {
-    marginLeft: '20px',
+    flex: '0 1 42%',
+    maxWidth: 480,
+    minWidth: 220,
+    display: 'flex',
+    flexDirection: 'column',
+    alignSelf: 'flex-start',
     [theme.breakpoints.down('sm')]: {
-      marginLeft: 0,
+      flex: '0 1 auto',
+      width: '100%',
+      maxWidth: '100%',
+      minWidth: 0,
     },
   },
   recommendedPosts: {
     display: 'flex',
-    [theme.breakpoints.down('sm')]: {
-      flexDirection: 'column',
+    flexWrap: 'wrap',
+    gap: theme.spacing(2),
+    marginTop: theme.spacing(1),
+  },
+  recommendedCard: {
+    flex: '1 1 200px',
+    maxWidth: 280,
+    minWidth: 180,
+    padding: theme.spacing(1.5),
+    boxSizing: 'border-box',
+    borderRadius: 16,
+    border: `1px solid ${theme.palette.divider}`,
+    cursor: 'pointer',
+    transition: 'box-shadow 0.2s ease',
+    '&:hover': {
+      boxShadow: theme.shadows[4],
     },
   },
+  recommendedMedia: {
+    display: 'block',
+    width: '100%',
+    maxHeight: 160,
+    objectFit: 'contain',
+    objectPosition: 'center',
+    borderRadius: 12,
+    backgroundColor: '#f5f5f5',
+    marginTop: theme.spacing(1),
+  },
+  recommendedMessage: {
+    display: '-webkit-box',
+    WebkitLineClamp: 3,
+    WebkitBoxOrient: 'vertical',
+    overflow: 'hidden',
+  },
   loadingPaper: {
-    display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '20px', borderRadius: '15px', height: '39vh',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: '20px',
+    borderRadius: '15px',
+    height: '39vh',
   },
-  commentsOuterContainer: {
-    display: 'flex', justifyContent: 'space-between',
+  commentsSection: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: theme.spacing(2),
+    width: '100%',
   },
-  commentsInnerContainer: {
-    height: '200px', overflowY: 'auto', marginRight: '30px',
+  commentsListBlock: {
+    width: '100%',
+  },
+  commentsListHeading: {
+    marginBottom: theme.spacing(0.5),
+  },
+  commentsScroll: {
+    maxHeight: 120,
+    overflowY: 'auto',
+    paddingRight: theme.spacing(1),
+    border: `1px solid ${theme.palette.divider}`,
+    borderRadius: theme.spacing(1),
+    padding: theme.spacing(1, 1.5),
+    backgroundColor: theme.palette.type === 'dark' ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.02)',
+    '&::-webkit-scrollbar': {
+      width: 6,
+    },
+    '&::-webkit-scrollbar-thumb': {
+      backgroundColor: theme.palette.divider,
+      borderRadius: 3,
+    },
+  },
+  writeCommentBlock: {
+    width: '100%',
+    paddingTop: theme.spacing(1),
+    borderTop: `1px solid ${theme.palette.divider}`,
+  },
+  writeCommentHeading: {
+    marginBottom: theme.spacing(1),
   },
 }));
