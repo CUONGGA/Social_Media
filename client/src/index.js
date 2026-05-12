@@ -9,6 +9,7 @@ import { BrowserRouter } from 'react-router-dom';
 import reducers from './reducers';
 import App from './App';
 import './index.css';
+import { ThemeModeProvider } from './context/ThemeModeContext';
 
 const store = createStore(reducers, compose(applyMiddleware(thunk)));
 
@@ -16,7 +17,9 @@ ReactDOM.render(
     <Provider store={store}>
         <GoogleOAuthProvider clientId="319407429518-4o8l3lg5ulji3pfav2aei920j6r3eqbl.apps.googleusercontent.com">
             <BrowserRouter>
-                <App /> 
+                <ThemeModeProvider>
+                    <App />
+                </ThemeModeProvider>
             </BrowserRouter>
         </GoogleOAuthProvider>
     </Provider>,

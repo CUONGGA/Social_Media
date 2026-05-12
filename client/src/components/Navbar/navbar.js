@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Link, useHistory, useLocation } from "react-router-dom";
-import { AppBar, Avatar, Toolbar, Typography, Button } from "@material-ui/core";
+import { AppBar, Avatar, Toolbar, Typography, Button, IconButton, Tooltip } from "@material-ui/core";
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import NightsStay from '@material-ui/icons/NightsStay';
+import WbSunny from '@material-ui/icons/WbSunny';
 import { useDispatch } from "react-redux";
+import { useThemeMode } from '../../context/ThemeModeContext';
 import { jwtDecode } from 'jwt-decode';
 import useStyle from './styles';
 import memoriesLogo from '../../images/memories-Logo.png';
@@ -10,6 +13,7 @@ import memoriesText from '../../images/memories-Text.png';
 
 const Navbar = () => {
     const classes = useStyle();
+    const { mode, toggleMode } = useThemeMode();
     const [user, setUser] = useState(JSON.parse(localStorage.getItem('profile')));
     const dispatch = useDispatch();
     const history = useHistory();
@@ -38,6 +42,15 @@ const Navbar = () => {
         <img className={classes.image} src={memoriesLogo} alt="icon" height="60px" />
         </Link>
         <Toolbar className={classes.toolbar}>
+            <Tooltip title={mode === 'light' ? 'Dark mode' : 'Light mode'}>
+                <IconButton
+                    className={classes.themeToggle}
+                    onClick={toggleMode}
+                    aria-label={mode === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
+                >
+                    {mode === 'light' ? <NightsStay /> : <WbSunny />}
+                </IconButton>
+            </Tooltip>
             {
                 user ? ( 
                     <div className={classes.profile}>

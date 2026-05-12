@@ -10,11 +10,11 @@ export default makeStyles((theme) => ({
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: theme.spacing(1, 2.5),
-    boxShadow: '0 1px 3px rgba(0,0,0,0.08)',
+    boxShadow:
+      theme.palette.type === 'dark'
+        ? '0 1px 4px rgba(0,0,0,0.35)'
+        : '0 1px 3px rgba(0,0,0,0.08)',
     transition: 'none',
-    '&:hover': {
-      boxShadow: '0 1px 3px rgba(0,0,0,0.08)',
-    },
     [theme.breakpoints.down('sm')]: {
       flexDirection: 'column',
       padding: theme.spacing(1.5, 2),
@@ -37,15 +37,18 @@ export default makeStyles((theme) => ({
     flex: 1,
     minWidth: 0,
     paddingRight: 0,
+    gap: theme.spacing(2.5),
     [theme.breakpoints.down('sm')]: {
       width: '100%',
       justifyContent: 'center',
+      flexWrap: 'wrap',
+      gap: theme.spacing(1.5),
     },
   },
   profile: {
     display: 'flex',
     alignItems: 'center',
-    gap: theme.spacing(1.5),
+    gap: theme.spacing(2),
     flexWrap: 'nowrap',
     minWidth: 0,
     maxWidth: '100%',
@@ -114,6 +117,42 @@ export default makeStyles((theme) => ({
   purple: {
     color: theme.palette.getContrastText(deepPurple[500]),
     backgroundColor: deepPurple[500],
+  },
+  themeToggle: {
+    padding: 10,
+    borderRadius: 12,
+    border:
+      theme.palette.type === 'dark'
+        ? '1px solid rgba(129, 140, 248, 0.35)'
+        : '1px solid rgba(57, 73, 171, 0.22)',
+    background:
+      theme.palette.type === 'dark'
+        ? 'linear-gradient(145deg, rgba(99,102,241,0.22) 0%, rgba(30,27,75,0.55) 100%)'
+        : 'linear-gradient(145deg, #f5f7ff 0%, #e8eaf6 100%)',
+    color: theme.palette.type === 'dark' ? '#e0e7ff' : '#3949ab',
+    boxShadow:
+      theme.palette.type === 'dark'
+        ? '0 2px 12px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.06)'
+        : '0 2px 8px rgba(57, 73, 171, 0.15)',
+    transition: 'transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease',
+    '&:hover': {
+      background:
+        theme.palette.type === 'dark'
+          ? 'linear-gradient(145deg, rgba(129,140,248,0.32) 0%, rgba(49,46,129,0.65) 100%)'
+          : 'linear-gradient(145deg, #fff 0%, #e8eaf6 100%)',
+      boxShadow:
+        theme.palette.type === 'dark'
+          ? '0 4px 18px rgba(99,102,241,0.25)'
+          : '0 4px 14px rgba(57, 73, 171, 0.22)',
+      transform: 'scale(1.06)',
+    },
+    '& svg': {
+      fontSize: 22,
+      filter:
+        theme.palette.type === 'dark'
+          ? 'drop-shadow(0 0 6px rgba(165, 180, 252, 0.45))'
+          : 'drop-shadow(0 1px 2px rgba(57, 73, 171, 0.25))',
+    },
   },
   signInButton: {
     textTransform: 'none',

@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { Paper, Typography, CircularProgress, Divider } from '@material-ui/core';
+import { Paper, Typography, CircularProgress, Divider, Chip } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
 import CommentSection from './commentsection.jsx';
@@ -105,16 +105,39 @@ const PostDetails = () => {
     <Paper className={classes.rootPaper} elevation={6}>
       <div className={classes.card}>
         <div className={classes.section}>
-          <Typography variant="h3" component="h2">{post.title}</Typography>
-          <Typography gutterBottom variant="h6" color="textSecondary" component="h2">
-            {(post.tags ?? []).map((tag) => `#${tag} `)}
-          </Typography>
-          <Typography gutterBottom variant="body1" component="p">{post.message}</Typography>
-          <Typography variant="h6">Created by: {post.name}</Typography>
-          <Typography variant="body1">{moment(post.createdAt).fromNow()}</Typography>
-          <Divider style={{ margin: '20px 0' }} />
+          <div className={classes.articleContent}>
+            <Typography variant="h4" component="h1" className={classes.postTitle}>
+              {post.title}
+            </Typography>
+            {(post.tags ?? []).length > 0 && (
+              <div className={classes.tagRow} aria-label="Tags">
+                {(post.tags ?? []).map((tag) => (
+                  <Chip
+                    key={tag}
+                    size="small"
+                    label={`#${tag}`}
+                    className={classes.tagChip}
+                    component="span"
+                  />
+                ))}
+              </div>
+            )}
+            <Typography variant="body1" component="div" className={classes.postBody}>
+              {post.message}
+            </Typography>
+            <div className={classes.postMeta}>
+              <Typography variant="body2" component="span" className={classes.postAuthor}>
+                {post.name}
+              </Typography>
+              <span className={classes.metaDot} aria-hidden />
+              <Typography variant="caption" color="textSecondary" component="span">
+                {moment(post.createdAt).fromNow()}
+              </Typography>
+            </div>
+          </div>
+          <Divider className={classes.sectionDivider} />
           <CommentSection post={post} />
-          <Divider style={{ margin: '20px 0' }} />
+          <Divider className={classes.sectionDivider} />
         </div>
         <div className={classes.imageSection}>
           <div className={classes.mediaFrame}>

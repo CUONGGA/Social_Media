@@ -38,49 +38,71 @@ const CommentSection = ({ post }) => {
 
     return (
         <div className={classes.commentsSection}>
-            <div className={classes.commentsListBlock}>
-                <Typography variant="h6" className={classes.commentsListHeading}>
-                    Comments
-                </Typography>
-                <div className={classes.commentsScroll}>
-                    {(comments ?? []).map((c, i) => {
-                        const { author, body } = splitCommentAuthorBody(c);
-                        return (
-                            <Typography key={i} gutterBottom variant="subtitle2" component="div">
-                                <strong>{author}</strong>
-                                {author ? ': ' : ''}
-                                {body}
-                            </Typography>
-                        );
-                    })}
-                    <div ref={commentReft} />
-                </div>
-            </div>
-            {user?.result?.name && (
-                <div className={classes.writeCommentBlock}>
-                    <Typography variant="h6" className={classes.writeCommentHeading}>
-                        Write a comment
+            <div className={classes.commentsPanel}>
+                <div className={classes.commentsPanelHeader}>
+                    <Typography component="h2" variant="subtitle1" className={classes.commentsListHeading}>
+                        Comments
                     </Typography>
-                    <TextField
-                        fullWidth
-                        rows={3}
-                        variant="outlined"
-                        label="Your comment"
-                        multiline
-                        value={comment}
-                        onChange={(e) => setComment(e.target.value)}
-                    />
-                    <Button
-                        style={{ marginTop: 12 }}
-                        disabled={!comment}
-                        variant="contained"
-                        onClick={handleClick}
-                        color="primary"
-                    >
-                        Post comment
-                    </Button>
                 </div>
-            )}
+                <div className={classes.commentsListBody}>
+                    <div className={classes.commentsScroll}>
+                        {(comments ?? []).length === 0 ? (
+                            <Typography variant="body2" color="textSecondary" className={classes.commentsEmpty}>
+                                No comments yet. Start the conversation below.
+                            </Typography>
+                        ) : (
+                            (comments ?? []).map((c, i) => {
+                                const { author, body } = splitCommentAuthorBody(c);
+                                return (
+                                    <Typography
+                                        key={i}
+                                        variant="body2"
+                                        component="div"
+                                        className={classes.commentItem}
+                                    >
+                                        <strong>{author}</strong>
+                                        {author && body ? ': ' : ''}
+                                        {body}
+                                    </Typography>
+                                );
+                            })
+                        )}
+                        <div ref={commentReft} />
+                    </div>
+                </div>
+                {user?.result?.name && (
+                    <div className={classes.writeCommentBlock}>
+                        <Typography variant="subtitle1" component="h3" className={classes.writeCommentHeading}>
+                            Write a comment
+                        </Typography>
+                        <div className={classes.commentComposerStack}>
+                            <TextField
+                                className={classes.commentField}
+                                fullWidth
+                                rows={2}
+                                margin="dense"
+                                variant="outlined"
+                                label="Your comment"
+                                multiline
+                                value={comment}
+                                onChange={(e) => setComment(e.target.value)}
+                            />
+                            <div className={classes.commentPostRow}>
+                                <Button
+                                    className={classes.commentPostButton}
+                                    disabled={!comment}
+                                    variant="contained"
+                                    onClick={handleClick}
+                                    color="primary"
+                                    size="small"
+                                >
+                                    Post comment
+                                </Button>
+                            </div>
+                        </div>
+                    </div>
+                )}
+            </div>
         </div>
     )
 }
