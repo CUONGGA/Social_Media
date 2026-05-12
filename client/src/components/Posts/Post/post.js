@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Card, CardActions, CardContent, CardMedia, Button, Typography, ButtonBase } from '@material-ui/core/';
 import ThumbUpAltIcon from '@material-ui/icons/ThumbUpAlt';
 import DeleteIcon from '@material-ui/icons/Delete';
@@ -11,29 +11,30 @@ import { useHistory } from 'react-router-dom';
 import { likePost, deletePost } from '../../../actions/posts';
 import useStyles from './styles';
 
+const getUserId = (user) => {
+  const r = user?.result;
+  if (!r) return null;
+  return r.sub ?? r.googleId ?? r._id ?? null;
+};
+
+const isSameId = (a, b) => String(a) === String(b);
+
 const Post = ({ post, setCurrentId }) => {
   const user = JSON.parse(localStorage.getItem('profile'));
-  const [likes, setLikes] = useState(post?.likes);
   const dispatch = useDispatch();
   const history = useHistory();
   const classes = useStyles();
 
-  const userId = user?.result?.googleId || user?.result?._id;
-  const hasLikedPost = post.likes.find((like) => like === userId);
+  const userId = getUserId(user);
+  const likes = post.likes ?? [];
 
-  const handleLike = async () => {
+  const handleLike = () => {
     dispatch(likePost(post._id));
-
-    if (hasLikedPost) {
-      setLikes(post.likes.filter((id) => id !== userId));
-    } else {
-      setLikes([...post.likes, userId]);
-    }
   };
 
   const Likes = () => {
     if (likes.length > 0) {
-      return likes.find((like) => like === userId)
+      return likes.some((like) => isSameId(like, userId))
         ? (
           <><ThumbUpAltIcon fontSize="small" />&nbsp;{likes.length > 2 ? `You and ${likes.length - 1} others` : `${likes.length} like${likes.length > 1 ? 's' : ''}` }</>
         ) : (
@@ -63,7 +64,7 @@ const Post = ({ post, setCurrentId }) => {
           <Typography variant="h6">{post.name}</Typography>
           <Typography variant="body2">{moment(post.createdAt).fromNow()}</Typography>
         </div>
-        {(user?.result?.googleId === post?.creator || user?.result?._id === post?.creator) && (
+        {(isSameId(getUserId(user), post?.creator)) && (
         <div className={classes.overlay2} name="edit">
           <Button
             onClick={(e) => {
@@ -89,7 +90,7 @@ const Post = ({ post, setCurrentId }) => {
         <Button size="small" color="primary" disabled={!user?.result} onClick={handleLike}>
           <Likes />
         </Button>
-        {(user?.result?.googleId === post?.creator || user?.result?._id === post?.creator) && (
+        {(isSameId(getUserId(user), post?.creator)) && (
           <Button size="small" color="secondary" onClick={() => dispatch(deletePost(post._id))}>
             <DeleteIcon fontSize="small" /> &nbsp; Delete
           </Button>

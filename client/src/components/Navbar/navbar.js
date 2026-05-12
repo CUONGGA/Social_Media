@@ -32,7 +32,7 @@ const Navbar = () => {
         setUser(JSON.parse(localStorage.getItem('profile')));
     }, [location]);
     return (    
-    <AppBar className={classes.appBar} position="static" color='inherit'>
+    <AppBar className={classes.appBar} position="static" color='inherit' elevation={0}>
         <Link to="/" className={classes.brandContainer}>
         <img src={memoriesText} alt="icon" height="55px" />
         <img className={classes.image} src={memoriesLogo} alt="icon" height="60px" />
@@ -50,15 +50,16 @@ const Navbar = () => {
                         <Button
                             variant="outlined"
                             className={classes.logout}
-                            color="primary"
+                            color="default"
                             onClick={logout}
-                            startIcon={<ExitToAppIcon style={{ fontSize: 18 }} />}
+                            disableElevation
+                            startIcon={<ExitToAppIcon className={classes.logoutIcon} />}
                         >
                             Logout
                         </Button>
                     </div>
                 ) : ( 
-                    <Button component={Link} to="/auth" variant="contained" color="primary" className={classes.signInButton}>
+                    <Button component={Link} to="/auth" variant="contained" color="primary" className={classes.signInButton} disableElevation>
                         Sign In
                     </Button>
                 )

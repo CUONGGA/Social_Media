@@ -10,6 +10,11 @@ export default makeStyles((theme) => ({
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: theme.spacing(1, 2.5),
+    boxShadow: '0 1px 3px rgba(0,0,0,0.08)',
+    transition: 'none',
+    '&:hover': {
+      boxShadow: '0 1px 3px rgba(0,0,0,0.08)',
+    },
     [theme.breakpoints.down('sm')]: {
       flexDirection: 'column',
       padding: theme.spacing(1.5, 2),
@@ -54,27 +59,36 @@ export default makeStyles((theme) => ({
     textTransform: 'none',
     fontWeight: 600,
     fontSize: '0.8125rem',
-    padding: theme.spacing(0.4, 1.5),
-    minHeight: 34,
-    minWidth: 0,
-    borderRadius: 8,
-    borderWidth: 1.5,
-    borderStyle: 'solid',
-    borderColor: theme.palette.primary.main,
-    color: theme.palette.primary.main,
+    padding: '8px 16px',
+    minHeight: 36,
+    borderRadius: 10,
+    lineHeight: 1.2,
+    color: '#5c5c5c',
+    border: '1px solid #e0e0e0',
     backgroundColor: '#fff',
     boxShadow: 'none',
     flexShrink: 0,
-    transition: 'background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease',
+    transition: 'background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease',
     '& .MuiButton-startIcon': {
-      marginRight: theme.spacing(0.75),
+      marginRight: 6,
     },
     '&:hover': {
-      borderColor: theme.palette.primary.dark,
-      backgroundColor: theme.palette.primary.main,
-      color: theme.palette.primary.contrastText,
+      backgroundColor: '#e8eaf6',
+      border: '1px solid #7986cb',
+      color: '#283593',
       boxShadow: 'none',
     },
+    '&.MuiButton-outlined': {
+      border: '1px solid #e0e0e0',
+      padding: '8px 16px',
+      '&:hover': {
+        border: '1px solid #7986cb',
+        backgroundColor: '#e8eaf6',
+      },
+    },
+  },
+  logoutIcon: {
+    fontSize: 18,
   },
   userName: {
     display: 'block',
@@ -90,26 +104,42 @@ export default makeStyles((theme) => ({
   brandContainer: {
     display: 'flex',
     alignItems: 'center',
+    textDecoration: 'none',
+    color: 'inherit',
+    '&:hover': {
+      textDecoration: 'none',
+      opacity: 1,
+    },
   },
   purple: {
     color: theme.palette.getContrastText(deepPurple[500]),
     backgroundColor: deepPurple[500],
   },
   signInButton: {
-  textTransform: 'none',                // chữ bình thường
-  fontWeight: 600,                      // chữ đậm hơn
-  fontSize: '1rem',                     // cỡ chữ vừa phải
-  padding: '8px 22px',                  // padding gọn nhưng sang
-  borderRadius: '12px',                 // bo tròn mềm mại
-  background: 'linear-gradient(90deg, #141620 0%, #6573c3 100%)', // gradient nhẹ
-  color: '#fff',
-  boxShadow: '0 4px 12px rgba(63,81,181,0.3)', // shadow sang
-  transition: 'all 0.3s ease',
-  cursor: 'pointer',
-  '&:hover': {
-    background: 'linear-gradient(90deg, #6573c3 0%, #3f51b5 100%)', // đổi gradient khi hover
-    boxShadow: '0 6px 16px rgba(63,81,181,0.4)', // shadow nổi bật hơn
-    transform: 'translateY(-2px)',  // nâng nhẹ khi hover
-  },
+    textTransform: 'none',
+    fontWeight: 600,
+    fontSize: '0.875rem',
+    letterSpacing: '0.02em',
+    padding: '10px 22px',
+    minHeight: 40,
+    borderRadius: 10,
+    lineHeight: 1.2,
+    boxShadow: 'none',
+    backgroundColor: '#3f51b5',
+    color: '#fff',
+    transition: 'background-color 0.2s ease, box-shadow 0.2s ease',
+    '&:hover': {
+      backgroundColor: '#283593',
+      color: '#fff',
+      boxShadow: '0 2px 6px rgba(40, 53, 147, 0.4)',
+    },
+    '&.MuiButton-containedPrimary': {
+      boxShadow: 'none',
+      backgroundColor: '#3f51b5',
+      '&:hover': {
+        backgroundColor: '#283593',
+        boxShadow: '0 2px 6px rgba(40, 53, 147, 0.4)',
+      },
+    },
   },
 }));

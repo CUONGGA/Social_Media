@@ -1,5 +1,5 @@
     import * as api from '../api';
-    import { FETCH_POST ,START_LOADING, END_LOADING, FETCH_BY_SEARCH, FETCH_ALL, CREATE, UPDATE, DELETE, COMMENT } from '../constants/actionType';
+    import { FETCH_POST ,START_LOADING, END_LOADING, FETCH_BY_SEARCH, FETCH_ALL, CREATE, UPDATE, DELETE, LIKE, COMMENT } from '../constants/actionType';
 
     export const getPost = (id) => async (dispatch) => {
         try {
@@ -72,8 +72,7 @@
         try {
             const { data } = await api.likePost(id);
 
-            dispatch({ type: COMMENT, payload: data });
-            return data.comments; 
+            dispatch({ type: LIKE, payload: data });
         } catch (error) {
             console.log(error); 
         }

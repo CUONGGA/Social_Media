@@ -92,12 +92,12 @@ export const likePost = async (req, res, next) => {
 
     const post = await PostMessage.findById(id);    
 
-    const index = post.likes.findIndex((id) => id == String(req.userId));
-    console.log(post);
-    if (index == -1) {
-        post.likes.push(req.userId);
+    const index = post.likes.findIndex((id) => String(id) === String(req.userId));
+
+    if (index === -1) {
+        post.likes.push(String(req.userId));
     } else {
-        post.likes = post.likes.filter((id) => id !== String(req.userId));
+        post.likes = post.likes.filter((id) => String(id) !== String(req.userId));
     }
 
     const updatedPost = await PostMessage.findByIdAndUpdate(id, post, { new: true });

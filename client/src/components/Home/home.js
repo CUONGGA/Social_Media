@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Container, Grow, Grid, Paper, AppBar, TextField, Button } from '@material-ui/core';
+import { Container, Grow, Grid, Paper, TextField, Button, Typography } from '@material-ui/core';
 import Posts from '../Posts/posts';
 import Form from '../Forms/form';
 import Paginate from '../Pagination';
@@ -23,12 +23,6 @@ const Home = () => {
     const classes = useStyle();
     const [search, setSearch] = useState('');
     const [tags, setTags] = useState([]);
-
-    const handleKeyPress = (e) => {
-        if(e.keyCode === 13) {
-            searchPost();
-        }
-    };
 
     const handleAdd = (tag) => setTags([...tags, tag]);
 
@@ -54,11 +48,44 @@ const Home = () => {
                 <Posts setCurrentId={setCurrentId} />
             </Grid>
             <Grid item xs={12} sm={6} md={3}>
-                <AppBar className={classes.appBarSearch} position="static" color="inherit">
-                    <TextField name="search" variant="outlined" label="Search Memories" onKeyPress={handleKeyPress} fullWidth value={search} onChange={(e) => setSearch(e.target.value)} />
-                    <ChipInput style={{ margin: '10px 0' }} value={tags} onAdd={handleAdd} onDelete={handleDelete} label="Search Tags" variant="outlined" />
-                    <Button onClick={searchPost} className={classes.searchButton} variant="contained" color="primary">Search</Button>
-                </AppBar>
+                <Paper className={classes.searchPaper} elevation={6}>
+                    <div className={`${classes.searchInner} ${classes.searchFieldsRoot}`}>
+                        <Typography className={classes.searchTitle} component="h2">
+                            Search Memories
+                        </Typography>
+                        <TextField
+                            name="search"
+                            variant="outlined"
+                            label="Search by title"
+                            placeholder="Try a keyword…"
+                            onKeyDown={(e) => e.key === 'Enter' && searchPost()}
+                            fullWidth
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                        />
+                        <ChipInput
+                            className={classes.chipInput}
+                            value={tags}
+                            onAdd={handleAdd}
+                            onDelete={handleDelete}
+                            label="Search by tags"
+                            variant="outlined"
+                            fullWidth
+                            placeholder="e.g. vacation — Enter"
+                        />
+                        <Button
+                            type="button"
+                            onClick={searchPost}
+                            className={classes.searchButton}
+                            variant="contained"
+                            color="primary"
+                            disableElevation
+                            fullWidth
+                        >
+                            Search
+                        </Button>
+                    </div>
+                </Paper>
                 <Form currentId={currentId} setCurrentId={setCurrentId} />
                 {(!searchQuery && !tags.length) && (
                      <Paper elevation={6} className={classes.pagination}>

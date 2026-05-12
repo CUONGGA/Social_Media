@@ -86,7 +86,7 @@ const Form = ({ currentId, setCurrentId }) => {
                     className={classes.fileInputHidden}
                     onChange={handleFileChange}
                 />
-                <Button type="button" className={classes.chooseFileButton} variant="outlined" color="primary" onClick={openFilePicker}>
+                <Button type="button" className={classes.chooseFileButton} variant="outlined" disableElevation onClick={openFilePicker}>
                     Choose file
                 </Button>
                 <Typography className={classes.fileHint} variant="body2" noWrap component="span" title={pickedFileLabel || undefined}>
@@ -94,10 +94,10 @@ const Form = ({ currentId, setCurrentId }) => {
                 </Typography>
             </div>
             <div className={classes.actionsRow}>
-                <Button className={classes.buttonSubmit} variant="contained" color="primary" type="submit">
+                <Button className={classes.buttonSubmit} type="submit" variant="contained" color="primary" disableElevation>
                     Submit
                 </Button>
-                <Button className={classes.clearButton} variant="text" type="button" onClick={clear}>
+                <Button className={classes.clearButton} type="button" variant="outlined" color="default" onClick={clear} disableElevation>
                     Clear
                 </Button>
             </div>
