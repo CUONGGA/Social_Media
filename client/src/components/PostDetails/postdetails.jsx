@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { Paper, Typography, CircularProgress, Divider, Chip } from '@material-ui/core';
+import { Paper, Typography, CircularProgress, Divider, Chip, Link as MuiLink } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
 import CommentSection from './commentsection.jsx';
@@ -132,9 +132,23 @@ const PostDetails = () => {
               {post.message}
             </Typography>
             <div className={classes.postMeta}>
-              <Typography variant="body2" component="span" className={classes.postAuthor}>
-                {post.name}
-              </Typography>
+              {post.creator ? (
+                <MuiLink
+                  component="button"
+                  type="button"
+                  variant="body2"
+                  color="inherit"
+                  underline="hover"
+                  className={classes.postAuthor}
+                  onClick={() => history.push(`/users/${post.creator}`)}
+                >
+                  {post.name}
+                </MuiLink>
+              ) : (
+                <Typography variant="body2" component="span" className={classes.postAuthor}>
+                  {post.name}
+                </Typography>
+              )}
               <span className={classes.metaDot} aria-hidden />
               <Typography variant="caption" color="textSecondary" component="span">
                 {moment(post.createdAt).fromNow()}

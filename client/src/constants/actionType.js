@@ -11,3 +11,10 @@ export const LOGOUT = 'LOGOUT';
 export const START_LOADING = 'START_LOADING';
 export const END_LOADING = 'END_LOADING';
 export const COMMENT = 'COMMENT';
+
+/* Profile / hồ sơ user */
+export const FETCH_USER_PROFILE = 'FETCH_USER_PROFILE';
+export const FETCH_USER_POSTS = 'FETCH_USER_POSTS';
+export const PROFILE_START_LOADING = 'PROFILE_START_LOADING';
+export const PROFILE_END_LOADING = 'PROFILE_END_LOADING';
+export const PROFILE_RESET = 'PROFILE_RESET';

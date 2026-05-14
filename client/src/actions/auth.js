@@ -27,3 +27,19 @@ export const signup = (formData, history) => async (dispatch) => {
     notifyError(axiosErrorMessage(error, 'Sign up failed.'));
   }
 };
+
+/* Google sign-in: gửi Google ID token sang server. Server upsert User vào DB,
+   migrate post.creator (sub → ObjectId) nếu có, và trả về JWT **local**.
+   Frontend lưu JWT local + result (User doc) y như local signin. */
+export const googleSignIn = (googleToken, history) => async (dispatch) => {
+  try {
+    const { data } = await api.googleSignIn(googleToken);
+
+    dispatch({ type: AUTH, data });
+
+    notifySuccess('Signed in with Google.');
+    history.push('/posts');
+  } catch (error) {
+    notifyError(axiosErrorMessage(error, 'Google sign-in failed.'));
+  }
+};

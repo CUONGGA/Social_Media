@@ -44,7 +44,7 @@
 |---|--------|-----|-----------|
 | D1-1 | "You might also like" nháy nội dung **sai** khi mở post mới (hiển thị related cũ vài giây trước khi cập nhật) | 🟠 | Tách `relatedPosts` ra khỏi feed; reducer thêm `relatedForPostId` để biết related đang gắn với post nào; UI chỉ render khi `relatedForPostId === current postId` ([ngay1.md](./ngay1.md)). |
 
-### 1.2 Ngày 2 — Realtime + phân quyền + tối ưu
+### 1.2 Ngày 2 — Realtime + phân quyền + tối ưu + Trang hồ sơ
 
 | # | Vấn đề | Mức | Giải pháp |
 |---|--------|-----|-----------|
@@ -65,6 +65,10 @@
 | D2-15 | `getPostsBySearch` crash 500 khi `tags` undefined (`.split` trên null) | 🟠 | Guard tagList + searchQuery; query rỗng → trả `[]` sớm. |
 | D2-16 | `getPost` trả `200 + null` khi post không tồn tại; không validate ObjectId | 🟡 | Validate `ObjectId.isValid` + null check → 404. |
 | D2-17 | Logic `getUserId` lặp ở `Post.js` và `actions/posts.js` (sau A1) | 🟡 | Tách `client/src/utils/authUser.js` dùng chung. |
+| D2-18 | **Không có trang hồ sơ user** — click vào tên không đi đâu; "Bài viết của tôi" chưa có. | 🟡 | Profile MVP: `GET /user/:id` + filter `getposts?creator=`; route `/users/:id` + `/me`; slice `profile` riêng; tên creator click được trên Post card và Post details. ([ngay2.md § Trang hồ sơ](./ngay2.md#trang-hồ-sơ--phạm-vi-s-mvp-cùng-ngày)) |
+| D2-19 | User schema thiếu `timestamps` → không biết user tham gia khi nào. | 🟡 | Bật `timestamps: true` trên `userSchema`; user cũ thiếu trường → client fallback ngày bài đầu. |
+| D2-20 | **Google OAuth user chưa có User doc** (PROF-1) → fallback 'posts'/'self-local' tạm thời. | 🟠 | **Phase M đã làm**: `POST /user/google` upsert User + `updateMany` migrate `post.creator: sub → ObjectId` + trả JWT local. Auth middleware bỏ heuristic Google. ([ngay2.md § PROF-1 Phase M](./ngay2.md#prof-1-phase-m--google-user-upsert--dọn-fallback-cùng-ngày)) |
+| D2-21 | `auth` middleware có heuristic `token.length < 500` để phân biệt Google vs local — fragile và đồng nghĩa Google token không verify chữ ký. | 🟠 | Sau D2-20: mọi token đều là JWT local, bỏ luôn nhánh decode Google. Chỉ còn 1 đường `jwt.verify`. |
 
 ---
 
@@ -131,6 +135,13 @@
 | F-8 | 🟡 | **Google OAuth `clientId` placeholder hardcode trong client** — nếu push public repo sẽ leak (dù không phải secret). | Đẩy qua `REACT_APP_GOOGLE_CLIENT_ID`. |
 | F-9 | 🟡 | **MUI v4 lỗi thời**; `material-ui-chip-input` không maintain. | Trung hạn: nâng MUI v5/6 (breaking nhiều). Tách task lớn. |
 | F-10 | 🟡 | **Search query không persist trong URL**: F5 mất hết bộ lọc. | Đẩy `searchQuery`/`tags` vào URL `?q=&tags=`; component hydrate state từ URL khi mount. |
+| ~~PROF-1~~ | ✅ | ~~**Google OAuth user chưa có document local**~~ — **Đã giải quyết** (D2-20). | ✅ Phase M đã làm: upsert + migrate. Còn lại S-2 (verify chữ ký) là task riêng. |
+| PROF-2 | 🟡 | **Avatar profile chỉ là chữ cái đầu** — **Đã giải quyết một phần** (Profile header hiển thị `picture` từ DB), Post card và Post details vẫn dùng initial. | Mở rộng: populate `picture` của creator vào response của `getposts` / `getPost`. |
+| PROF-3 | 🟡 | **`postCount` ở header profile không tự sync** khi xoá/thêm bài trong session — phải reload. | Trong reducer `posts`, khi `CREATE`/`DELETE` thành công, dispatch kèm `creator` → reducer `profile` listen và inc/dec `viewed.postCount`. Hoặc tổng quát: SSE kênh `user:<id>` (xem A2). |
+| PROF-4 | 🟡 | **Chưa có bio / about / social links** trên profile. | Phạm vi M: thêm field `bio: String` (max ~280 char) + UI hiển thị. |
+| PROF-5 | 🟡 | **Nút "Sửa hồ sơ" là stub `alert`** — chưa có form thật. | Dialog edit (`PATCH /user/:id`, owner-only) cho name + bio + picture URL. |
+| PROF-6 | 🟢 | **Đổi trang pagination trong profile không có loading state** — phụ thuộc transition nhanh. | Hiện `<Skeleton>` cards trong khi `getUserPostsPage` đang chạy. Cần một flag `isPaginating` riêng để không lẫn với spinner full khi load đầu. |
+| PROF-7 | 🟢 | **Profile không có meta SEO / OG tags** — share link profile preview xấu. | `react-helmet` (hoặc SSR sau này) set `<title>` và `og:title`/`og:description`. |
 
 ### 2.6 API & hành vi HTTP
 
@@ -170,7 +181,7 @@ Không liệt kê chi tiết ở đây — đã có riêng [Y_TUONG_TINH_NANG.md
 
 - Timeline, album, "on this day", ngày kỷ niệm
 - Bản đồ kỷ niệm (geolocation)
-- Trang hồ sơ user + "Bài viết của tôi" + follow
+- ~~Trang hồ sơ user + "Bài viết của tôi"~~ ✅ MVP đã làm; phần follow + edit/bio đang chờ (PROF-1..5).
 - Bookmark / lưu bài người khác
 - DM 1-1 (phạm vi M của realtime — cần Socket.IO)
 - Sửa/xoá comment, reply, mention (cần D-3 trước)
@@ -199,7 +210,7 @@ Không liệt kê chi tiết ở đây — đã có riêng [Y_TUONG_TINH_NANG.md
 ### Tier 3 — Mở rộng tính năng
 
 11. **R-1 + R-4** A2 Bell notifications (auth stream + per-user channel) (~2-3h).
-12. Trang profile + "Bài viết của tôi" (cần D-2 trước).
+12. ~~Trang profile + "Bài viết của tôi"~~ ✅ **MVP đã làm** ([ngay2.md § Trang hồ sơ](./ngay2.md#trang-hồ-sơ--phạm-vi-s-mvp-cùng-ngày)). Phạm vi M kế tiếp: **PROF-1..5** (Google user sync + edit form + bio + avatar thật).
 13. A2.5 Persist notifications trong DB (cần D-1, D-2).
 14. DM 1-1 (cần Socket.IO).
 15. Tính năng sản phẩm theo [Y_TUONG_TINH_NANG.md](./Y_TUONG_TINH_NANG.md).
@@ -215,3 +226,5 @@ Không liệt kê chi tiết ở đây — đã có riêng [Y_TUONG_TINH_NANG.md
 ## Lịch sử cập nhật
 
 - **14/05/2026** — Tạo file. Tổng hợp 17 vấn đề đã giải quyết (D1-1, D2-1..D2-17), 38 vấn đề chưa giải quyết (S/D/P/R/F/A/Q), 5 quyết định cố ý hoãn.
+- **14/05/2026 (cùng ngày, sau Trang hồ sơ MVP)** — Thêm D2-18 (Profile MVP), D2-19 (User timestamps) vào danh sách đã giải quyết. Thêm PROF-1..7 vào backlog Frontend UX (chủ yếu Phạm vi M của Profile: Google sync, avatar, bio, edit form, pagination loading, SEO).
+- **14/05/2026 (cùng ngày, sau PROF-1 Phase M)** — Đóng PROF-1 + PROF-2 một phần. Thêm D2-20 (Google upsert + migrate post.creator) và D2-21 (gỡ heuristic auth middleware). Còn lại trong Phase M: PROF-3..5 (edit form + bio + pagination loading).

@@ -1,13 +1,33 @@
 import mongoose from "mongoose";
 
-const postSchema = mongoose.Schema({
-    name: {type: String, require: true},
-    email: {type: String, require: true},
-    password: {type: String, require: true},
-    id: String,
-});
+const userSchema = mongoose.Schema(
+    {
+        name: { type: String, required: true },
+        email: { type: String, required: true },
+        /* Password optional vì user đăng nhập qua Google không có password local.
+           Local signup vẫn hash + lưu như cũ. */
+        password: { type: String },
+        /* Google `sub` (subject) — unique mỗi tài khoản Google. Dùng để upsert
+           tránh tạo trùng khi user đăng nhập Google nhiều lần.
+           - `sparse: true`: cho phép null/undefined không tham gia unique index
+             → user signup local (không có googleId) không xung đột.
+           - `unique: true`: 1 sub Google chỉ map đến 1 User document. */
+        googleId: { type: String, index: { unique: true, sparse: true } },
+        /* URL avatar lấy từ Google profile khi user signin lần đầu. */
+        picture: String,
+        /* `id` cũ là field dư từ skeleton ban đầu — giữ optional để không phá
+           document cũ trong DB. Có thể loại bỏ sau khi migrate. */
+        id: String,
+    },
+    {
+        /* `timestamps: true` tự thêm `createdAt` + `updatedAt`. User cũ trong
+           DB sẽ thiếu `createdAt` → client phải fallback "Tham gia trước đây". */
+        timestamps: true,
+    },
+);
 
 
-const User = mongoose.model('User', postSchema);
+const User = mongoose.model('User', userSchema);
 
 export default User;
+

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, CardActions, CardContent, CardMedia, Button, Typography, ButtonBase } from '@material-ui/core/';
+import { Card, CardActions, CardContent, CardMedia, Button, Typography, ButtonBase, Link as MuiLink } from '@material-ui/core/';
 import ThumbUpAltIcon from '@material-ui/icons/ThumbUpAlt';
 import DeleteIcon from '@material-ui/icons/Delete';
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
@@ -46,6 +46,13 @@ const Post = ({ post, setCurrentId }) => {
     history.push(`/posts/${post._id}`);
   };
 
+  /* Click vào tên creator → tới Profile của họ. Phải chặn bubbling để
+     không trigger `openPost` (bọc ngoài là ButtonBase cho cả card). */
+  const openCreatorProfile = (e) => {
+    e.stopPropagation();
+    if (post?.creator) history.push(`/users/${post.creator}`);
+  };
+
   return (
     <Card className={classes.card} raised elevation={6}>
       <ButtonBase
@@ -56,7 +63,18 @@ const Post = ({ post, setCurrentId }) => {
       >
         <CardMedia className={classes.media} image={post.selectedFile || 'https://user-images.githubusercontent.com/194400/49531010-48dad180-f8b1-11e8-8d89-1e61320e1d82.png'} title={post.title} />
         <div className={classes.overlay}>
-          <Typography variant="h6">{post.name}</Typography>
+          {/* MuiLink (component="span") để giữ structure không tạo nested <a>;
+              ButtonBase ngoài đã là interactive root. */}
+          <MuiLink
+            component="span"
+            variant="h6"
+            color="inherit"
+            underline="hover"
+            onClick={openCreatorProfile}
+            style={{ cursor: 'pointer', display: 'inline-block' }}
+          >
+            {post.name}
+          </MuiLink>
           <Typography variant="body2">{moment(post.createdAt).fromNow()}</Typography>
         </div>
         {(isSameId(getUserId(user), post?.creator)) && (

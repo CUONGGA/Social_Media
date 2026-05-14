@@ -13,6 +13,8 @@ API.interceptors.request.use((req) => {
 
 export const fetchPost = (id) => API.get(`/posts/${id}`);
 export const fetchPosts = (page) => API.get(`/posts?page=${page}`);
+export const fetchPostsByCreator = (creatorId, page) =>
+  API.get(`/posts?page=${page}&creator=${encodeURIComponent(creatorId)}`);
 export const fetchPostBySearch = (searchQuery) =>
   API.get(`/posts/search?searchQuery=${searchQuery.search || 'none'}&tags=${searchQuery.tags}`);
 export const createPost = (newPost) => API.post('/posts', newPost);
@@ -24,3 +26,5 @@ export const comment = (value, id) =>
 
 export const signIn = (formData) => API.post('/user/signin', formData);
 export const signUp = (formData) => API.post('/user/signup', formData);
+export const googleSignIn = (token) => API.post('/user/google', { token });
+export const fetchUserPublic = (id) => API.get(`/user/${encodeURIComponent(id)}`);

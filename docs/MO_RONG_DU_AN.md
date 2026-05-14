@@ -8,7 +8,7 @@ Tài liệu ghi lại các hướng củng cố và mở rộng cho ứng dụng
 
 **Phản ứng nhiều loại (tim, haha, …)** — tạm ngưng trên UI; gợi ý triển khai sau: [PHAN_UNG_DA_TRIEN_KHAI.md](./PHAN_UNG_DA_TRIEN_KHAI.md).
 
-**Bình luận realtime (SSE) + Live like count + Phân quyền P0** — đã triển khai (ngày 2: comment realtime, A1: live like, P0: khoá lỗ hổng edit/delete bất kỳ ai); nhật ký gộp: [ngay2.md](./ngay2.md).
+**Bình luận realtime (SSE) + Live like count + Phân quyền P0 + Trang hồ sơ MVP + Google user upsert** — đã triển khai (ngày 2: comment realtime, A1: live like, P0: khoá lỗ hổng edit/delete bất kỳ ai, Profile S: `/users/:id` + `/me`, PROF-1 Phase M: upsert + migrate Google → ObjectId); nhật ký gộp: [ngay2.md](./ngay2.md).
 
 **Tách `relatedPosts` khỏi feed** — đã xử lý nháy "You might also like"; nhật ký: [ngay1.md](./ngay1.md).
 
@@ -77,8 +77,9 @@ Tài liệu ghi lại các hướng củng cố và mở rộng cho ứng dụng
 
 ## 6. Tính năng sản phẩm (tùy mục tiêu)
 
-- [ ] Hồ sơ user, đổi tên/avatar.
-- [ ] Trang “Bài viết của tôi”.
+- [x] **Trang hồ sơ MVP** — `/users/:id` + `/me`, lưới bài + ngày tham gia + số bài. Xem [ngay2.md — Trang hồ sơ](./ngay2.md#trang-hồ-sơ--phạm-vi-s-mvp-cùng-ngày).
+- [x] **Hồ sơ — Phạm vi M (Google upsert)**: PROF-1 đã đóng — Google user có User doc trong DB, `post.creator` migrate sang ObjectId, frontend luôn dùng JWT local. Xem [ngay2.md § PROF-1 Phase M](./ngay2.md#prof-1-phase-m--google-user-upsert--dọn-fallback-cùng-ngày).
+- [ ] **Hồ sơ — Phạm vi M (tiếp)**: form sửa name/bio (owner-only), upload avatar mới, populate `picture` cho Post card. Phát sinh PROF-3..5.
 - [ ] Theo dõi user / feed cá nhân.
 - [ ] Thông báo; báo cáo nội dung; chặn user (moderation).
 - [ ] Sửa/xóa comment, reply, mention.
@@ -103,6 +104,6 @@ Tài liệu ghi lại các hướng củng cố và mở rộng cho ứng dụng
 3. Comment schema rõ ràng + mã HTTP chuẩn — đổi `comments: [String]` sang object `{ userId, name, text, createdAt }`. Khi đổi, **payload SSE `comment:new` cần cập nhật** theo cấu trúc mới (vẫn cùng key `comments`).
 4. Đồng bộ search với URL (encode + hydrate state).
 5. Env client/server (`JWT_SECRET`, `REACT_APP_API_URL`, Google client ID).
-6. Trang hồ sơ + "Bài viết của tôi" — cửa ngõ cho follow / bookmark / DM.
+6. ~~Trang hồ sơ + "Bài viết của tôi"~~ — **MVP đã làm**; tiếp theo là Phạm vi M (edit + bio + avatar).
 7. Realtime mở rộng (Phạm vi M): DM 1-1 bằng Socket.IO; bell notifications dùng SSE kênh `user:{id}`.
 8. Nâng dependency UI và tính năng social khi nền tảng đã vững.

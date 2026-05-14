@@ -3,13 +3,11 @@ import { Avatar, Button, Paper, Grid, Typography, Container} from '@material-ui/
 import { useHistory } from 'react-router-dom';
 import useStyle from './styles';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
-import Icon from './Icon.js';
 import Input from './Input.js';
 import { GoogleLogin } from '@react-oauth/google';
-import { jwtDecode } from 'jwt-decode';
 import { useDispatch } from 'react-redux';
-import { signin, signup } from '../../actions/auth.js';
-import { notifySuccess, notifyError } from '../../utils/notify';
+import { signin, signup, googleSignIn } from '../../actions/auth.js';
+import { notifyError } from '../../utils/notify';
 
 
 const initialState = { firstName: '', lastName: '', email: '', password: '', confirmPassword: '' };
@@ -39,16 +37,21 @@ const Auth = () => {
     };
 
     const googleSuccess = async (res) => {
+      /* Trước đây: decode Google ID token ngay tại client rồi lưu thẳng
+         credentials Google vào localStorage. Hệ luỵ:
+         - userId trong app = Google `sub` (không phải ObjectId Mongo) → mọi
+           query DB phải xử lý 2 kiểu id (sub vs ObjectId).
+         - User Google không có document trong DB → trang hồ sơ 404.
+
+         Bây giờ: gửi token sang server `/user/google`. Server upsert User
+         doc, migrate post.creator nếu cần, trả về JWT **local** + User doc.
+         Frontend lưu giống local signin → mọi flow downstream nhất quán. */
       const token = res?.credential;
-      const decoded = jwtDecode(token);
-      try {
-        dispatch({ type: 'AUTH', data: { result: decoded, token } });
-        notifySuccess('Signed in with Google.');
-        history.push('/posts');
-      } catch (error) {
-        console.log(error);
-        notifyError('Something went wrong during Google sign-in.');
+      if (!token) {
+        notifyError('Google sign-in returned no credential.');
+        return;
       }
+      dispatch(googleSignIn(token, history));
     };
 
     const googleFailure = () => {

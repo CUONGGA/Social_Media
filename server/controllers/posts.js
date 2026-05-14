@@ -3,27 +3,32 @@ import PostMessage from "../models/postMessage.js";
 import * as commentBus from "../realtime/commentBus.js";
 
 export const getposts = async (req, res, next) => {
-    const { page } = req.query;
+    const { page, creator } = req.query;
 
     try {
         const LIMIT = 9;
         const startIndex = (Math.max(Number(page) || 1, 1) - 1) * LIMIT;
 
-        /* Chạy song song để tiết kiệm 1 roundtrip DB. Trước đây dùng 2 await
-           tuần tự (count rồi find), giờ Promise.all → tổng latency ~ max(count, find)
-           thay vì count + find. */
+        /* Filter chung dùng cho cả `countDocuments` và `find` — phải nhất quán
+           để tính `numberOfPages` đúng.
+
+           Lưu ý: `post.creator` đang là **String** trong schema (không phải
+           ObjectId ref), vì user Google đăng nhập sẽ có creator = `sub`
+           (chuỗi số dài kiểu `"10493838..."`), còn user local có creator là
+           ObjectId-stringified. Vì vậy KHÔNG được guard bằng `ObjectId.isValid`
+           ở đây — sẽ làm Google user vô hình ở trang profile của họ. Match
+           thẳng theo string là an toàn (String filter không gây CastError). */
+        const filter = creator ? { creator: String(creator) } : {};
+
+        /* Chạy song song để tiết kiệm 1 roundtrip DB. */
         const [total, posts] = await Promise.all([
-            PostMessage.countDocuments({}),
-            PostMessage.find()
+            PostMessage.countDocuments(filter),
+            PostMessage.find(filter)
                 .sort({ _id: -1 })
                 .limit(LIMIT)
                 .skip(startIndex)
-                .lean(), /* lean() bỏ Mongoose hydration → JS object thuần, nhẹ hơn ~30% */
+                .lean(),
         ]);
-
-        /* CHÚ Ý: trước đây có dòng `const postMessage = await PostMessage.find();`
-           fetch TOÀN BỘ posts (gồm cả base64 selectedFile) rồi vứt vào biến không
-           dùng → mỗi lần load Home đốt MB IO DB vô ích. Đã xoá. */
 
         res.status(200).json({
             data: posts,

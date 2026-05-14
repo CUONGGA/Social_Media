@@ -45,67 +45,198 @@ export default makeStyles((theme) => ({
       gap: theme.spacing(1.5),
     },
   },
-  profile: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: theme.spacing(2),
-    flexWrap: 'nowrap',
-    minWidth: 0,
-    maxWidth: '100%',
+  /* Trigger Avatar — kiểu Gmail/GitHub: chỉ 1 vòng tròn avatar, click mở menu.
+     IconButton bọc ngoài cho click target rộng + a11y, padding 2px tạo
+     "khoảng thở" giữa avatar và hover ring. */
+  avatarTrigger: {
+    padding: 2,
+    flexShrink: 0,
+    backgroundColor: 'transparent',
+    border: 'none',
+    /* Hover/active state dùng `box-shadow` để vẽ ring quanh avatar — đẹp hơn
+       background tròn vì avatar đã tròn rồi, ring tách rõ. Transition mượt. */
+    boxShadow: '0 0 0 0 transparent',
+    transition: 'box-shadow 0.2s ease, transform 0.2s ease',
+    '&:hover': {
+      backgroundColor: 'transparent',
+      boxShadow:
+        theme.palette.type === 'dark'
+          ? '0 0 0 3px rgba(129, 140, 248, 0.35)'
+          : '0 0 0 3px rgba(57, 73, 171, 0.25)',
+    },
+    '&:focus-visible': {
+      outline: 'none',
+      boxShadow:
+        theme.palette.type === 'dark'
+          ? `0 0 0 3px ${theme.palette.primary.main}`
+          : `0 0 0 3px ${theme.palette.primary.main}`,
+    },
     [theme.breakpoints.down('sm')]: {
       marginTop: theme.spacing(1),
-      flexWrap: 'wrap',
-      justifyContent: 'center',
     },
   },
-  logout: {
-    textTransform: 'none',
+  /* Khi menu mở: KHÔNG đậm thêm cấp — chỉ giữ ring tương đương hover (cùng
+     độ dày 3px nhưng opacity nhẹ hơn để không "shout"). Trigger phải khiêm
+     tốn vì menu bên dưới đã chiếm sự chú ý chính. Trước đây ring đậm 45% +
+     extra dropshadow → cứng, jump 1 cấp visual khi click. */
+  avatarTriggerActive: {
+    boxShadow:
+      theme.palette.type === 'dark'
+        ? '0 0 0 3px rgba(129, 140, 248, 0.28) !important'
+        : '0 0 0 3px rgba(57, 73, 171, 0.18) !important',
+  },
+  /* Avatar bên trong: 36×36 (đủ thoáng trong IconButton 40×40 padding 2). */
+  avatarTriggerImg: {
+    width: 36,
+    height: 36,
+    fontSize: '0.95rem',
     fontWeight: 600,
-    fontSize: '0.8125rem',
-    padding: '9px 16px',
-    minHeight: 38,
-    minWidth: 132,
-    borderRadius: 10,
-    lineHeight: 1.2,
-    color: '#5c5c5c',
-    border: '1px solid #e0e0e0',
-    backgroundColor: '#fff',
-    boxShadow: 'none',
+  },
+  /* Dropdown paper: rộng đủ ôm header + 2 hành động; bo góc lớn + đổ bóng sâu.
+     Dùng "card" style hiện đại — viền nhẹ + shadow soft thay vì viền cứng. */
+  menuPaper: {
+    minWidth: 280,
+    marginTop: theme.spacing(0.75),
+    borderRadius: 14,
+    border:
+      theme.palette.type === 'dark'
+        ? '1px solid rgba(129, 140, 248, 0.18)'
+        : '1px solid rgba(0, 0, 0, 0.04)',
+    boxShadow:
+      theme.palette.type === 'dark'
+        ? '0 12px 32px rgba(0, 0, 0, 0.55), 0 2px 8px rgba(0, 0, 0, 0.3)'
+        : '0 12px 32px rgba(17, 24, 39, 0.12), 0 2px 8px rgba(17, 24, 39, 0.05)',
+    overflow: 'hidden',
+    backgroundColor: theme.palette.background.paper,
+  },
+  /* MUI v4 mặc định cho list padding-top/bottom 8 — bỏ để header sát mép, đẹp hơn. */
+  menuList: {
+    padding: 0,
+  },
+
+  /* Header card: identity user. Nền có tint nhẹ để tách khỏi item phía dưới. */
+  menuHeader: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: theme.spacing(1.5),
+    padding: theme.spacing(2, 2),
+    background:
+      theme.palette.type === 'dark'
+        ? 'linear-gradient(135deg, rgba(129, 140, 248, 0.12) 0%, rgba(99, 102, 241, 0.04) 100%)'
+        : 'linear-gradient(135deg, rgba(57, 73, 171, 0.06) 0%, rgba(99, 102, 241, 0.02) 100%)',
+    /* Header không bấm được nên không có hover state. */
+    cursor: 'default',
+  },
+  menuHeaderAvatar: {
+    width: 44,
+    height: 44,
+    fontSize: '1.1rem',
+    fontWeight: 600,
     flexShrink: 0,
-    transition: 'background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease',
-    '& .MuiButton-startIcon': {
-      marginRight: 6,
-    },
-    '&:hover': {
-      backgroundColor: '#e8eaf6',
-      border: '1px solid #7986cb',
-      color: '#283593',
-      boxShadow: 'none',
-    },
-    '&.MuiButton-outlined': {
-      border: '1px solid #e0e0e0',
-      padding: '9px 16px',
-      minHeight: 38,
-      minWidth: 132,
-      '&:hover': {
-        border: '1px solid #7986cb',
-        backgroundColor: '#e8eaf6',
-      },
-    },
+    boxShadow:
+      theme.palette.type === 'dark'
+        ? '0 4px 12px rgba(99, 102, 241, 0.4)'
+        : '0 4px 12px rgba(57, 73, 171, 0.25)',
   },
-  logoutIcon: {
-    fontSize: 17,
+  menuHeaderText: {
+    display: 'flex',
+    flexDirection: 'column',
+    minWidth: 0,
+    flex: 1,
   },
-  userName: {
-    display: 'block',
-    fontWeight: 600,
+  menuHeaderName: {
     fontSize: '0.9375rem',
-    lineHeight: 1.2,
-    maxWidth: 160,
+    fontWeight: 700,
+    lineHeight: 1.3,
+    color: theme.palette.text.primary,
     overflow: 'hidden',
     textOverflow: 'ellipsis',
     whiteSpace: 'nowrap',
+  },
+  menuHeaderEmail: {
+    fontSize: '0.75rem',
+    color: theme.palette.text.secondary,
+    lineHeight: 1.3,
+    marginTop: 2,
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
+  },
+
+  /* Mỗi mục hành động: icon trong khung tròn bo + 2 dòng text. Hover khá rõ
+     để click cảm thấy "feedback". */
+  menuItem: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: theme.spacing(1.5),
+    padding: theme.spacing(1.25, 2),
+    transition: 'background-color 0.15s ease',
+    '&:hover': {
+      backgroundColor:
+        theme.palette.type === 'dark'
+          ? 'rgba(129, 140, 248, 0.10)'
+          : 'rgba(57, 73, 171, 0.06)',
+    },
+  },
+  /* Khung tròn 36px chứa icon — tạo "weight" cho item, nhìn cân bằng với avatar header. */
+  menuItemIconBox: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 36,
+    height: 36,
+    borderRadius: 10,
+    flexShrink: 0,
+    backgroundColor:
+      theme.palette.type === 'dark'
+        ? 'rgba(129, 140, 248, 0.16)'
+        : 'rgba(57, 73, 171, 0.10)',
+    color: theme.palette.primary.main,
+    transition: 'background-color 0.15s ease, color 0.15s ease',
+  },
+  menuItemIconBoxDanger: {
+    backgroundColor:
+      theme.palette.type === 'dark'
+        ? 'rgba(248, 113, 113, 0.15)'
+        : 'rgba(239, 68, 68, 0.10)',
+    color: theme.palette.type === 'dark' ? '#fca5a5' : '#dc2626',
+  },
+  menuItemText: {
+    display: 'flex',
+    flexDirection: 'column',
     minWidth: 0,
+    flex: 1,
+  },
+  menuItemPrimary: {
+    fontSize: '0.875rem',
+    fontWeight: 600,
+    lineHeight: 1.25,
+    color: theme.palette.text.primary,
+  },
+  menuItemSecondary: {
+    fontSize: '0.75rem',
+    color: theme.palette.text.secondary,
+    lineHeight: 1.3,
+    marginTop: 2,
+  },
+  /* Item logout: text cũng đỏ nhẹ ở hover để báo "đây là hành động phá huỷ". */
+  menuItemDanger: {
+    '&:hover': {
+      backgroundColor:
+        theme.palette.type === 'dark'
+          ? 'rgba(248, 113, 113, 0.10)'
+          : 'rgba(239, 68, 68, 0.06)',
+      '& $menuItemPrimary': {
+        color: theme.palette.type === 'dark' ? '#fca5a5' : '#dc2626',
+      },
+    },
+  },
+  menuDivider: {
+    margin: 0,
+    backgroundColor:
+      theme.palette.type === 'dark'
+        ? 'rgba(255, 255, 255, 0.06)'
+        : 'rgba(0, 0, 0, 0.06)',
   },
   brandContainer: {
     display: 'flex',

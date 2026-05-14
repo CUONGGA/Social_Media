@@ -573,6 +573,341 @@ Tỉ lệ cải thiện sẽ **rất lớn** khi DB có nhiều post. Khi DB ít
 
 ---
 
+# Trang hồ sơ — Phạm vi S (MVP, cùng ngày)
+
+> Liên kết: `Y_TUONG_TINH_NANG.md` mục "Trang hồ sơ", `MO_RONG_DU_AN.md` mục 3 "Frontend & UX", `VanDeCanGiaiQuyet.md` mục product features.
+
+## Mục tiêu
+
+- Có thể bấm vào tên một người để xem trang cá nhân của họ.
+- Trang hồ sơ hiển thị: tên + avatar (initial), ngày tham gia, số kỷ niệm, lưới các bài đã đăng.
+- Có shortcut `/me` về hồ sơ của chính mình.
+- Mở đường cho các nâng cấp tương lai: bio, edit, avatar Google, follower, etc.
+
+## Phạm vi (đã chốt với user)
+
+| Câu hỏi | Quyết định |
+|----------|-----------|
+| URL? | `/users/:id` cho ai cũng xem được; `/me` redirect tới `/users/<myId>`. |
+| Hiển thị email? | **Không** — email là PII, chỉ chính chủ thấy trong dropdown navbar (đã có). |
+| Có edit profile không? | **Không trong S** — chỉ chỗ giữ nút stub "Sửa hồ sơ" cho phạm vi M. |
+| Tham gia từ bao giờ? | Lấy `User.createdAt`. User cũ chưa có → fallback "Tham gia từ trước". |
+| Đếm số bài? | `countDocuments({ creator: id })`, song song với fetch user. |
+| Trang user xa lạ (không tồn tại) | Hiển thị empty state thân thiện + nút về Home. |
+
+## Quyết định kỹ thuật
+
+| Tiêu chí | Lựa chọn | Lý do |
+|----------|----------|-------|
+| Schema User | Bật `timestamps: true` | Cần `createdAt` cho "Tham gia từ ...". Document cũ thiếu trường → client fallback. |
+| Endpoint user public | `GET /user/:id` riêng, không gắn auth | Hồ sơ public ai cũng xem được. Trả tối thiểu (name, joinedAt, postCount). |
+| Endpoint bài theo creator | **Mở rộng `GET /posts?creator=:id`** thay vì tạo route mới | Tận dụng pagination + filter có sẵn. Không gây trùng logic. |
+| State client | Slice `profile` riêng, **không** đụng `posts` | Tránh nhầm giữa feed Home và bài hồ sơ; chuyển route Profile → Home không phá feed cũ. |
+| Validate id | `mongoose.Types.ObjectId.isValid` cả ở `/user/:id` và filter `creator` | Tránh CastError, tránh fail toàn bộ list khi id sai format. |
+| Reuse `Post` card | Đúng — không tách component | Trải nghiệm nhất quán, miễn `setCurrentId` là no-op. |
+| Pagination | MUI `Pagination` inline (không reuse `Paginate`) | `Paginate` cũ coupling với feed (`state.posts`, `getPosts`). Inline đơn giản hơn refactor. |
+| Link tên creator | Trên Post card (`overlay`) + trên Post details (`postMeta`) | 2 chỗ user nhìn thấy tên → cả 2 đều phải click được. |
+
+## Kiến trúc tổng thể
+
+```
+[Post.card] tên creator → /users/:id
+[Navbar] dropdown → "Hồ sơ" → /users/:myId
+[App.js] /me → redirect /users/:myId (nếu login) / /auth (nếu chưa)
+[Profile.jsx]
+  ├─ dispatch getUserProfile(id)
+  │     ├─ GET /user/:id              → { _id, name, joinedAt, postCount }
+  │     └─ GET /posts?creator=:id     → { data, currentPage, numberOfPages }
+  │     (Promise.allSettled — fail riêng, không block nhau)
+  └─ render header + lưới Post + pagination
+```
+
+## Hợp đồng API mới
+
+### `GET /user/:id`
+
+- Status:
+  - `200 { _id, name, joinedAt, postCount }`
+  - `404 { message: "User not found" }` khi id không hợp lệ hoặc không có document.
+- Không yêu cầu auth.
+- Trả về `joinedAt: null` nếu user cũ chưa có `createdAt` (do schema mới bật timestamps).
+- KHÔNG trả: `email`, `password`, `id`, picture Google (avatar Google hiện đang ở client local storage, không có ở document DB).
+
+### `GET /posts?creator=:id&page=:n`
+
+- Query thêm `creator`. Hành vi cũ không đổi nếu thiếu `creator`.
+- Nếu `creator` không phải ObjectId hợp lệ → trả `data: []` (đúng kỳ vọng cho UI, tránh 400).
+- `numberOfPages` tính theo filter có `creator` → pagination hoạt động chính xác.
+
+## Files chạm
+
+### Server
+
+| File | Hành động | Chú thích |
+|------|-----------|-----------|
+| `server/models/user.js` | Sửa | Bật `timestamps: true`, đổi `require` → `required`, đổi tên var `postSchema` → `userSchema`. |
+| `server/controllers/users.js` | Sửa | Thêm `getUserPublic`. Sử dụng `Promise.all` cho `findById` + `countDocuments`. |
+| `server/routes/users.js` | Sửa | Thêm `router.get('/:id', getUserPublic)`. |
+| `server/controllers/posts.js` | Sửa | `getposts` đọc `creator` query → build filter dùng chung cho `count` và `find`. |
+
+### Client
+
+| File | Hành động | Chú thích |
+|------|-----------|-----------|
+| `client/src/constants/actionType.js` | Sửa | Thêm 5 action types: `FETCH_USER_PROFILE`, `FETCH_USER_POSTS`, `PROFILE_START_LOADING`, `PROFILE_END_LOADING`, `PROFILE_RESET`. |
+| `client/src/api/index.js` | Sửa | Thêm `fetchUserPublic`, `fetchPostsByCreator`. |
+| `client/src/actions/users.js` | **Mới** | `getUserProfile`, `getUserPostsPage`, `resetProfile`. `Promise.allSettled` để 2 request fail độc lập. |
+| `client/src/reducers/profile.js` | **Mới** | Slice riêng `{ viewed, posts, currentPage, numberOfPages, isLoading }`. |
+| `client/src/reducers/index.js` | Sửa | `combineReducers({ posts, auth, profile })`. |
+| `client/src/components/Profile/profile.jsx` | **Mới** | Component trang hồ sơ. |
+| `client/src/components/Profile/styles.js` | **Mới** | Styles: header gradient, avatar 96px, grid, pagination wrap, empty state. |
+| `client/src/App.js` | Sửa | Routes `/me` (redirect helper) + `/users/:id` → `Profile`. Cleanup: bỏ import `BrowserRouter` thừa. |
+| `client/src/components/Navbar/navbar.js` | Sửa | Menu item mới "Hồ sơ" với `<PersonIcon />`. Hàm `goToProfile` xử lý OAuth Google không có DB. |
+| `client/src/components/Posts/Post/post.js` | Sửa | Tên creator trong `overlay` → `MuiLink` + `stopPropagation` để không trigger mở post. |
+| `client/src/components/PostDetails/postdetails.jsx` | Sửa | Tên creator trong `postMeta` → `MuiLink component="button"` nếu có `creator`; fallback `Typography` cho post cũ thiếu creator. |
+
+## Edge cases & cách xử lý
+
+- **OAuth Google user chưa có document local**: JWT của họ có `sub` không phải ObjectId Mongo → `getUserPublic` trả 404. UI hiển thị empty state "Có thể đăng nhập bằng Google chưa đồng bộ". Phạm vi M sẽ tạo document User local cho Google user.
+- **`/me` khi chưa login**: redirect tới `/auth`.
+- **Post cũ không có `creator`**: Post details fallback sang `Typography` non-clickable.
+- **Click tên trên Post card**: `stopPropagation` để không vô tình mở chi tiết bài.
+- **User cũ thiếu `createdAt`**: Profile hiển thị "Tham gia từ trước".
+- **`creator` query không hợp lệ**: Server trả `data: []`, không 400 — UI hiển thị empty state "chưa có kỷ niệm".
+
+## Hành vi trên UI
+
+- Header hồ sơ là card gradient nhẹ (theo theme), avatar 96px, tên 700 weight, dòng meta "Tham gia DD/MM/YYYY · N kỷ niệm".
+- Nút "Sửa hồ sơ" chỉ hiện cho chính chủ. Click → alert "sẽ ra mắt sau" (stub, Phạm vi M).
+- Section "Kỷ niệm của X": Divider mảnh, grid 3 cột (>=md), 2 cột (sm), 1 cột (xs). Reuse `<Post />` y nguyên → like/delete vẫn hoạt động bình thường.
+- Empty: nếu là mình → "Bạn chưa có kỷ niệm nào. Hãy đăng bài đầu tiên!"; nếu là người khác → "Người này chưa đăng kỷ niệm nào."
+- Loading lần đầu: spinner toàn bộ paper. Đổi trang trong pagination: không spinner full (giữ context).
+
+## Manual test
+
+1. Đăng nhập, click avatar navbar → "Hồ sơ" → mở `/users/<myId>`. Thấy tên, ngày tham gia, số bài, lưới bài.
+2. Trên Home, click tên creator của post bất kỳ → mở profile người đó. KHÔNG mở chi tiết post.
+3. Truy cập `/users/<id-không-tồn-tại>` → hiện empty state có nút "Về trang chính".
+4. Truy cập `/users/abc123` (id sai format) → empty state.
+5. `/me` khi đã login → redirect đúng tới `/users/<myId>`; khi chưa login → `/auth`.
+6. Trên trang chi tiết bài, click tên người đăng ở dòng meta → mở profile họ.
+7. Đăng nhập bằng Google không có document local → mở `/me` → profile hiển thị empty state thông báo OAuth.
+8. Trong profile, like 1 bài → đếm like cập nhật optimistically (giữ logic cũ).
+9. Xoá 1 bài trong profile (nếu là chính chủ) → bài biến mất khỏi grid (qua reducer `posts` chung); reload trang để verify còn `postCount` đúng → **hạn chế**: `postCount` ở `viewed` không tự sync khi xoá bài; reload mới đúng (xem TODO bên dưới).
+
+## Hotfix sau release — Google user xem profile bị lỗi
+
+> Phát hiện ngay sau khi merge: đăng nhập bằng Google rồi mở `/me` → 404 + grid trống. Đây là **PROF-1** đã ghi nhận trước, mức độ thực tế là 🔴 vì lỗ hổng UX cho 100% Google user (đa số user thực).
+
+**Gốc rễ**:
+
+- Google sign-in **không tạo document User local**; auth middleware chỉ `jwt.decode` → `req.userId = sub` (chuỗi số kiểu `"10493838..."`).
+- Mọi post Google user đăng đều có `post.creator = sub`.
+- Endpoint `GET /user/:id` của tôi chặn cứng `mongoose.Types.ObjectId.isValid(id)` → Google `sub` không pass → 404.
+- Endpoint `GET /posts?creator=:id` cũng có guard tương tự → filter rỗng → grid trống.
+
+**Fix nhanh (đã merge cùng pass)**:
+
+1. **`getposts`**: bỏ guard ObjectId — `post.creator` là `String`, match thẳng theo string là an toàn (String filter không gây CastError).
+   ```diff
+   - const filter = creator && mongoose.Types.ObjectId.isValid(creator)
+   -     ? { creator }
+   -     : {};
+   + const filter = creator ? { creator: String(creator) } : {};
+   ```
+
+2. **`getUserPublic`**: thêm fallback path. Nếu id không phải ObjectId hoặc không có User doc → thử suy luận từ posts:
+   - `name` ← post mới nhất (tên gần đây nhất, đề phòng user đổi tên).
+   - `joinedAt` ← post cũ nhất (`createdAt`).
+   - `postCount` ← `countDocuments({ creator: id })`.
+   - Trả thêm `source: 'posts'` để client biết "đây là hồ sơ tạm" và hiển thị chip nhãn.
+   - Nếu không có bài nào → vẫn 404 (Google user mới đăng ký, chưa đăng bài).
+
+3. **Client `Profile`**: hiển thị chip `"Hồ sơ tạm"` (outlined, có tooltip) khi `viewed.source === 'posts'` để user hiểu vì sao "ngày tham gia" có thể không khớp ngày đăng ký Google thật.
+
+**Vì sao chỉ là fix tạm**: ngày tham gia dùng ngày post đầu tiên (không phải ngày đăng ký thật). Triệt để là **PROF-1 phase M** — upsert User doc khi sign-in Google + migrate `post.creator` sang ObjectId (D-2) + verify Google idToken (S-2).
+
+### Hotfix bổ sung — Google user chưa có bài nào
+
+> Lần test đầu phát hiện: Google user đăng nhập lần đầu, **chưa đăng bài nào** → vẫn 404 (fallback theo posts cũng không có dữ liệu để dựng). UX xấu: trang lỗi "Không tìm thấy người dùng" cho chính chủ.
+
+**Cách xử lý**: ở `actions/users.js`, khi server trả 404 cho `/user/:id` và id đang xem **trùng với user trong `localStorage`**, dispatch `FETCH_USER_PROFILE` thủ công với "synthetic profile" từ `localStorage.profile.result`:
+- `name` ← Google `name`
+- `joinedAt` ← `null` (không có dữ liệu)
+- `postCount` ← `0`
+- `source: 'self-local'`
+
+Client hiển thị chip `"Chưa đồng bộ"` (tooltip giải thích Google chưa upsert) + CTA "Tới trang đăng bài" trong empty state. Cho user khác (không phải chính mình) → vẫn empty state 404 thân thiện như cũ.
+
+Snippet logic chính:
+
+```javascript
+if (status === 404 && isSelf && stored?.result) {
+    dispatch({
+        type: FETCH_USER_PROFILE,
+        payload: {
+            _id: String(id),
+            name: stored.result.name || stored.result.given_name || 'You',
+            joinedAt: null,
+            postCount: 0,
+            source: 'self-local',
+        },
+    });
+}
+```
+
+## Hạn chế đã biết (sang Phạm vi M)
+
+| ID | Mô tả | Mức độ |
+|----|------|--------|
+| PROF-1 | OAuth Google user chưa có document local → đã có **fallback theo posts** ở hotfix trên, nhưng vẫn 404 khi Google user chưa đăng bài nào; ngày tham gia là ngày post đầu tiên, không phải ngày đăng ký thật. | 🟠 |
+| PROF-2 | Avatar lấy initial từ tên; chưa dùng `picture` Google (cần lưu trên User schema). | 🟡 |
+| PROF-3 | Sau khi xoá/sửa bài trong profile, `postCount` ở header không tự decrement (lệ thuộc vào reload). | 🟡 |
+| PROF-4 | Chưa có bio/giới thiệu/social links. | 🟡 |
+| PROF-5 | Chưa có "Sửa hồ sơ" thực sự — đang là stub alert. | 🟡 |
+| PROF-6 | Chưa có loading state khi đổi trang pagination (chỉ hiện ở lần load đầu). | 🟢 |
+| PROF-7 | Chưa có infinite scroll / SEO meta cho profile. | 🟢 |
+
+## Mở rộng đề xuất
+
+- **Phạm vi M**: Form sửa hồ sơ (`PATCH /user/:id`, owner-only) — name, bio, picture URL. Tạo document local cho Google user lúc signin lần đầu.
+- **Avatar thực**: Bổ sung field `picture` vào User schema + endpoint upload; phasing dần khỏi base64 cùng phase với ảnh post.
+- **Realtime profile**: Khi user đăng/like/comment một bài, broadcast lên `user:<id>` để profile đang mở tự cập nhật `postCount` và thêm bài mới vào đầu grid. Đi cùng A2 (Bell notifications) khi tổng quát hoá `commentBus → realtimeBus`.
+- **Social graph**: follower/following — cần model riêng + index, không phải MVP.
+
+---
+
+# PROF-1 Phase M — Google user upsert + dọn fallback (cùng ngày)
+
+> Tiếp nối: 2 hotfix Google ở trên (path 'posts' + 'self-local') là band-aid. Pass này đóng gốc rễ — Google user trở thành "first-class citizen" trong DB, mọi flow downstream dùng chung 1 logic với local user. Sau pass này KHÔNG còn 2 dạng `req.userId` (ObjectId vs Google `sub`).
+
+## Mục tiêu
+
+- Google sign-in → tạo/cập nhật document `User` trong DB.
+- Mọi `post.creator` là ObjectId string (kể cả post cũ đăng dưới Google `sub` cũng được migrate).
+- Frontend luôn cầm JWT **local** (verify chữ ký bằng `JWT_SECRET`) thay vì Google idToken.
+- Gỡ heuristic `token.length < 500` trong `auth` middleware → an toàn hơn.
+- Gỡ `path 'posts'` fallback ở `getUserPublic` và logic `source: 'self-local'` ở client → code sạch.
+
+## Quyết định kỹ thuật
+
+| Tiêu chí | Lựa chọn | Lý do |
+|----------|----------|-------|
+| Endpoint riêng cho Google | `POST /user/google` | Tránh đụng signin/signup hiện tại; logic upsert phức tạp hơn (4 nhánh: by-googleId, by-email, brand new, repeat). |
+| Verify chữ ký Google idToken | **Hoãn** (vẫn `jwt.decode` như cũ) | Đó là **S-2** — task riêng, cần `google-auth-library`. Pass này tập trung schema + flow. |
+| Schema field | `googleId: { index: { unique: true, sparse: true } }` + `picture: String` | `sparse` để user local (không có `googleId`) không xung đột unique. `picture` để hiển thị avatar Google thật trên Profile. |
+| Link với user local cùng email | Tự động (find by email → set googleId) | Tránh tạo 2 document khi user signup email/password rồi sau đó login Google cùng email. |
+| Migrate `post.creator: sub → ObjectId` | **Trong endpoint `/user/google`** (`updateMany` idempotent) | Tự xảy ra khi user Google đăng nhập lần đầu. Không cần script offline. `updateMany` lần thứ 2 không match gì → no-op. |
+| Trả token gì cho client | **JWT local** (cùng format signin/signup) | Đồng nhất → middleware verify chữ ký được, không cần heuristic length. |
+| Password optional trên schema | `password: { type: String }` (không required) | Google user không có password local. Local signup vẫn hash + lưu. |
+
+## Files chạm
+
+### Server
+
+| File | Hành động | Chú thích |
+|------|-----------|-----------|
+| `server/models/user.js` | Sửa | Thêm `googleId` (sparse+unique index) + `picture` (string). Đổi `password: required` → optional. |
+| `server/controllers/users.js` | Thêm controller `googleSignIn` | Upsert User theo googleId → email → create. Migrate post.creator `sub → ObjectId` (`updateMany`). Trả `{ result, token }` JWT local. |
+| `server/controllers/users.js` | Sửa `getUserPublic` | Bỏ path 'posts' fallback (không cần nữa). Bỏ field `source` trong response. Thêm `picture` vào response. Vẫn giữ fallback `joinedAt` từ earliest post cho user cũ thiếu `createdAt`. |
+| `server/routes/users.js` | Thêm | `POST /user/google → googleSignIn`. |
+| `server/middleware/auth.js` | Sửa | Bỏ nhánh Google `jwt.decode` (heuristic `length < 500`). Chỉ `jwt.verify` JWT local. |
+
+### Client
+
+| File | Hành động | Chú thích |
+|------|-----------|-----------|
+| `client/src/api/index.js` | Thêm | `googleSignIn(token) → POST /user/google`. |
+| `client/src/actions/auth.js` | Thêm | `googleSignIn(googleToken, history)` thunk: gọi API → dispatch AUTH (giống signin/signup). |
+| `client/src/components/Auth/Auth.js` | Sửa | `googleSuccess` không decode local nữa → gọi `googleSignIn(token, history)`. Xoá `jwtDecode`, `Icon` import dư. |
+| `client/src/actions/users.js` | Sửa | Bỏ logic synthetic `source: 'self-local'` khi 404. |
+| `client/src/components/Profile/profile.jsx` | Sửa | Avatar truyền `src={viewed?.picture}` để hiển thị avatar Google thật. |
+
+## Hợp đồng API
+
+### `POST /user/google`
+
+- **Body**: `{ token: <Google ID token> }`.
+- **Body validation**: trả 400 nếu thiếu `token` hoặc decode không có `sub`/`email`.
+- **Status**:
+  - `200 { result: <User document>, token: <JWT local> }`.
+  - `400 { message: 'Missing Google token' | 'Invalid Google token payload' }`.
+  - `500` khi DB lỗi.
+- **Side effect**: `updateMany` posts có `creator = sub` → `creator = User._id`. Idempotent.
+
+### `GET /user/:id`
+
+- Cleanup: bỏ `source`. Thêm `picture`.
+- Vẫn fallback `joinedAt` từ earliest post nếu User cũ thiếu `createdAt`.
+
+## Logic upsert (4 nhánh)
+
+```
+findOne({ googleId })
+├─ Có → update picture (refresh từ Google); KHÔNG đụng name nếu user đã đổi local.
+└─ Không
+   ├─ findOne({ email })
+   │  ├─ Có → link googleId vào doc cũ (user signup local rồi mới login Google).
+   │  └─ Không → create({ name, email, googleId, picture }).
+```
+
+Quyết định: ưu tiên giữ name user đã đổi (`user.name || name`). Không ưu tiên Google name để tránh ghi đè khi user đã đổi trên app.
+
+## Hành vi sau migration
+
+- Google user đăng nhập lần đầu: tạo User doc, post cũ với `creator = sub` được `updateMany` về `creator = ObjectId`.
+- Google user đăng nhập lần 2+: chỉ refresh `picture`. `updateMany` không match gì.
+- Local user đã từng login email/password, giờ login Google cùng email: doc cũ được link `googleId`, từ đó về sau đăng nhập kiểu nào cũng cùng 1 doc.
+- Local user không bao giờ login Google: không bị ảnh hưởng (`googleId` undefined, `sparse: true` đảm bảo unique index không xung đột).
+
+## Edge cases
+
+- **Google token hết hạn**: `jwt.decode` vẫn unwrap được (không verify exp). Cần S-2 với `google-auth-library` để bắt.
+- **User Google có 2 tài khoản trùng email** (hiếm — email primary là unique trên Google): nếu signin Google rồi đổi sang account Google khác cùng email (vd workplace) → cùng email → cùng User doc → OK.
+- **User đổi email Google**: googleId vẫn match → vẫn cùng doc. Email trên User document update theo Google (chưa làm — tốt cho Phạm vi M tiếp).
+- **Post của user khác có cùng `creator = sub` của Google user A trong DB**: không xảy ra vì `sub` của mỗi tài khoản Google là duy nhất.
+
+## Manual test (5 case)
+
+1. **Local user đã có account**: signin email/password → /me → header có avatar initial, ngày tham gia, số kỷ niệm. (Không đổi gì.)
+2. **Google user lần đầu, chưa từng đăng bài**: click Google sign-in → server tạo User doc → frontend nhận JWT local → /me → header có avatar Google thật (`picture`), `joinedAt = createdAt`, postCount = 0.
+3. **Google user đã có post cũ với `creator = sub`**: sign-in Google → server tạo doc + `updateMany` → /me thấy đầy đủ bài cũ. Mở DB tay xem: `post.creator` đã thành ObjectId.
+4. **Google user lần 2+**: signin lại → server tìm theo googleId, chỉ update picture. Profile xem được như bình thường.
+5. **Local user signup email cũ, sau đó login Google cùng email**: doc cũ được link googleId. Cả 2 cách signin về sau đều ra cùng `req.userId`.
+
+## Lợi ích đã đạt
+
+- Code path duy nhất: mọi user là 1 ObjectId, 1 doc, 1 JWT format.
+- Bỏ 1 lỗ hổng âm thầm: `auth` middleware không còn nhận Google idToken nguyên xi (đã từng không verify chữ ký).
+- Profile Phạm vi M dễ làm tiếp: form sửa `name + bio + picture` trên cùng schema; không phải xử lý "user không có doc".
+- A2 Bell notifications dễ làm: `req.userId` luôn là ObjectId → emit `user:<id>` an toàn.
+
+## Hotfix sau Phase M — `getUserId` priority
+
+Phát hiện ngay khi test: Google user sau khi sign-in qua endpoint mới vẫn 404 ở /me. Server log thấy client gọi `GET /user/<sub>` (Google sub) thay vì `GET /user/<_id>`.
+
+**Gốc rễ**: `client/src/utils/authUser.js` priority cũ là `sub → googleId → _id`. Sau Phase M, `result` lưu trong localStorage chính là User document (đã có `googleId` field) nên `r.sub` undefined → fallback `r.googleId` (Google sub) → quay lại bug cũ.
+
+**Fix**: đổi priority thành `_id → googleId → sub`. Đây là 1 dòng đổi.
+
+```diff
+- const id = r.sub ?? r.googleId ?? r._id;
++ const id = r._id ?? r.googleId ?? r.sub;
+```
+
+Có ghi chú comment dài hơn để người sau hiểu lý do — đây là dạng bug "tinh tế nhưng tốn time": code đúng cú pháp, không lint, không exception; chỉ là sai về mặt semantic vì cấu trúc dữ liệu đã đổi sau pass.
+
+## Hạn chế còn lại
+
+| ID | Mô tả | Mức độ |
+|----|------|--------|
+| S-2 | Vẫn chưa verify chữ ký Google idToken — token forge vẫn có thể (đặt `sub` bất kỳ). Cần `google-auth-library` `OAuth2Client.verifyIdToken`. | 🔴 (production) |
+| PROF-2 | Avatar Google đã hiển thị ở Profile — nhưng Post card vẫn dùng initial. Có thể bổ sung populate `creator.picture` về sau. | 🟡 |
+| D-2 | `post.creator` vẫn là `String` thay vì `ObjectId ref User`. Migrate qua sau (lớn hơn — phải đụng nhiều query). | 🟡 |
+| PROF-3..5 | Edit form, bio chưa làm. | 🟡 |
+
+---
+
 # A2 — Bell notifications (đề xuất, chưa triển khai)
 
 > Đã chốt kế hoạch, hoãn lại để ưu tiên **phân quyền** trước (mục 1 `MO_RONG_DU_AN.md`). Quay lại A2 sau.
