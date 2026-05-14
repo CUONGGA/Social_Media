@@ -156,7 +156,7 @@ export const getUserPublic = async (req, res) => {
     try {
         const postFilter = { creator: String(id) };
         const [user, postCount, earliestPost] = await Promise.all([
-            User.findById(id, { name: 1, picture: 1, createdAt: 1 }).lean(),
+            User.findById(id, { name: 1, picture: 1, bio: 1, createdAt: 1 }).lean(),
             PostMessage.countDocuments(postFilter),
             /* Earliest post để fallback `joinedAt` cho user CŨ: được tạo
                trước khi bật `timestamps: true` nên thiếu `createdAt`. */
@@ -171,9 +171,176 @@ export const getUserPublic = async (req, res) => {
             _id: String(user._id),
             name: user.name,
             picture: user.picture || null,
+            bio: user.bio || null,
             joinedAt: user.createdAt || earliestPost?.createdAt || null,
             postCount,
         });
+    } catch (err) {
+        return res.status(500).json({ message: err.message });
+    }
+};
+
+/* PATCH /user/:id — sửa hồ sơ. Chỉ owner mới được sửa (req.userId === id).
+   Whitelist field: name, bio, picture. Mọi field khác (email, password,
+   googleId, _id, createdAt) bị BỎ — tránh leo quyền hoặc làm hỏng identity.
+
+   Validation:
+   - name: required nếu có, trim, 1-80 ký tự.
+   - bio: optional, max 280 ký tự (có thể là chuỗi rỗng để xoá).
+   - picture: optional, max 1024 ký tự (có thể rỗng để xoá avatar).
+
+   Trả về shape giống GET /user/:id để client merge thẳng vào state.profile.viewed.
+   `postCount` KHÔNG trả về (vì PATCH này không đổi số bài) — client giữ giá trị cũ. */
+export const updateUserProfile = async (req, res) => {
+    const { id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(404).json({ message: 'User not found' });
+    }
+
+    /* Owner check: dùng req.userId từ JWT (auth middleware đã verify).
+       KHÔNG dùng giá trị từ body — tránh client gửi id khác để giả mạo. */
+    if (String(req.userId) !== String(id)) {
+        return res.status(403).json({ message: 'You can only edit your own profile' });
+    }
+
+    const { name, bio, picture } = req.body || {};
+    const update = {};
+
+    if (name != null) {
+        if (typeof name !== 'string') {
+            return res.status(400).json({ message: 'Name phải là chuỗi' });
+        }
+        const trimmed = name.trim();
+        if (trimmed.length === 0 || trimmed.length > 80) {
+            return res.status(400).json({ message: 'Name phải dài 1-80 ký tự' });
+        }
+        update.name = trimmed;
+    }
+
+    if (bio != null) {
+        if (typeof bio !== 'string') {
+            return res.status(400).json({ message: 'Bio phải là chuỗi' });
+        }
+        if (bio.length > 280) {
+            return res.status(400).json({ message: 'Bio tối đa 280 ký tự' });
+        }
+        update.bio = bio;
+    }
+
+    if (picture != null) {
+        if (typeof picture !== 'string') {
+            return res.status(400).json({ message: 'Picture URL phải là chuỗi' });
+        }
+        const trimmed = picture.trim();
+        if (trimmed.length > 1024) {
+            return res.status(400).json({ message: 'Picture URL quá dài' });
+        }
+        update.picture = trimmed;
+    }
+
+    if (Object.keys(update).length === 0) {
+        return res.status(400).json({ message: 'Không có thay đổi nào' });
+    }
+
+    try {
+        const user = await User.findByIdAndUpdate(id, update, {
+            new: true,
+            runValidators: true,
+            projection: { name: 1, picture: 1, bio: 1, createdAt: 1 },
+        }).lean();
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        /* Lấy lại postCount để response có đủ shape giống getUserPublic.
+           Trade-off: 1 query nhỏ mỗi lần edit (hiếm) — bù lại client không
+           phải merge với state cũ. */
+        const postCount = await PostMessage.countDocuments({ creator: String(id) });
+
+        return res.json({
+            _id: String(user._id),
+            name: user.name,
+            picture: user.picture || null,
+            bio: user.bio || null,
+            joinedAt: user.createdAt || null,
+            postCount,
+        });
+    } catch (err) {
+        return res.status(500).json({ message: err.message });
+    }
+};
+
+/* PATCH /user/me/password — đổi mật khẩu cho user local.
+   Identity LẤY TỪ JWT (`req.userId`), không lấy từ body — tránh leo quyền.
+
+   Đầu vào: { currentPassword, newPassword, confirmPassword }
+   Logic:
+   1. Tìm user theo `req.userId` (đã verify trong middleware `auth`).
+   2. Nếu user CHƯA có `password` field → đây là Google-only user → 400
+      với `code: 'NO_PASSWORD'` để FE hiển thị giao diện phù hợp ("đăng nhập
+      bằng Google, không có mật khẩu local"). Không chuyển sang flow "set
+      password" vì sẽ phải xử lý xác thực 2 bước (gửi email…) — out of scope MVP.
+   3. `bcrypt.compare(currentPassword, user.password)` — sai → 400.
+   4. Validate newPassword:
+      - tối thiểu 6 ký tự (cùng ngưỡng với client để thông báo nhất quán)
+      - không trùng currentPassword (đổi mà giống cũ là vô nghĩa)
+      - === confirmPassword (defense-in-depth, FE cũng check rồi)
+   5. Hash mới (bcrypt cost 12, cùng với signup) → save.
+
+   Trả về 200 `{ message }` — KHÔNG trả password hash mới. Client không cần
+   biết hash; JWT cũ vẫn valid nên user không bị đăng xuất. */
+export const changePassword = async (req, res) => {
+    if (!req.userId) {
+        return res.status(401).json({ message: 'Unauthorized', code: 'NO_TOKEN' });
+    }
+
+    const { currentPassword, newPassword, confirmPassword } = req.body || {};
+
+    if (
+        typeof currentPassword !== 'string' ||
+        typeof newPassword !== 'string' ||
+        typeof confirmPassword !== 'string'
+    ) {
+        return res.status(400).json({ message: 'Thiếu trường mật khẩu' });
+    }
+
+    if (newPassword.length < 6) {
+        return res.status(400).json({ message: 'Mật khẩu mới phải tối thiểu 6 ký tự' });
+    }
+
+    if (newPassword !== confirmPassword) {
+        return res.status(400).json({ message: 'Mật khẩu xác nhận không khớp' });
+    }
+
+    if (newPassword === currentPassword) {
+        return res.status(400).json({ message: 'Mật khẩu mới phải khác mật khẩu hiện tại' });
+    }
+
+    try {
+        const user = await User.findById(req.userId);
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        if (!user.password) {
+            return res.status(400).json({
+                message: 'Tài khoản này đăng nhập bằng Google nên không có mật khẩu local. Hãy đổi mật khẩu trên Google.',
+                code: 'NO_PASSWORD',
+            });
+        }
+
+        const ok = await bcrypt.compare(currentPassword, user.password);
+        if (!ok) {
+            return res.status(400).json({ message: 'Mật khẩu hiện tại không đúng' });
+        }
+
+        user.password = await bcrypt.hash(newPassword, 12);
+        await user.save();
+
+        return res.json({ message: 'Đổi mật khẩu thành công' });
     } catch (err) {
         return res.status(500).json({ message: err.message });
     }

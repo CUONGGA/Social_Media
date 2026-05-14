@@ -38,11 +38,13 @@ function normalizeToastPayload(severity, payload) {
 
 const useToastStyles = makeStyles((theme) => ({
   snackbar: {
-    marginBottom: theme.spacing(2.5),
-    marginRight: theme.spacing(1),
+    /* Sát mép phải-dưới. Giữ khoảng đệm tối thiểu để toast không "đè"
+       lên mép viewport. */
+    marginBottom: theme.spacing(0.75),
+    marginRight: 0,
     [theme.breakpoints.down('xs')]: {
-      marginBottom: theme.spacing(1.5),
-      marginRight: theme.spacing(0.75),
+      marginBottom: theme.spacing(0.5),
+      marginRight: 0,
       paddingLeft: theme.spacing(1),
     },
     '& .MuiSnackbarContent-root': {
@@ -170,6 +172,8 @@ const useToastStyles = makeStyles((theme) => ({
 }));
 
 function ToastSlide(props) {
+  /* `direction="left"` = toast bay từ bên phải vào (Slide đẩy element theo
+     direction tới vị trí cuối). Phù hợp với anchor bottom-right. */
   return <Slide {...props} direction="left" />;
 }
 

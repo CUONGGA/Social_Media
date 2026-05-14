@@ -79,7 +79,8 @@ Tài liệu ghi lại các hướng củng cố và mở rộng cho ứng dụng
 
 - [x] **Trang hồ sơ MVP** — `/users/:id` + `/me`, lưới bài + ngày tham gia + số bài. Xem [ngay2.md — Trang hồ sơ](./ngay2.md#trang-hồ-sơ--phạm-vi-s-mvp-cùng-ngày).
 - [x] **Hồ sơ — Phạm vi M (Google upsert)**: PROF-1 đã đóng — Google user có User doc trong DB, `post.creator` migrate sang ObjectId, frontend luôn dùng JWT local. Xem [ngay2.md § PROF-1 Phase M](./ngay2.md#prof-1-phase-m--google-user-upsert--dọn-fallback-cùng-ngày).
-- [ ] **Hồ sơ — Phạm vi M (tiếp)**: form sửa name/bio (owner-only), upload avatar mới, populate `picture` cho Post card. Phát sinh PROF-3..5.
+- [x] **Hồ sơ — Sửa hồ sơ (PROF-4 + PROF-5)**: dialog edit name + bio (≤280) + picture URL, owner-only (`PATCH /user/:id` server-side check), sync Navbar realtime qua dispatch `AUTH`. Xem [ngay2.md § PROF-5](./ngay2.md#prof-5--sửa-hồ-sơ-name--bio--picture-cùng-ngày).
+- [ ] **Hồ sơ — Phạm vi M (còn lại)**: upload avatar thật (chờ D-1 file storage), populate `picture`/`name` cho Post card (chờ D-2 creator ref). PROF-3 (postCount sync) đi cùng A2.
 - [ ] Theo dõi user / feed cá nhân.
 - [ ] Thông báo; báo cáo nội dung; chặn user (moderation).
 - [ ] Sửa/xóa comment, reply, mention.
@@ -104,6 +105,6 @@ Tài liệu ghi lại các hướng củng cố và mở rộng cho ứng dụng
 3. Comment schema rõ ràng + mã HTTP chuẩn — đổi `comments: [String]` sang object `{ userId, name, text, createdAt }`. Khi đổi, **payload SSE `comment:new` cần cập nhật** theo cấu trúc mới (vẫn cùng key `comments`).
 4. Đồng bộ search với URL (encode + hydrate state).
 5. Env client/server (`JWT_SECRET`, `REACT_APP_API_URL`, Google client ID).
-6. ~~Trang hồ sơ + "Bài viết của tôi"~~ — **MVP đã làm**; tiếp theo là Phạm vi M (edit + bio + avatar).
+6. ~~Trang hồ sơ + "Bài viết của tôi"~~ — **MVP + Sửa hồ sơ (PROF-5) đã làm**. Còn upload avatar thật (chờ D-1), populate post.creator (chờ D-2).
 7. Realtime mở rộng (Phạm vi M): DM 1-1 bằng Socket.IO; bell notifications dùng SSE kênh `user:{id}`.
 8. Nâng dependency UI và tính năng social khi nền tảng đã vững.

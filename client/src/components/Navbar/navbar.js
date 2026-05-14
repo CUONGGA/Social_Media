@@ -7,7 +7,6 @@ import {
     Typography,
     Button,
     IconButton,
-    Tooltip,
     Menu,
     MenuItem,
     Divider,
@@ -16,7 +15,9 @@ import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import NightsStay from '@material-ui/icons/NightsStay';
 import WbSunny from '@material-ui/icons/WbSunny';
 import PersonIcon from '@material-ui/icons/Person';
-import { useDispatch } from "react-redux";
+import SettingsIcon from '@material-ui/icons/Settings';
+import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import { useDispatch, useSelector } from "react-redux";
 import { useThemeMode } from '../../context/ThemeModeContext';
 import { jwtDecode } from 'jwt-decode';
 import { notifyInfo } from '../../utils/notify';
@@ -36,6 +37,12 @@ const Navbar = () => {
     const dispatch = useDispatch();
     const history = useHistory();
     const location = useLocation();
+    /* Subscribe authData để re-render khi profile được sửa qua dialog
+       (PROF-5). Trước đây Navbar chỉ re-đọc localStorage khi location đổi,
+       nên sau khi sửa hồ sơ ngay tại trang /users/:id, avatar/tên vẫn cũ
+       cho tới khi user navigate. Dispatch AUTH trong thunk → authData đổi
+       → useEffect bên dưới chạy lại → setUser từ localStorage. */
+    const authData = useSelector((state) => state.auth?.authData);
 
     const closeMenu = () => setMenuAnchor(null);
 
@@ -67,6 +74,37 @@ const Navbar = () => {
         else history.push('/me'); /* fallback: route /me sẽ tự redirect /auth */
     };
 
+    /* Mở trang Cài đặt: đóng Menu trước rồi navigate. Trang Settings có
+       sidebar nhiều mục, deeplink theo /settings/:section (mặc định security).
+       Không còn dùng Dialog vì user yêu cầu page riêng cho dễ mở rộng nhiều
+       section sau này. */
+    const openSettings = () => {
+        closeMenu();
+        history.push('/settings');
+    };
+
+    /* User đăng nhập bằng Google sẽ KHÔNG có `password` field trong document
+       (xem `googleSignIn` controller: `User.create({ name, email, googleId, picture })`
+       không set password). Dùng để chọn mô tả phụ trong MenuItem. */
+    const hasLocalPassword = Boolean(user?.result?.password);
+
+    /* Back button: chỉ hiện trên các trang con (không Home, không root, không Auth).
+       `history.goBack()` an toàn nếu đã có navigation trước đó trong session;
+       fallback về `/posts` nếu user mở trang trực tiếp (vd paste URL).
+
+       Heuristic: dùng `window.history.length > 2` để đoán có history hay không.
+       Không hoàn hảo (browser history.length đếm cả các tab/page khác) nhưng
+       đủ tốt cho 90% case. Edge case còn lại: user vào thẳng `/users/:id` →
+       click back → đi về `/posts`. */
+    const isOnHome = location.pathname === '/' || location.pathname === '/posts';
+    const isOnAuth = location.pathname === '/auth';
+    const showBack = !isOnHome && !isOnAuth;
+
+    const handleBack = () => {
+        if (window.history.length > 2) history.goBack();
+        else history.push('/posts');
+    };
+
     useEffect(() => {
         const token = user?.token;
         if (token) {
@@ -75,42 +113,51 @@ const Navbar = () => {
         }
         setUser(JSON.parse(localStorage.getItem('profile')));
         /* eslint-disable-next-line react-hooks/exhaustive-deps */
-    }, [location]);
+    }, [location, authData]);
 
     const nextModeLabel = mode === 'light' ? 'Dark mode' : 'Light mode';
     const ModeIcon = mode === 'light' ? NightsStay : WbSunny;
 
     return (
         <AppBar className={classes.appBar} position="static" color='inherit' elevation={0}>
-            <Link to="/" className={classes.brandContainer}>
-                <img src={memoriesText} alt="icon" height="55px" />
-                <img className={classes.image} src={memoriesLogo} alt="icon" height="60px" />
-            </Link>
+            <div className={classes.leftSide}>
+                {showBack && (
+                    <IconButton
+                        className={classes.backBtn}
+                        onClick={handleBack}
+                        aria-label="Quay lại"
+                    >
+                        <ArrowBackIcon fontSize="large" />
+                    </IconButton>
+                )}
+                <Link to="/" className={classes.brandContainer}>
+                    <img src={memoriesText} alt="icon" height="55px" />
+                    <img className={classes.image} src={memoriesLogo} alt="icon" height="60px" />
+                </Link>
+            </div>
             <Toolbar className={classes.toolbar}>
                 {user ? (
                     <>
                         {/* Trigger là chính Avatar của user — kiểu Gmail / GitHub.
                             IconButton ngoài cho click + a11y + hover ring; bên trong
                             Avatar không có padding để tận dụng hết 40×40. */}
-                        <Tooltip title={user?.result?.name || 'Tài khoản & cài đặt'}>
-                            <IconButton
-                                ref={triggerRef}
-                                className={`${classes.avatarTrigger} ${menuAnchor ? classes.avatarTriggerActive : ''}`}
-                                onClick={(e) => setMenuAnchor(e.currentTarget)}
-                                aria-controls={menuAnchor ? 'profile-menu' : undefined}
-                                aria-haspopup="true"
-                                aria-expanded={menuAnchor ? 'true' : undefined}
-                                aria-label="Open account menu"
+                        <IconButton
+                            ref={triggerRef}
+                            className={`${classes.avatarTrigger} ${menuAnchor ? classes.avatarTriggerActive : ''}`}
+                            onClick={(e) => setMenuAnchor(e.currentTarget)}
+                            aria-controls={menuAnchor ? 'profile-menu' : undefined}
+                            aria-haspopup="true"
+                            aria-expanded={menuAnchor ? 'true' : undefined}
+                            aria-label="Open account menu"
+                        >
+                            <Avatar
+                                className={`${classes.purple} ${classes.avatarTriggerImg}`}
+                                alt={user?.result?.name?.charAt(0)}
+                                src={user?.result?.picture}
                             >
-                                <Avatar
-                                    className={`${classes.purple} ${classes.avatarTriggerImg}`}
-                                    alt={user?.result?.name?.charAt(0)}
-                                    src={user?.result?.picture}
-                                >
-                                    {user?.result?.name?.charAt(0)}
-                                </Avatar>
-                            </IconButton>
-                        </Tooltip>
+                                {user?.result?.name?.charAt(0)}
+                            </Avatar>
+                        </IconButton>
 
                         <Menu
                             id="profile-menu"
@@ -162,6 +209,22 @@ const Navbar = () => {
                                 </div>
                             </MenuItem>
 
+                            <MenuItem onClick={openSettings} className={classes.menuItem}>
+                                <div className={classes.menuItemIconBox}>
+                                    <SettingsIcon fontSize="small" />
+                                </div>
+                                <div className={classes.menuItemText}>
+                                    <Typography className={classes.menuItemPrimary} component="div">
+                                        Cài đặt
+                                    </Typography>
+                                    <Typography className={classes.menuItemSecondary} component="div">
+                                        {hasLocalPassword
+                                            ? 'Đổi mật khẩu & tuỳ chỉnh tài khoản'
+                                            : 'Tuỳ chỉnh tài khoản (đăng nhập Google)'}
+                                    </Typography>
+                                </div>
+                            </MenuItem>
+
                             <MenuItem onClick={handleToggleMode} className={classes.menuItem}>
                                 <div className={classes.menuItemIconBox}>
                                     <ModeIcon fontSize="small" />
@@ -200,15 +263,13 @@ const Navbar = () => {
                     /* Chưa đăng nhập: vẫn cần nút đổi theme độc lập (không có
                        chỗ "trong tài khoản" để giấu). Đặt cạnh nút Sign In. */
                     <>
-                        <Tooltip title={nextModeLabel}>
-                            <IconButton
-                                className={classes.themeToggle}
-                                onClick={toggleMode}
-                                aria-label={`Switch to ${nextModeLabel.toLowerCase()}`}
-                            >
-                                <ModeIcon />
-                            </IconButton>
-                        </Tooltip>
+                        <IconButton
+                            className={classes.themeToggle}
+                            onClick={toggleMode}
+                            aria-label={`Switch to ${nextModeLabel.toLowerCase()}`}
+                        >
+                            <ModeIcon />
+                        </IconButton>
                         <Button
                             component={Link}
                             to="/auth"

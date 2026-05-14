@@ -11,7 +11,7 @@ import {
   DELETE,
   LIKE,
 } from '../constants/actionType';
-import { notifySuccess, notifyError, notifyInfo, axiosErrorMessage } from '../utils/notify';
+import { notifySuccess, notifyError, axiosErrorMessage } from '../utils/notify';
 import { readStoredProfile, getUserId } from '../utils/authUser';
 
 export const getPost = (id) => async (dispatch) => {
@@ -57,7 +57,9 @@ export const getPostBySearch = (searchQuery, options = {}) => async (dispatch) =
     }
     if (!silent) {
       dispatch({ type: END_LOADING });
-      notifyInfo(`Found ${Array.isArray(data) ? data.length : 0} result(s).`);
+      /* Bỏ toast "Found X results": dư thừa — UI grid bên dưới đã hiển thị
+         kết quả (hoặc empty state nếu 0). Toast làm ồn và xen tiếng Anh
+         vào UI tiếng Việt. */
     }
   } catch (error) {
     if (!silent) {

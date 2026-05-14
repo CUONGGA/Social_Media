@@ -238,6 +238,28 @@ export default makeStyles((theme) => ({
         ? 'rgba(255, 255, 255, 0.06)'
         : 'rgba(0, 0, 0, 0.06)',
   },
+  /* Vùng trái của navbar: optional back button + brand logo. Có gap rõ ràng
+     để nút back không "dính" vào logo. */
+  leftSide: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: theme.spacing(1),
+    minWidth: 0,
+  },
+  /* Nút Back: icon-only, ghost. Hover hiện vòng tròn nhẹ. Cùng triết lý
+     với theme toggle / avatar trigger trong navbar — tối giản, không border. */
+  backBtn: {
+    color: theme.palette.text.primary,
+    padding: theme.spacing(1),
+    backgroundColor: 'transparent',
+    transition: 'background-color 0.15s ease',
+    '&:hover': {
+      backgroundColor:
+        theme.palette.type === 'dark'
+          ? 'rgba(255, 255, 255, 0.08)'
+          : 'rgba(0, 0, 0, 0.06)',
+    },
+  },
   brandContainer: {
     display: 'flex',
     alignItems: 'center',

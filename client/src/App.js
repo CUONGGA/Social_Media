@@ -6,6 +6,7 @@ import Home from './components/Home/home.js';
 import Auth from './components/Auth/Auth.js';
 import PostDetails from './components/PostDetails/postdetails.jsx';
 import Profile from './components/Profile/profile.jsx';
+import Settings from './components/Settings/Settings.jsx';
 import { readStoredProfile, getUserId } from './utils/authUser';
 
 
@@ -33,6 +34,10 @@ const App = () => {
           component={() => (myUserId ? <Redirect to={`/users/${myUserId}`} /> : <Redirect to="/auth" />)}
         />
         <Route path="/users/:id" exact component={Profile} />
+        {/* `:section?` để URL như /settings/security có deeplink rõ ràng;
+            mặc định (không có :section) Settings tự redirect tới /settings/security.
+            Auth guard nằm bên trong component — chưa login thì redirect /auth. */}
+        <Route path="/settings/:section?" component={Settings} />
         <Route
           path="/auth"
           exact

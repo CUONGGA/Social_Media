@@ -8,6 +8,11 @@ import { createPost, updatePost } from '../../actions/posts.js'
 
 const Form = ({ currentId, setCurrentId }) => {
     const [postData, setPostData] = useState({ title: '', message: '', tags: [], selectedFile: '' })
+    /* Lưu CHÍNH XÁC chuỗi user gõ ở field Tags để dấu `,` và khoảng trắng
+       hiển thị bình thường khi đang nhập. Nếu chỉ derive từ `postData.tags`
+       (array đã parse) thì `["a"].join(', ') === "a"` — separator bị nuốt
+       ngay sau mỗi phím, user tưởng phím space/phẩy "hỏng". */
+    const [tagsInput, setTagsInput] = useState('')
     const [pickedFileLabel, setPickedFileLabel] = useState('')
     const fileInputRef = useRef(null)
     const post = useSelector((state) => currentId ? state.posts.posts.find((p) => p._id === currentId) : null);
@@ -19,6 +24,7 @@ const Form = ({ currentId, setCurrentId }) => {
     useEffect(() => {
         if (post) {
             setPostData(post)
+            setTagsInput(Array.isArray(post.tags) ? post.tags.join(', ') : (post.tags || ''))
             setPickedFileLabel(post.selectedFile ? 'Image attached' : '')
         }
     }, [post])
@@ -61,13 +67,22 @@ const Form = ({ currentId, setCurrentId }) => {
     const clear = () => {
         setCurrentId(null);
         setPostData({ title: '', message: '', tags: [], selectedFile: '' });
+        setTagsInput('');
         setPickedFileLabel('');
         if (fileInputRef.current) fileInputRef.current.value = '';
     }
 
-    const tagsValue = Array.isArray(postData.tags)
-        ? postData.tags.join(', ')
-        : (postData.tags || '');
+    /* Mỗi lần user gõ Tags: lưu nguyên văn vào `tagsInput` (để render),
+       đồng thời parse sang array (split theo `,` + whitespace, bỏ chuỗi rỗng)
+       cập nhật `postData.tags` → submit lúc nào cũng sẵn dữ liệu sạch. */
+    const handleTagsChange = (e) => {
+        const raw = e.target.value;
+        setTagsInput(raw);
+        setPostData((prev) => ({
+            ...prev,
+            tags: raw.split(/[,\s]+/).filter(Boolean),
+        }));
+    }
 
     return (
         <Paper className={classes.paper} elevation={6}>
@@ -77,7 +92,15 @@ const Form = ({ currentId, setCurrentId }) => {
             </Typography>
             <TextField name="title" variant="outlined" label="Title" fullWidth value={postData.title} onChange={(e) => setPostData({ ...postData, title: e.target.value})}/>
             <TextField name="message" variant="outlined" label="Message" fullWidth multiline rows={3} value={postData.message} onChange={(e) => setPostData({ ...postData, message: e.target.value})}/>
-            <TextField name="tags" variant="outlined" label="Tags" fullWidth placeholder="vacation, family" value={tagsValue} onChange={(e) => setPostData({ ...postData, tags: e.target.value.split(',').map((t) => t.trim()).filter(Boolean) })}/>
+            <TextField
+                name="tags"
+                variant="outlined"
+                label="Tags"
+                fullWidth
+                placeholder="vacation family travel"
+                value={tagsInput}
+                onChange={handleTagsChange}
+            />
             <div className={classes.fileInput}>
                 <input
                     ref={fileInputRef}

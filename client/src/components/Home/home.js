@@ -24,7 +24,25 @@ const Home = () => {
     const [search, setSearch] = useState('');
     const [tags, setTags] = useState([]);
 
-    const handleAdd = (tag) => setTags([...tags, tag]);
+    /* Khi user gõ "summer vacation" + Enter hoặc paste "a, b c" vào ChipInput,
+       ta tách theo dấu phẩy hoặc khoảng trắng → mỗi mảnh thành 1 chip riêng.
+       Cũng dedupe — không thêm tag đã có trong list. Kết quả: tag KHÔNG bao
+       giờ chứa `,` hoặc space. */
+    const handleAdd = (raw) => {
+        const pieces = String(raw).split(/[,\s]+/).filter(Boolean);
+        if (pieces.length === 0) return;
+        setTags((prev) => {
+            const seen = new Set(prev);
+            const next = [...prev];
+            for (const p of pieces) {
+                if (!seen.has(p)) {
+                    next.push(p);
+                    seen.add(p);
+                }
+            }
+            return next;
+        });
+    };
 
     const handleDelete = (tagToDelete) => setTags(tags.filter((tag) => tag !== tagToDelete));
 
@@ -76,7 +94,11 @@ const Home = () => {
                             label="Search by tags"
                             variant="outlined"
                             fullWidth
-                            placeholder="e.g. vacation — Enter"
+                            placeholder="vacation, family — Enter / phẩy / space"
+                            /* Mặc định chỉ Enter tạo chip. Thêm `,` để gõ nhanh hơn;
+                               không thêm Space vì user có thể đang đánh máy giữa từ.
+                               `handleAdd` cũng tự split nếu paste chuỗi nhiều từ. */
+                            newChipKeys={['Enter', ',']}
                         />
                         <Button
                             type="button"

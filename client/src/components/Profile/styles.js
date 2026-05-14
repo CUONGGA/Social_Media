@@ -11,14 +11,17 @@ export default makeStyles((theme) => ({
     },
 
     headerPaper: {
-        /* Phẳng: bg trắng (paper), bo góc, KHÔNG shadow/border/hover. */
+        /* Phẳng: bg trắng (paper), bo góc, KHÔNG shadow/border/hover.
+           Phải dùng `!important` ở hover vì `index.css` có rule global
+           `body[data-theme="dark"] .MuiPaper-root:hover` với specificity (0,2,1)
+           cao hơn class JSS — nếu không sẽ tự bật shadow khi dark mode. */
         padding: theme.spacing(3),
         borderRadius: 16,
         backgroundColor: theme.palette.background.paper,
-        boxShadow: 'none',
+        boxShadow: 'none !important',
         border: 'none',
         '&:hover': {
-            boxShadow: 'none',
+            boxShadow: 'none !important',
             backgroundColor: theme.palette.background.paper,
         },
     },
@@ -65,6 +68,29 @@ export default makeStyles((theme) => ({
         color: theme.palette.text.secondary,
     },
 
+    /* Bio: kiểu "lời tự giới thiệu", tách khỏi metadata bằng accent bar bên
+       trái (primary alpha). Font lớn hơn body2 chút (95% body1) để dễ đọc;
+       màu text.secondary để KHÔNG tranh sự chú ý với tên hiển thị.
+       - whitespace: pre-line  → giữ xuống dòng user gõ trong textarea.
+       - word-break: break-word → URL/tag dài không phá layout. */
+    headerBio: {
+        marginTop: theme.spacing(1.75),
+        paddingLeft: theme.spacing(1.5),
+        borderLeft: `3px solid ${
+            theme.palette.type === 'dark'
+                ? 'rgba(129, 140, 248, 0.55)' /* primary indigo sáng cho dark */
+                : 'rgba(57, 73, 171, 0.4)'    /* primary indigo đậm cho light */
+        }`,
+        color: theme.palette.text.secondary,
+        whiteSpace: 'pre-line',
+        wordBreak: 'break-word',
+        maxWidth: 640,
+        lineHeight: 1.55,
+        fontSize: '0.95rem',
+        letterSpacing: 0.1,
+        fontStyle: 'italic',
+    },
+
     metaDot: {
         width: 4,
         height: 4,
@@ -80,14 +106,15 @@ export default makeStyles((theme) => ({
     },
 
     postsPaper: {
-        /* Cùng style như header: bg trắng, bo góc, phẳng. */
+        /* Cùng style như header: bg trắng, bo góc, phẳng.
+           `!important` trên hover để né rule global ở `index.css` (xem ghi chú headerPaper). */
         padding: theme.spacing(3),
         borderRadius: 16,
         backgroundColor: theme.palette.background.paper,
-        boxShadow: 'none',
+        boxShadow: 'none !important',
         border: 'none',
         '&:hover': {
-            boxShadow: 'none',
+            boxShadow: 'none !important',
             backgroundColor: theme.palette.background.paper,
         },
     },

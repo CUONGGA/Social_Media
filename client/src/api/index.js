@@ -28,3 +28,7 @@ export const signIn = (formData) => API.post('/user/signin', formData);
 export const signUp = (formData) => API.post('/user/signup', formData);
 export const googleSignIn = (token) => API.post('/user/google', { token });
 export const fetchUserPublic = (id) => API.get(`/user/${encodeURIComponent(id)}`);
+export const updateUserProfile = (id, payload) =>
+  API.patch(`/user/${encodeURIComponent(id)}`, payload);
+/* Đổi mật khẩu — identity lấy từ JWT, không cần id trong URL. */
+export const changePassword = (payload) => API.patch('/user/me/password', payload);

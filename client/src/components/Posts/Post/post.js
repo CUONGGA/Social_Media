@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, CardActions, CardContent, CardMedia, Button, Typography, ButtonBase, Link as MuiLink } from '@material-ui/core/';
+import { Card, CardActions, CardContent, CardMedia, Button, Typography, ButtonBase, Link as MuiLink, Tooltip } from '@material-ui/core/';
 import ThumbUpAltIcon from '@material-ui/icons/ThumbUpAlt';
 import DeleteIcon from '@material-ui/icons/Delete';
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
@@ -14,7 +14,11 @@ import useStyles from './styles';
 
 const isSameId = (a, b) => String(a) === String(b);
 
-const Post = ({ post, setCurrentId }) => {
+/* `hideEdit`: ẩn nút "..." (MoreHorizIcon) ở góc trên-phải card. Mặc định
+   false → Home vẫn hiện như cũ. Profile truyền true vì trang đó không có
+   Form mount → click "..." sẽ không có hiệu lực (setCurrentId là no-op).
+   Delete vẫn giữ — user có quyền xoá bài của mình từ Profile. */
+const Post = ({ post, setCurrentId, hideEdit = false }) => {
   const user = readStoredProfile();
   const dispatch = useDispatch();
   const history = useHistory();
@@ -77,18 +81,21 @@ const Post = ({ post, setCurrentId }) => {
           </MuiLink>
           <Typography variant="body2">{moment(post.createdAt).fromNow()}</Typography>
         </div>
-        {(isSameId(getUserId(user), post?.creator)) && (
+        {!hideEdit && isSameId(getUserId(user), post?.creator) && (
         <div className={classes.overlay2} name="edit">
-          <Button
-            onClick={(e) => {
-              e.stopPropagation();
-              setCurrentId(post._id);
-            }}
-            style={{ color: 'white' }}
-            size="small"
-          >
-            <MoreHorizIcon fontSize="default" />
-          </Button>
+          <Tooltip title="Edit" arrow>
+            <Button
+              onClick={(e) => {
+                e.stopPropagation();
+                setCurrentId(post._id);
+              }}
+              style={{ color: 'white' }}
+              size="small"
+              aria-label="Edit post"
+            >
+              <MoreHorizIcon fontSize="default" />
+            </Button>
+          </Tooltip>
         </div>
         )}
         <div className={classes.details}>

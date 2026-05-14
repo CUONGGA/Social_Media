@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useParams, useHistory, Redirect } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -17,6 +17,7 @@ import moment from 'moment';
 import { getUserProfile, getUserPostsPage } from '../../actions/users';
 import { readStoredProfile, getUserId } from '../../utils/authUser';
 import Post from '../Posts/Post/post';
+import EditProfileDialog from './EditProfileDialog';
 import useStyles from './styles';
 
 /* Trang hồ sơ (Phạm vi S — MVP):
@@ -39,6 +40,7 @@ const Profile = () => {
        hiện tại không nhất quán; util `authUser` đã chuẩn hoá. */
     const myUserId = useMemo(() => getUserId(readStoredProfile()), []);
     const isOwner = myUserId && String(myUserId) === String(id);
+    const [editOpen, setEditOpen] = useState(false);
 
     useEffect(() => {
         if (!id) return;
@@ -112,6 +114,11 @@ const Profile = () => {
                                 thuật ra UI. Server vẫn trả `source`, client vẫn dùng để
                                 dựng synthetic profile khi 404 + self. */}
                         </div>
+                        {viewed?.bio && (
+                            <Typography variant="body2" component="p" className={classes.headerBio}>
+                                {viewed.bio}
+                            </Typography>
+                        )}
                     </div>
 
                     {isOwner && (
@@ -119,15 +126,26 @@ const Profile = () => {
                             variant="outlined"
                             startIcon={<EditIcon fontSize="small" />}
                             className={classes.editBtn}
-                            /* Stub: chưa làm form sửa ở Phạm vi S. Khi sẵn sàng Phạm vi M
-                               sẽ mở dialog edit (name + bio + avatar). */
-                            onClick={() => alert('Tính năng sửa hồ sơ sẽ ra mắt sau.')}
+                            onClick={() => setEditOpen(true)}
                         >
                             Sửa hồ sơ
                         </Button>
                     )}
                 </div>
             </Paper>
+
+            {isOwner && (
+                <EditProfileDialog
+                    open={editOpen}
+                    onClose={() => setEditOpen(false)}
+                    userId={String(id)}
+                    initial={{
+                        name: viewed?.name || '',
+                        bio: viewed?.bio || '',
+                        picture: viewed?.picture || '',
+                    }}
+                />
+            )}
 
             <Paper elevation={0} className={classes.postsPaper}>
                 <Typography variant="h5" component="h2" className={classes.sectionTitle}>
@@ -160,9 +178,10 @@ const Profile = () => {
                             {posts.map((post) => (
                                 <Grid key={post._id} item xs={12} sm={6} md={4}>
                                     {/* Reuse Post card. setCurrentId = no-op vì Profile
-                                        không có Form edit ngay tại đây. Khi nào cần edit
-                                        trong-place sẽ thêm sau. */}
-                                    <Post post={post} setCurrentId={() => {}} />
+                                        không có Form edit ngay tại đây. `hideEdit` để
+                                        không hiển thị nút "..." (vô tác dụng trên trang
+                                        này). Delete vẫn giữ. */}
+                                    <Post post={post} setCurrentId={() => {}} hideEdit />
                                 </Grid>
                             ))}
                         </Grid>
