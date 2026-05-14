@@ -99,6 +99,30 @@ Events được phát:
 - `req.on('close')` và `req.on('aborted')`: server xóa `res` khỏi room, clear `setInterval` heartbeat.
 - React unmount `CommentSection` → hàm trả về từ `openCommentStream` đóng `EventSource` → trình duyệt gửi `close` → server cleanup.
 
+## Gotcha — CRA dev proxy buffer SSE
+
+**Triệu chứng:** Sign in 2 tài khoản, A comment → B không thấy realtime, phải reload mới thấy. Server log có HIT POST + 2 stream subscribers.
+
+**Nguyên nhân:** `http-proxy-middleware` mặc định của CRA (qua field `"proxy"` trong `package.json`) buffer toàn bộ response body, kể cả khi `Content-Type: text/event-stream`. Browser EventSource không nhận event cho tới khi proxy đóng connection (vô hạn).
+
+**Cách fix (đã áp dụng):** Trong `client/src/api/commentStream.js`, ở dev (port 3000) EventSource trỏ **thẳng** `http://<hostname>:5000`, bỏ qua CRA proxy. `cors()` server cho phép mọi origin nên hợp lệ. Code:
+
+```js
+function resolveApiBase() {
+  if (process.env.REACT_APP_API_URL) return process.env.REACT_APP_API_URL;
+  if (typeof window !== 'undefined' && window.location.port === '3000') {
+    return `${window.location.protocol}//${window.location.hostname}:5000`;
+  }
+  return '';
+}
+```
+
+**Alternative đã cân nhắc và bỏ:**
+- `setupProxy.js` với http-proxy-middleware tự config — vẫn không tránh được layer `compress` của webpack-dev-server.
+- `res.flush()` ở server — không có middleware compression nên không có gì để flush; vô tác dụng.
+
+**Trong production:** không có bug này — phía sau nginx/Cloudflare/PaaS đã có header `X-Accel-Buffering: no` (mình đã set) + không có CRA proxy.
+
 ## Edge case / hạn chế đã biết
 
 1. **Bài bị xóa khi đang stream** — client vẫn nhận `ready` rồi nằm im, không có event nào nữa. Có thể bổ sung event `post:deleted` sau.

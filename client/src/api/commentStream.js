@@ -4,12 +4,24 @@
  * Dùng EventSource (built-in trình duyệt) — không cần thư viện ngoài.
  * EventSource sẽ tự reconnect khi mất kết nối, nên client không cần code lại.
  *
- * Trong dev (CRA), URL tương đối /posts/... được proxy về http://localhost:5000
- * theo cấu hình "proxy" trong package.json.
- * Trong prod, đặt REACT_APP_API_URL nếu API ở domain khác.
+ * GOTCHA: CRA dev proxy (mặc định trong package.json "proxy") buffer response
+ * text/event-stream → client KHÔNG nhận event tới khi connection đóng. Vì vậy
+ * trong dev ta cố ý bỏ qua proxy và gọi thẳng http://<host>:5000.
+ * `cors()` trên server cho phép mọi origin nên không cần preflight.
+ *
+ *  - Prod: dùng REACT_APP_API_URL nếu API ở domain khác, hoặc relative URL nếu cùng origin.
+ *  - Dev (CRA port 3000): tự đoán backend ở cùng host port 5000.
  */
 
-const API_BASE = process.env.REACT_APP_API_URL || '';
+function resolveApiBase() {
+  if (process.env.REACT_APP_API_URL) return process.env.REACT_APP_API_URL;
+  if (typeof window !== 'undefined' && window.location.port === '3000') {
+    return `${window.location.protocol}//${window.location.hostname}:5000`;
+  }
+  return '';
+}
+
+const API_BASE = resolveApiBase();
 
 /**
  * @param {string} postId
@@ -26,6 +38,8 @@ export function openCommentStream(postId, handlers = {}) {
   }
 
   const url = `${API_BASE}/posts/${postId}/comments/stream`;
+  // eslint-disable-next-line no-console
+  console.log('[SSE] open', url);
   const es = new window.EventSource(url);
 
   const safeJson = (raw) => {
@@ -33,18 +47,28 @@ export function openCommentStream(postId, handlers = {}) {
   };
 
   es.addEventListener('ready', (e) => {
+    // eslint-disable-next-line no-console
+    console.log('[SSE] ready', e.data);
     const data = safeJson(e.data);
     if (data && handlers.onReady) handlers.onReady(data);
   });
 
   es.addEventListener('comment:new', (e) => {
+    // eslint-disable-next-line no-console
+    console.log('[SSE] comment:new', e.data);
     const data = safeJson(e.data);
     if (data && handlers.onNewComment) handlers.onNewComment(data);
   });
 
-  if (handlers.onError) es.onerror = handlers.onError;
+  es.onerror = (event) => {
+    // eslint-disable-next-line no-console
+    console.warn('[SSE] error / readyState =', es.readyState, event);
+    if (handlers.onError) handlers.onError(event);
+  };
 
   return () => {
+    // eslint-disable-next-line no-console
+    console.log('[SSE] close', url);
     try { es.close(); } catch { /* ignore */ }
   };
 }
