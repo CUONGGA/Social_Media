@@ -6,12 +6,18 @@ Tài liệu ghi lại các hướng củng cố và mở rộng cho ứng dụng
 
 **Phản ứng nhiều loại (tim, haha, …)** — tạm ngưng trên UI; gợi ý triển khai sau: [PHAN_UNG_DA_TRIEN_KHAI.md](./PHAN_UNG_DA_TRIEN_KHAI.md).
 
+**Bình luận realtime (SSE)** — đã triển khai phạm vi S; nhật ký: [ngay2.md](./ngay2.md).
+
+**Tách `relatedPosts` khỏi feed** — đã xử lý nháy "You might also like"; nhật ký: [ngay1.md](./ngay1.md).
+
+**Giao diện sáng / tối** — đã có; tổng quan: [GIAO_DIEN_CHU_DE.md](./GIAO_DIEN_CHU_DE.md).
+
 ---
 
 ## Hiện trạng ngắn gọn
 
-- **Client**: Router, trang Home (danh sách, form tạo bài, tìm kiếm theo tiêu đề/tags), Auth Google, chi tiết bài + comment, navbar, phân trang qua query `page`.
-- **Server**: CRUD post, like, comment (đang lưu dạng chuỗi), tìm kiếm regex, middleware JWT; ảnh thường là base64 trong document.
+- **Client**: Router, trang Home (danh sách, form tạo bài, tìm kiếm theo tiêu đề/tags), Auth Google, chi tiết bài + comment, navbar, phân trang qua query `page`. Theme sáng/tối qua context + `localStorage`. Toast snackbar tập trung qua `ToastContext`. Chi tiết bài đăng ký **SSE** để nhận comment mới realtime.
+- **Server**: CRUD post, like, comment (đang lưu dạng chuỗi), tìm kiếm regex, middleware JWT; ảnh thường là base64 trong document. Có lớp **pub/sub trong bộ nhớ** (`server/realtime/commentBus.js`) phát SSE `comment:new` khi commentPost thành công.
 
 ---
 
@@ -38,10 +44,26 @@ Tài liệu ghi lại các hướng củng cố và mở rộng cho ứng dụng
 - [ ] **Mã lỗi chuẩn**: 401 khi thiếu token; 403 khi không đủ quyền; 404 khi không có post.
 - [ ] **URL tìm kiếm**: `encodeURIComponent` cho `searchQuery` và `tags` khi đẩy lịch sử; đồng bộ state form với URL khi F5 tại `/posts/search?...`.
 - [ ] **Edge case**: Chuỗi tags rỗng / khoảng trắng — thống nhất client và server.
+- [ ] **`getPostsBySearch`**: `tags` có thể `undefined` → tránh `tags.split(',')` crash; thống nhất giá trị "rỗng" giữa client & server.
 
 ---
 
-## 4. Frontend (UX và kỹ thuật)
+## 4. Realtime / Streaming
+
+> Trạng thái: **Phạm vi S đã có** (live bình luận qua SSE — xem [ngay2.md](./ngay2.md)). Các mục dưới là việc tiếp theo nếu tiến lên Phạm vi M (DM) / Phạm vi L (notifications).
+
+- [ ] **Auth trên stream**: hiện stream comment là public. Khi có bài "private" / DM phải verify JWT lúc `subscribe` (qua query `?token=...` hoặc cookie httpOnly).
+- [ ] **Scale ngang**: `commentBus` đang là `Map` in-memory → khi chạy cluster phải đổi sang **Redis Pub/Sub** (giữ nguyên signature `subscribe / emit`).
+- [ ] **Không bỏ sót khi reconnect**: SSE `Last-Event-ID` header + buffer event gần nhất (theo post). Hữu ích khi mạng chập chờn.
+- [ ] **Bell / notifications**: kênh riêng `user:{id}` — emit khi bài của user được like/comment. Cần model `Notification` cho lịch sử.
+- [ ] **Live like count**: cùng pattern, event `like:update { likes: string[] }` trong `likePost` controller.
+- [ ] **Typing indicator / DM 2 chiều**: lúc này nên cân nhắc đổi sang **Socket.IO** thay vì SSE (cần kênh client → server).
+- [ ] **Heartbeat / idle timeout**: hiện tại 25s; theo dõi nếu reverse proxy production có idle ngắn hơn (Cloudflare 100s, AWS ALB 60s mặc định — đều OK).
+- [ ] **Quan sát**: log số `roomSize` định kỳ để biết tải; cảnh báo nếu vượt ngưỡng (giúp quyết định lúc nào chuyển Redis).
+
+---
+
+## 5. Frontend (UX và kỹ thuật)
 
 - [ ] **Feedback**: Toast/snackbar cho lỗi mạng/API; skeleton/empty state.
 - [ ] **Google OAuth**: `clientId` qua env, không để placeholder trên repo công khai.
@@ -51,7 +73,7 @@ Tài liệu ghi lại các hướng củng cố và mở rộng cho ứng dụng
 
 ---
 
-## 5. Tính năng sản phẩm (tùy mục tiêu)
+## 6. Tính năng sản phẩm (tùy mục tiêu)
 
 - [ ] Hồ sơ user, đổi tên/avatar.
 - [ ] Trang “Bài viết của tôi”.
@@ -59,10 +81,11 @@ Tài liệu ghi lại các hướng củng cố và mở rộng cho ứng dụng
 - [ ] Thông báo; báo cáo nội dung; chặn user (moderation).
 - [ ] Sửa/xóa comment, reply, mention.
 - [ ] Tìm kiếm nâng cao: full-text MongoDB hoặc dịch vụ search nếu quy mô lớn.
+- [ ] **DM 1-1** (Phạm vi M của realtime — Socket.IO, model `Conversation` + `Message`).
 
 ---
 
-## 6. Chất lượng và vận hành
+## 7. Chất lượng và vận hành
 
 - [ ] **Tests**: Jest + RTL cho reducer; integration API; smoke E2E (Playwright/Cypress).
 - [ ] **CI**: Lint + test trên PR.
@@ -73,9 +96,11 @@ Tài liệu ghi lại các hướng củng cố và mở rộng cho ứng dụng
 
 ## Thứ tự gợi ý
 
-1. Bảo mật JWT + phân quyền CRUD post.  
-2. Upload ảnh ra storage + URL trong DB.  
-3. Comment schema rõ ràng + mã HTTP chuẩn.  
-4. Đồng bộ search với URL (encode + hydrate state).  
-5. Env client/server (`JWT_SECRET`, `REACT_APP_API_URL`, Google client ID).  
-6. Nâng dependency UI và tính năng social khi nền tảng đã vững.
+1. Bảo mật JWT + phân quyền CRUD post.
+2. Upload ảnh ra storage + URL trong DB.
+3. Comment schema rõ ràng + mã HTTP chuẩn — đổi `comments: [String]` sang object `{ userId, name, text, createdAt }`. Khi đổi, **payload SSE `comment:new` cần cập nhật** theo cấu trúc mới (vẫn cùng key `comments`).
+4. Đồng bộ search với URL (encode + hydrate state).
+5. Env client/server (`JWT_SECRET`, `REACT_APP_API_URL`, Google client ID).
+6. Trang hồ sơ + "Bài viết của tôi" — cửa ngõ cho follow / bookmark / DM.
+7. Realtime mở rộng (Phạm vi M): DM 1-1 bằng Socket.IO; bell notifications dùng SSE kênh `user:{id}`.
+8. Nâng dependency UI và tính năng social khi nền tảng đã vững.

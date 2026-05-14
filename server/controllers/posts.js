@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import PostMessage from "../models/postMessage.js";
+import * as commentBus from "../realtime/commentBus.js";
 
 export const getposts = async (req, res, next) => {
     const { page } = req.query;
@@ -117,6 +118,54 @@ export const commentPost = async (req, res, next) => {
     post.comments.push(value);
     const updatedPost = await PostMessage.findByIdAndUpdate(id
         , post, { new: true });
+
+    /* Phát comment tới mọi client đang mở trang chi tiết bài này.
+       Gửi cả 'comment' (raw) và 'comments' (mảng chuẩn từ DB) — client chọn dùng cái nào. */
+    commentBus.emit(id, 'comment:new', {
+        postId: String(id),
+        comment: value,
+        comments: updatedPost.comments,
+    });
+
     res.json(updatedPost);
 }
+
+/**
+ * SSE stream cho bình luận của 1 post.
+ * Public (không cần auth) — bất kỳ ai mở trang chi tiết đều có thể nhận event mới.
+ */
+export const streamComments = (req, res) => {
+    const { id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(404).end();
+    }
+
+    res.set({
+        'Content-Type': 'text/event-stream; charset=utf-8',
+        'Cache-Control': 'no-cache, no-transform',
+        Connection: 'keep-alive',
+        /* Tắt buffering trên reverse proxy phổ biến (nginx) — không có hại nếu không dùng proxy */
+        'X-Accel-Buffering': 'no',
+    });
+    res.flushHeaders?.();
+
+    /* Báo client đã sẵn sàng (cũng giúp axios/fetch không bị stuck chờ first byte). */
+    res.write(`event: ready\ndata: ${JSON.stringify({ postId: String(id) })}\n\n`);
+
+    /* Heartbeat 25s — giữ kết nối qua proxy/loadbalancer hay đóng idle 30s+. */
+    const heartbeat = setInterval(() => {
+        try { res.write(': ping\n\n'); } catch { /* ignore */ }
+    }, 25_000);
+
+    commentBus.subscribe(id, res);
+
+    const cleanup = () => {
+        clearInterval(heartbeat);
+        commentBus.unsubscribe(id, res);
+    };
+
+    req.on('close', cleanup);
+    req.on('aborted', cleanup);
+};
 
