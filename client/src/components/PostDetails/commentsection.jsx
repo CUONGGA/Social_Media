@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux';
 import useStyle from './styles.js';
 import { commentPost } from '../../actions/posts.js';
 import { openCommentStream } from '../../api/commentStream.js';
+import { LIKE } from '../../constants/actionType.js';
 
 /** Tách "Tên: nội dung" chỉ tại dấu ": " đầu tiên (trùng định dạng lúc gửi), giữ nguyên mọi dấu : trong nội dung. */
 function splitCommentAuthorBody(raw) {
@@ -26,7 +27,8 @@ const CommentSection = ({ post }) => {
         setComments(post?.comments ?? []);
     }, [post]);
 
-    /* Realtime: lắng nghe SSE để thấy comment người khác gửi mà không cần refresh.
+    /* Realtime: lắng nghe SSE cho cả comment mới và số like cập nhật.
+       1 EventSource cho 1 post; nhiều loại event được tách bằng `event:` field SSE.
        Gắn lại stream mỗi khi đổi sang post khác. */
     useEffect(() => {
         const postId = post?._id;
@@ -35,9 +37,14 @@ const CommentSection = ({ post }) => {
             onNewComment: ({ comments: serverComments }) => {
                 if (Array.isArray(serverComments)) setComments(serverComments);
             },
+            onLikeUpdate: ({ postId: pid, likes }) => {
+                if (!Array.isArray(likes)) return;
+                /* Payload nhỏ (_id + likes) → reducer LIKE merge vào post hiện có. */
+                dispatch({ type: LIKE, payload: { _id: pid, likes } });
+            },
         });
         return close;
-    }, [post?._id]);
+    }, [post?._id, dispatch]);
 
     const handleClick = async () => {
         const finalComment = `${user.result.name}: ${comment}`;

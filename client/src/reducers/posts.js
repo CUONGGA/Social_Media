@@ -30,20 +30,24 @@ export default (state = { isLoading: true, posts: [], relatedPosts: [], relatedF
         }
         case FETCH_POST:
             return { ...state, post: action.payload, ...emptyRelated };
-        case LIKE:
+        case LIKE: {
+            /* Merge thay vì replace để hỗ trợ cả 2 dạng payload:
+               - REST trả về full post (khi user bấm like): { ...post, likes }
+               - SSE 'like:update' chỉ gửi partial: { _id, likes } (tránh truyền base64 ảnh)
+               Spread giữ nguyên các field khác (selectedFile, title, message, comments...). */
+            const upd = action.payload;
+            const merge = (p) =>
+                String(p._id) === String(upd._id) ? { ...p, ...upd } : p;
             return {
                 ...state,
-                posts: state.posts.map((p) =>
-                    String(p._id) === String(action.payload._id) ? action.payload : p
-                ),
-                relatedPosts: (state.relatedPosts || []).map((p) =>
-                    String(p._id) === String(action.payload._id) ? action.payload : p
-                ),
+                posts: state.posts.map(merge),
+                relatedPosts: (state.relatedPosts || []).map(merge),
                 post:
-                    state.post && String(state.post._id) === String(action.payload._id)
-                        ? action.payload
+                    state.post && String(state.post._id) === String(upd._id)
+                        ? { ...state.post, ...upd }
                         : state.post,
             };
+        }
         case COMMENT:
             return {
                 ...state,

@@ -2,11 +2,13 @@
 
 Tài liệu ghi lại các hướng củng cố và mở rộng cho ứng dụng (React + Redux + MUI v4, Node/Express + MongoDB + JWT + Google OAuth).
 
+**Backlog vấn đề cụ thể (bug / lỗ hổng / nợ kỹ thuật)** — đã + chưa giải quyết: [VanDeCanGiaiQuyet.md](./VanDeCanGiaiQuyet.md). File này (`MO_RONG_DU_AN.md`) viết theo **mục tiêu**; file kia liệt kê **vấn đề cụ thể** kèm severity/status — bổ sung nhau.
+
 **Ý tưởng tính năng sản phẩm / UX** (dòng thời gian, album, map, v.v.): [Y_TUONG_TINH_NANG.md](./Y_TUONG_TINH_NANG.md).
 
 **Phản ứng nhiều loại (tim, haha, …)** — tạm ngưng trên UI; gợi ý triển khai sau: [PHAN_UNG_DA_TRIEN_KHAI.md](./PHAN_UNG_DA_TRIEN_KHAI.md).
 
-**Bình luận realtime (SSE)** — đã triển khai phạm vi S; nhật ký: [ngay2.md](./ngay2.md).
+**Bình luận realtime (SSE) + Live like count + Phân quyền P0** — đã triển khai (ngày 2: comment realtime, A1: live like, P0: khoá lỗ hổng edit/delete bất kỳ ai); nhật ký gộp: [ngay2.md](./ngay2.md).
 
 **Tách `relatedPosts` khỏi feed** — đã xử lý nháy "You might also like"; nhật ký: [ngay1.md](./ngay1.md).
 
@@ -24,7 +26,7 @@ Tài liệu ghi lại các hướng củng cố và mở rộng cho ứng dụng
 ## 1. Bảo mật và môi trường production
 
 - [ ] **`JWT_SECRET`**: Lấy từ biến môi trường, không hardcode trong repo.
-- [ ] **Phân quyền**: Chỉ chủ bài viết (hoặc admin) được sửa/xóa; quy tắc rõ cho like/comment (ví dụ bắt buộc đăng nhập).
+- [x] **Phân quyền** *(P0 đã đóng — xem [ngay2.md § Phân quyền P0](./ngay2.md#phân-quyền-p0--khoá-lỗ-hổng-editdelete-bất-kỳ-ai))*: chỉ chủ bài được PATCH/DELETE (403 nếu khác owner); 404 khi post không tồn tại; 401 chuẩn khi thiếu/sai token; body không cho ghi đè `creator`.
 - [ ] **Validation**: `express-validator`, Joi, hoặc Zod — giới hạn độ dài title/message, tags, kích thước body.
 - [ ] **Rate limiting**, **helmet**, **CORS** chặt theo domain deploy.
 - [ ] **HTTPS**; nếu dùng cookie cho token thì `httpOnly`, `secure`, `sameSite` phù hợp.
@@ -56,7 +58,7 @@ Tài liệu ghi lại các hướng củng cố và mở rộng cho ứng dụng
 - [ ] **Scale ngang**: `commentBus` đang là `Map` in-memory → khi chạy cluster phải đổi sang **Redis Pub/Sub** (giữ nguyên signature `subscribe / emit`).
 - [ ] **Không bỏ sót khi reconnect**: SSE `Last-Event-ID` header + buffer event gần nhất (theo post). Hữu ích khi mạng chập chờn.
 - [ ] **Bell / notifications**: kênh riêng `user:{id}` — emit khi bài của user được like/comment. Cần model `Notification` cho lịch sử.
-- [ ] **Live like count**: cùng pattern, event `like:update { likes: string[] }` trong `likePost` controller.
+- [x] **Live like count** — đã làm trong A1 cùng ngày, xem [ngay2.md § A1](./ngay2.md#a1--live-like-count-mở-rộng-cùng-ngày). Event `like:update { postId, likes[] }` tái dùng `commentBus` + stream sẵn có.
 - [ ] **Typing indicator / DM 2 chiều**: lúc này nên cân nhắc đổi sang **Socket.IO** thay vì SSE (cần kênh client → server).
 - [ ] **Heartbeat / idle timeout**: hiện tại 25s; theo dõi nếu reverse proxy production có idle ngắn hơn (Cloudflare 100s, AWS ALB 60s mặc định — đều OK).
 - [ ] **Quan sát**: log số `roomSize` định kỳ để biết tải; cảnh báo nếu vượt ngưỡng (giúp quyết định lúc nào chuyển Redis).

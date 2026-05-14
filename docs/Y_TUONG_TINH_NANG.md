@@ -1,6 +1,6 @@
 # Ý tưởng tính năng cho Memories
 
-Các hướng **sản phẩm / UX** làm app “kỷ niệm” thú vị hơn — bổ sung cho checklist kỹ thuật trong [MO_RONG_DU_AN.md](./MO_RONG_DU_AN.md).
+Các hướng **sản phẩm / UX** làm app "kỷ niệm" thú vị hơn — bổ sung cho checklist kỹ thuật trong [MO_RONG_DU_AN.md](./MO_RONG_DU_AN.md) và backlog vấn đề cụ thể trong [VanDeCanGiaiQuyet.md](./VanDeCanGiaiQuyet.md).
 
 > **Đã làm:** Bình luận realtime trên trang chi tiết (SSE — phạm vi S của hướng "chat realtime"). Nhật ký: [ngay2.md](./ngay2.md).
 

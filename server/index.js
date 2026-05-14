@@ -2,6 +2,7 @@ import express from 'express';
 import mongoose from "mongoose";
 import cors from 'cors';
 import dotenv from 'dotenv';
+import compression from 'compression';
 import postsRouter from './routes/posts.js'
 import userRouter from './routes/users.js';
 
@@ -9,6 +10,21 @@ dotenv.config();
 const app = express();
 
 app.use(cors());
+
+/* Gzip toàn bộ response. Đặt TRƯỚC các route handler.
+   Loại trừ SSE stream — vì compression buffer output theo chunk, sẽ giữ event
+   lại tới khi đủ buffer → mất tính realtime. Filter theo URL vì Content-Type
+   chỉ được set bên trong controller, sau khi middleware đã quyết định. */
+const isSseRoute = (req) =>
+  req.path.endsWith('/comments/stream') || req.path.endsWith('/stream');
+
+app.use(compression({
+  filter: (req, res) => {
+    if (isSseRoute(req)) return false;
+    return compression.filter(req, res);
+  },
+}));
+
 app.use(express.json({limit: "30mb"}));
 app.use(express.urlencoded({limit: "30mb", extended: true}));
 app.use((req, res, next) => {

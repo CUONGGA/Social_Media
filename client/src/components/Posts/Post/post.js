@@ -9,24 +9,8 @@ import moment from 'moment';
 import { useHistory } from 'react-router-dom';
 
 import { likePost, deletePost } from '../../../actions/posts';
+import { readStoredProfile, getUserId } from '../../../utils/authUser';
 import useStyles from './styles';
-
-const readStoredProfile = () => {
-  try {
-    const raw = localStorage.getItem('profile');
-    if (!raw) return null;
-    return JSON.parse(raw);
-  } catch {
-    return null;
-  }
-};
-
-const getUserId = (user) => {
-  const r = user?.result;
-  if (!r) return null;
-  const id = r.sub ?? r.googleId ?? r._id;
-  return id != null ? String(id) : null;
-};
 
 const isSameId = (a, b) => String(a) === String(b);
 

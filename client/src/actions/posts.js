@@ -12,6 +12,7 @@ import {
   LIKE,
 } from '../constants/actionType';
 import { notifySuccess, notifyError, notifyInfo, axiosErrorMessage } from '../utils/notify';
+import { readStoredProfile, getUserId } from '../utils/authUser';
 
 export const getPost = (id) => async (dispatch) => {
   try {
@@ -103,12 +104,46 @@ export const deletePost = (id) => async (dispatch) => {
   }
 };
 
-export const likePost = (id) => async (dispatch) => {
+/* Like với 3 thay đổi để bớt cảm giác chậm:
+   1. Optimistic update: dispatch toggle ngay tại client → UI nhảy số tức thì,
+      không đợi roundtrip server. Đây là phần "chính" làm bớt cảm giác chậm.
+   2. Slim payload server: API giờ trả `{ _id, likes }` thay vì full post —
+      reducer LIKE đã merge thay replace (từ A1) nên không phá field khác.
+   3. Rollback khi fail: nếu server trả lỗi (401/404/500), restore likes về cũ
+      và báo toast. Không để UI lệch với DB. */
+export const likePost = (id) => async (dispatch, getState) => {
+  const profile = readStoredProfile();
+  const userId = getUserId(profile);
+  if (!userId) {
+    notifyError('Please sign in to like.');
+    return;
+  }
+
+  /* Lấy snapshot `likes` hiện tại để toggle optimistic + rollback nếu cần.
+     Đọc từ cả 3 nơi vì post có thể nằm ở `posts` (Home), `relatedPosts`
+     (PostDetails) hoặc `post` (PostDetails current). */
+  const { posts: { posts = [], relatedPosts = [], post: currentPost } = {} } = getState();
+  const sourcePost =
+    (currentPost && String(currentPost._id) === String(id) && currentPost) ||
+    posts.find((p) => String(p._id) === String(id)) ||
+    relatedPosts.find((p) => String(p._id) === String(id));
+
+  const oldLikes = sourcePost?.likes ?? [];
+  const isLiked = oldLikes.some((u) => String(u) === userId);
+  const optimisticLikes = isLiked
+    ? oldLikes.filter((u) => String(u) !== userId)
+    : [...oldLikes, userId];
+
+  dispatch({ type: LIKE, payload: { _id: id, likes: optimisticLikes } });
+
   try {
     const { data } = await api.likePost(id);
-
+    /* Reconcile với DB. Trong trường hợp bình thường, `data.likes` trùng
+       `optimisticLikes` → React thấy reference mới nhưng nội dung giống,
+       chỉ re-render thừa 1 lần (không nhìn thấy được). */
     dispatch({ type: LIKE, payload: data });
   } catch (error) {
+    dispatch({ type: LIKE, payload: { _id: id, likes: oldLikes } });
     notifyError(axiosErrorMessage(error, 'Could not update like.'));
   }
 };

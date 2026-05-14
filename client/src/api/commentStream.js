@@ -28,6 +28,7 @@ const API_BASE = resolveApiBase();
  * @param {{
  *   onReady?: (data: { postId: string }) => void,
  *   onNewComment?: (data: { postId: string, comment: string, comments: string[] }) => void,
+ *   onLikeUpdate?: (data: { postId: string, likes: string[] }) => void,
  *   onError?: (event: Event) => void,
  * }} handlers
  * @returns {() => void} hàm đóng kết nối, gọi khi unmount.
@@ -38,8 +39,6 @@ export function openCommentStream(postId, handlers = {}) {
   }
 
   const url = `${API_BASE}/posts/${postId}/comments/stream`;
-  // eslint-disable-next-line no-console
-  console.log('[SSE] open', url);
   const es = new window.EventSource(url);
 
   const safeJson = (raw) => {
@@ -47,28 +46,23 @@ export function openCommentStream(postId, handlers = {}) {
   };
 
   es.addEventListener('ready', (e) => {
-    // eslint-disable-next-line no-console
-    console.log('[SSE] ready', e.data);
     const data = safeJson(e.data);
     if (data && handlers.onReady) handlers.onReady(data);
   });
 
   es.addEventListener('comment:new', (e) => {
-    // eslint-disable-next-line no-console
-    console.log('[SSE] comment:new', e.data);
     const data = safeJson(e.data);
     if (data && handlers.onNewComment) handlers.onNewComment(data);
   });
 
-  es.onerror = (event) => {
-    // eslint-disable-next-line no-console
-    console.warn('[SSE] error / readyState =', es.readyState, event);
-    if (handlers.onError) handlers.onError(event);
-  };
+  es.addEventListener('like:update', (e) => {
+    const data = safeJson(e.data);
+    if (data && handlers.onLikeUpdate) handlers.onLikeUpdate(data);
+  });
+
+  if (handlers.onError) es.onerror = handlers.onError;
 
   return () => {
-    // eslint-disable-next-line no-console
-    console.log('[SSE] close', url);
     try { es.close(); } catch { /* ignore */ }
   };
 }
