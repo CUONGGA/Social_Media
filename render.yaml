@@ -1,0 +1,18 @@
+# Render Blueprint — 1 Web Service (API + React static)
+# Dashboard: New → Blueprint → connect repo, hoặc tạo Web Service thủ công theo các giá trị dưới.
+
+services:
+  - type: web
+    name: memories
+    runtime: node
+    plan: free
+    buildCommand: cd client && npm install --legacy-peer-deps && npm run build && cd ../server && npm install
+    startCommand: cd server && NODE_ENV=production node index.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: CONNECTION_URL
+        sync: false
+      # Chỉ cần nếu tách API sang service khác:
+      # - key: REACT_APP_API_URL
+      #   value: https://your-api.onrender.com/api
